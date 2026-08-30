@@ -1,0 +1,132 @@
+{
+  "name": "spa-saas",
+  "archetype": "Client-rendered SaaS marketing SPA (CRA/Vite-style shell) with a bolted-on static blog for SEO",
+  "overall": "problematic",
+  "start_path": "/index.html",
+  "files_written": [
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/spa-saas/index.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/spa-saas/pricing.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/spa-saas/robots.txt",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/spa-saas/sitemap.xml",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/spa-saas/manifest.json",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/spa-saas/favicon.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/spa-saas/blog/index.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/spa-saas/assets/styles.css",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/spa-saas/assets/app.js",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/spa-saas/assets/logo.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/spa-saas/assets/divider.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/spa-saas/assets/blog-hero.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/spa-saas/assets/comparison-chart.svg"
+  ],
+  "real_problems": [
+    {
+      "half": "discoverability",
+      "severity": "critical",
+      "where": "index.html and pricing.html raw markup (body is just <div id=\"root\"></div> + <script src=\"/assets/app.js\">)",
+      "problem": "The headline, product description, feature copy, and every price figure exist only as string templates inside assets/app.js, injected into #root at runtime. The raw HTML document contains no product content at all.",
+      "why_it_hurts": "Any fetcher that reads the served HTML without executing JavaScript (most AI-assistant URL-fetch tools, many crawlers, and link-preview generators) receives a document with nothing to quote, summarize, or cite about what the product is, does, or costs. There is nothing to associate the brand with in the raw response."
+    },
+    {
+      "half": "discoverability",
+      "severity": "high",
+      "where": "index.html and pricing.html <body> \u2014 no <noscript> element anywhere",
+      "problem": "No <noscript> fallback text and no prerendered/SSR snapshot exists for either JS-rendered page.",
+      "why_it_hurts": "Even a minimal noscript blurb would give non-JS clients one sentence to work with. Its complete absence means the failure mode of problem 1 has zero mitigation \u2014 the document is unconditionally empty for non-executing clients."
+    },
+    {
+      "half": "discoverability",
+      "severity": "high",
+      "where": "robots.txt: 'Disallow: /blog/'",
+      "problem": "robots.txt blocks crawling of /blog/, which is the one section of the site that is fully static, server-delivered, and actually has real descriptive text content (the workflow-automation blog post).",
+      "why_it_hurts": "The only page on the entire site that a non-JS crawler could read and cite productively is the one page explicitly excluded from crawling. ('Disallow: /api/' in the same file is a legitimate, unrelated exclusion.)"
+    },
+    {
+      "half": "discoverability",
+      "severity": "medium",
+      "where": "index.html <title>React App</title>; pricing.html <title>Nimbusly</title>",
+      "problem": "The homepage title is the untouched framework boilerplate default, never customized to the brand or product. The pricing page title is only the bare brand name with no page-specific descriptor.",
+      "why_it_hurts": "Title text is one of the few strings guaranteed to survive in raw HTML for a JS-rendered page. 'React App' identifies nothing about the site; 'Nimbusly' alone doesn't tell a title-only reader this is the pricing page, so distinguishing pages by title/snippet is impossible."
+    },
+    {
+      "half": "discoverability",
+      "severity": "medium",
+      "where": "index.html and pricing.html <head> \u2014 no meta description, no Open Graph tags",
+      "problem": "Neither JS-rendered page has a meta description or any Open Graph tags in the static head.",
+      "why_it_hurts": "There is no static one-sentence fallback summary anywhere for a crawler, link-unfurler, or snippet generator to use when it can't execute the JS that would otherwise produce the description."
+    },
+    {
+      "half": "discoverability",
+      "severity": "medium",
+      "where": "assets/comparison-chart.svg, referenced from pricing.html via app.js with alt=\"Uptime SLA comparison chart\"",
+      "problem": "The uptime SLA figures for each plan (99.5% / 99.9% / 99.99%) are drawn as vector text inside a separate externally-referenced SVG image and are never repeated as page text anywhere. The alt attribute is a generic label that doesn't restate the numbers.",
+      "why_it_hurts": "A text-based reader of the page (even one that somehow got past the JS-rendering problem) would learn the topic exists ('uptime SLA comparison') but not the actual figures, because a crawler that only parses the HTML document text doesn't reach into a separately-fetched image file's internal markup."
+    },
+    {
+      "half": "discoverability",
+      "severity": "low",
+      "where": "sitemap.xml \u2014 <loc>https://www.nimbusly.example.com/features.html</loc>",
+      "problem": "The sitemap lists /features.html, a URL that does not exist anywhere on the site (would 404).",
+      "why_it_hurts": "Wastes crawl budget on a dead link and signals an unmaintained sitemap, a minor trust/quality signal issue rather than a blocking one."
+    },
+    {
+      "half": "engagement",
+      "severity": "high",
+      "where": "assets/app.js renderHome()/renderPricing() \u2014 all primary CTAs use href=\"#\" ('Get Started Free', 'Choose Starter', 'Choose Team', 'Contact Sales')",
+      "problem": "Every primary call-to-action on the homepage and pricing page is a dead link that performs no action.",
+      "why_it_hurts": "The core conversion path a visitor is funneled toward \u2014 signing up or contacting sales \u2014 goes nowhere, so any visitor who is engaged enough to click hits a dead end and has no way to continue."
+    },
+    {
+      "half": "engagement",
+      "severity": "medium",
+      "where": "assets/app.js showSignupModal(), called via setTimeout(showSignupModal, 600) inside renderHome()",
+      "problem": "An unsolicited full-screen newsletter signup modal auto-opens about 0.6 seconds after the homepage content renders, covering the hero section the visitor just arrived to read.",
+      "why_it_hurts": "This is an interstitial appearing on first arrival before the visitor has read anything, a well-documented pattern for increasing immediate bounce/abandonment."
+    },
+    {
+      "half": "engagement",
+      "severity": "low",
+      "where": "index.html / pricing.html <body> before app.js executes",
+      "problem": "There is no loading indicator, skeleton screen, or placeholder text of any kind between page load and the JS painting content \u2014 visitors see a blank white page during that window.",
+      "why_it_hurts": "On a slow connection or a busy main thread, a visitor sees nothing at all and has no signal the page is working, which raises the chance they navigate away before content ever appears."
+    }
+  ],
+  "legitimate_and_traps": [
+    {
+      "aspect": "Decorative logo icon in the header (assets/logo.svg) always used with alt=\"\"",
+      "why_it_is_fine": "The icon sits immediately next to the visible text \"Nimbusly\", so it is purely decorative; empty alt is the correct accessibility treatment and must not be flagged as a missing/bad alt attribute."
+    },
+    {
+      "aspect": "Divider image in the blog post (assets/divider.svg) used with alt=\"\"",
+      "why_it_is_fine": "A plain horizontal rule graphic with no informational content \u2014 empty alt is correct, not an oversight."
+    },
+    {
+      "aspect": "Blog post hero image alt text: \"Screenshot of Nimbusly's visual workflow editor showing a three-step Slack-to-Salesforce automation\"",
+      "why_it_is_fine": "This is a properly descriptive, specific alt text on a content-bearing image \u2014 it should be recognized as done correctly, in contrast to the generic alt on the comparison chart."
+    },
+    {
+      "aspect": "blog/index.html has a unique, descriptive <title>, a well-written <meta name=\"description\">, and a <link rel=\"canonical\">",
+      "why_it_is_fine": "This page is genuinely well-optimized static content; it should not be penalized just because the rest of the site is weak. It demonstrates the team knows how to do this correctly when the page isn't JS-rendered."
+    },
+    {
+      "aspect": "robots.txt disallows /api/",
+      "why_it_is_fine": "A legitimate, correct exclusion of a non-content backend path that has no reason to be crawled; unrelated to the /blog/ mistake and should not be flagged as a problem."
+    },
+    {
+      "aspect": "manifest.json, favicon.svg, and the viewport meta tag are present and well-formed on every page",
+      "why_it_is_fine": "Standard boilerplate hygiene that was actually done right; not a discoverability or engagement defect."
+    },
+    {
+      "aspect": "Newsletter modal's <form onsubmit=\"return false;\"> and the footer's Privacy/Terms href=\"#\" links",
+      "why_it_is_fine": "These are inert test-fixture plumbing (no backend exists in this static fixture), not a designed defect distinct from the CTA-dead-link finding above. The intentional defect being tested is that the modal auto-opens as an interstitial and that the *primary* conversion CTAs are dead \u2014 not that secondary legal links or a demo form lack a backend."
+    },
+    {
+      "aspect": "All internal links use relative/root-relative paths (e.g. /pricing.html, /blog/, /assets/...) and the whole site is servable by a plain static file server",
+      "why_it_is_fine": "No reliance on server-side redirects, custom headers, or rewrites; the site works correctly when served as flat files."
+    },
+    {
+      "aspect": "sitemap.xml is well-formed XML using the standard sitemap protocol namespace and absolute URLs",
+      "why_it_is_fine": "Structurally correct sitemap aside from the one dead /features.html entry noted as a separate low-severity issue."
+    }
+  ],
+  "notes": "Core directive fulfilled: index.html and pricing.html are near-empty shells (just #root + script tag) with all real marketing/pricing content injected client-side by assets/app.js. Added a genuinely well-built static /blog/ page as a realistic contrast (real SaaS teams often bolt a static content-marketing blog onto an otherwise JS-heavy app) and then undermined it with a robots.txt mistake, which is the single most interesting discoverability bug in this fixture because it's not obviously related to the JS-rendering problem. Also layered in one fact-trapped-in-image case (uptime SLA numbers only in an SVG's vector text) and two engagement-specific bugs (auto-opening interstitial, dead primary CTAs) to cover the on-site-engagement half of the brief, independent of the discoverability issues. Semgrep was run against the one new JavaScript file (assets/app.js) per policy; no findings. HTML/CSS/JSON/SVG/txt/xml files were not treated as scannable source code."
+}

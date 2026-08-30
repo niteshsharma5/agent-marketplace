@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+  <rect width="900" height="600" fill="#e3d5b9"/>
+  <rect x="60" y="80" width="780" height="440" fill="#c9b088"/>
+  <rect x="120" y="140" width="200" height="320" fill="#a87f49"/>
+  <rect x="360" y="180" width="200" height="280" fill="#9a763f"/>
+  <rect x="600" y="150" width="200" height="310" fill="#b08d57"/>
+  <text x="450" y="560" font-family="Helvetica, Arial, sans-serif" font-size="26" fill="#4a3728" text-anchor="middle">Our atelier in Porto, where every coat is finished by hand</text>
+</svg>

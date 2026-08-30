@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000">
+  <rect width="800" height="1000" fill="#efe6d8"/>
+  <g stroke="#b08d57" stroke-width="6" fill="none">
+    <path d="M100 200 Q400 100 700 200"/>
+    <path d="M100 320 Q400 220 700 320"/>
+    <path d="M100 440 Q400 340 700 440"/>
+    <path d="M100 560 Q400 460 700 560"/>
+    <path d="M100 680 Q400 580 700 680"/>
+  </g>
+  <text x="400" y="920" font-family="Helvetica, Arial, sans-serif" font-size="28" fill="#4a3728" text-anchor="middle">Merino Wool Wrap Coat — woven fabric detail</text>
+</svg>

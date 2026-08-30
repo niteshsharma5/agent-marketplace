@@ -1,0 +1,81 @@
+{
+  "site": "http://127.0.0.1:45049",
+  "audited_at": "2026-01-01T00:00:00Z",
+  "summary": {
+    "total_findings": 2,
+    "critical": 0,
+    "high": 1,
+    "medium": 0,
+    "low": 1,
+    "discoverability": 2,
+    "engagement": 1
+  },
+  "scope": {
+    "pages_sampled": 4,
+    "pages_readable": 4,
+    "urls": [
+      "http://127.0.0.1:45049/",
+      "http://127.0.0.1:45049/company.html",
+      "http://127.0.0.1:45049/platform.html",
+      "http://127.0.0.1:45049/pricing.html"
+    ],
+    "render_available": false,
+    "robots_txt_found": true,
+    "offline_replay": false,
+    "skills_run": [
+      "crawler-access",
+      "machine-readability",
+      "fact-extractability",
+      "entity-trust",
+      "onsite-engagement"
+    ],
+    "skill_errors": []
+  },
+  "limitations": [
+    "Single-variant fetch: one geography, one device profile, no logged-in state, no cookie consent accepted. Personalization and geo/consent-gated content are not observed.",
+    "Lab proxy, not field data: latency and Core Web Vitals appear as risk factors measured once, not real-user metrics.",
+    "Network-dependent checks (sameAs resolvability, broken links) reflect what was reachable at audit time and are excluded from the byte-for-byte determinism guarantee."
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "title": "No Wikidata/Wikipedia link in sameAs",
+      "severity": "high",
+      "category": "sameas-resolvability",
+      "half": "discoverability",
+      "evidence": "Organization sameAs lists 2 URL(s) but none point to Wikidata or Wikipedia (0/2).",
+      "evidence_detail": {},
+      "mechanism": "Wikidata/Wikipedia are the primary reconciliation targets engines use to identify a brand entity; without them sameAs cannot merge to the canonical node.",
+      "suggested_action": {
+        "summary": "Add the brand's Wikidata (and/or Wikipedia) URL to Organization.sameAs to anchor the entity to the authoritative knowledge graph.",
+        "priority": "high",
+        "mechanism": "Wikidata/Wikipedia are the primary reconciliation targets engines use to identify a brand entity; without them sameAs cannot merge to the canonical node.",
+        "effort": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "F-002",
+      "title": "Non-sequential heading levels",
+      "severity": "low",
+      "category": "title-meta-heading-orientation",
+      "half": "both",
+      "evidence": "3/4 pages skip heading levels (e.g. http://127.0.0.1:45049/ jumps h2->h4).",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:45049/",
+          "http://127.0.0.1:45049/platform.html",
+          "http://127.0.0.1:45049/pricing.html"
+        ]
+      },
+      "mechanism": "Level jumps break the document outline machines build to locate a fact within a section.",
+      "suggested_action": {
+        "summary": "Keep headings sequential (no skipping levels) so the outline parses cleanly.",
+        "priority": "low",
+        "mechanism": "Level jumps break the document outline machines build to locate a fact within a section.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    }
+  ]
+}

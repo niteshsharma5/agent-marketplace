@@ -1,0 +1,73 @@
+{
+  "name": "clean-marketing",
+  "archetype": "Small B2B SaaS marketing site (fictional \"Loomstack\" project-management tool) \u2014 4-page static site: home, features, pricing, about/contact",
+  "overall": "clean",
+  "start_path": "/index.html",
+  "files_written": [
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/clean-marketing/index.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/clean-marketing/features.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/clean-marketing/pricing.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/clean-marketing/about.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/clean-marketing/robots.txt",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/clean-marketing/sitemap.xml",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/clean-marketing/assets/styles.css",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/clean-marketing/assets/logo.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/clean-marketing/assets/hero-illustration.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/clean-marketing/assets/dashboard-screenshot.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/clean-marketing/assets/divider.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/clean-marketing/assets/favicon.png",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/clean-marketing/assets/og-image.png"
+  ],
+  "real_problems": [],
+  "legitimate_and_traps": [
+    {
+      "aspect": "Fully static HTML, zero required JavaScript for content",
+      "why_it_is_fine": "Every fact (hero copy, feature descriptions, pricing numbers, FAQ answers, contact details) is present in the raw HTML response body. A crawler or AI fetcher that never executes JS still sees 100% of the content \u2014 there is no client-side-rendered gap to miss."
+    },
+    {
+      "aspect": "No external network dependencies (no CDN fonts, no CDN JS, no third-party analytics/widget scripts)",
+      "why_it_is_fine": "Only local relative assets (assets/styles.css, local SVG/PNG) are referenced. Nothing can fail to load due to a blocked/unavailable third-party host, so there's no risk of broken layout or missing render depending on network conditions."
+    },
+    {
+      "aspect": "decorative divider.svg has alt=\"\" and aria-hidden=\"true\"",
+      "why_it_is_fine": "It's three purely decorative dots with zero informational content. Empty alt is the correct accessible/semantic choice here (it tells assistive tech and crawlers to skip it) \u2014 flagging this as 'missing alt text' would be a false positive."
+    },
+    {
+      "aspect": "logo.svg, hero-illustration.svg and dashboard-screenshot.svg all carry descriptive alt text, AND every fact those images convey (3-column board; Research/Wireframes/Build/Launch task bars across two weeks) is also restated in the surrounding paragraph text",
+      "why_it_is_fine": "No information is locked inside an image only \u2014 this is a deliberate check that the 'facts only in images' failure mode does not occur here, so a tool should not dock points for image-only content."
+    },
+    {
+      "aspect": "FAQPage JSON-LD on pricing.html has the exact same 4 questions/answers, word-for-word, as the visible <details><summary> FAQ list on the same page",
+      "why_it_is_fine": "Structured data matches visible content exactly \u2014 a legitimate, correctly-implemented FAQ schema, not a mismatch or cloaking pattern. Also implemented with native <details>/<summary> so the answers are in the DOM and readable without any click or JS, not hidden behind a JS-only accordion."
+    },
+    {
+      "aspect": "SoftwareApplication JSON-LD offer price ($9.00 USD) matches the visible Starter plan price on pricing.html exactly",
+      "why_it_is_fine": "Internally consistent structured data \u2014 no stale or conflicting price between schema and visible text."
+    },
+    {
+      "aspect": "Canonical URLs, OG/Twitter meta, sitemap.xml locs, and JSON-LD @id/url fields all use one consistent placeholder production domain (https://www.loomstack.com) rather than whatever ad hoc host the static file server happens to answer on",
+      "why_it_is_fine": "This is normal, correct practice for any site fixture/staging copy \u2014 a real company's canonical tags should point at its production domain regardless of which internal host is currently serving the bytes. Internal consistency (every page agrees on the same domain) is what matters, and that consistency holds throughout."
+    },
+    {
+      "aspect": "Contact page uses mailto: and tel: links plus a plain postal address instead of a <form>",
+      "why_it_is_fine": "A static file server cannot process form submissions server-side. Rather than ship a form that silently fails to submit anywhere (a real broken-engagement problem), the site uses functional mailto:/tel: links that work correctly with no backend, and a physical mailing address for trust/E-E-A-T signals."
+    },
+    {
+      "aspect": "No fake/placeholder social links (no href=\"#\" Twitter/LinkedIn icons in the footer)",
+      "why_it_is_fine": "Rather than including decorative social icons that go nowhere (dead links, a genuine minor UX defect), they were omitted entirely since this fictional company has no real social profiles to link to. Nothing on the site is a non-functional link."
+    },
+    {
+      "aspect": "One H1 per page, logical heading nesting (h1 > h2 > h3), unique <title> and <meta name=\"description\"> per page, descriptive anchor text (no 'click here')",
+      "why_it_is_fine": "Standard correct on-page SEO/structure hygiene, present consistently across all 4 pages \u2014 nothing to flag."
+    },
+    {
+      "aspect": "robots.txt allows all user agents including AI/training crawlers, and points to sitemap.xml",
+      "why_it_is_fine": "As the clean control, nothing blocks GPTBot/CCBot/ClaudeBot/etc. or ordinary search crawlers \u2014 full discoverability by design. This is a deliberate contrast case: a robots.txt that disallows AI bots would be a legitimate opt-out elsewhere, but blocking here would work against the 'clean, well-optimized' directive, so it was deliberately left permissive."
+    },
+    {
+      "aspect": "Skip-to-content link, semantic landmarks (header/nav/main/footer/section), aria-current=\"page\" on the active nav item, and og-image.png rendered as a real 1200x630 raster with visible brand text (not a 1x1 placeholder or an SVG passed as og:image)",
+      "why_it_is_fine": "These are accessibility and social-share correctness details done properly rather than corner-cut; an SVG og:image would have been silently unsupported by several platforms, which was deliberately avoided by generating a real PNG."
+    }
+  ],
+  "notes": "This is the control site and was built to have no intentional defects on either the discoverability or engagement side. Design choices, all four pages (index, features, pricing, about) share identical nav/footer, so there are no orphan pages and no broken internal links (verified by grep against the filesystem). Content is real and specific (named customer quotes with fictional but plausible attributions, concrete pricing figures, a real street-format mailing address, a founding year and team size) rather than generic filler, so there is substantive text for both a crawler to cite and a human to read. Page weight is trivial (one shared CSS file, inline SVGs, two small PNGs, no JS at all), so there is nothing here that would cause a real engagement problem like slow load or layout shift. I could not find a genuine problem I was willing to claim in good faith \u2014 if the auditing tool surfaces findings against this site, I'd treat that as a signal to scrutinize the tool's precision rather than assume I under-built it, though I acknowledge I can't rule out something subtle I didn't think of. No source code files (.py/.js/.ts/.java/.c/.cpp/.go/.rb) were created or modified in this turn \u2014 only HTML/CSS/SVG/XML/TXT/PNG \u2014 so per the org's static-analysis policy the MCP Semgrep scan was correctly skipped for this turn."
+}

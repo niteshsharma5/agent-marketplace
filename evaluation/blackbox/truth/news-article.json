@@ -1,0 +1,61 @@
+{
+  "name": "news-article",
+  "archetype": "Well-built news/editorial article (control site \u2014 intended to be clean)",
+  "overall": "clean",
+  "start_path": "/",
+  "files_written": [
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/news-article/index.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/news-article/articles/texas-battery-co-op-heat-dome.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/news-article/author/priya-chandran.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/news-article/robots.txt",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/news-article/sitemap.xml",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/news-article/images/battery-substation-hero.jpg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/news-article/images/priya-headshot.jpg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/news-article/images/texas-coop-hero.jpg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/news-article/images/ledger-logo.png"
+  ],
+  "real_problems": [
+    {
+      "half": "discoverability",
+      "problem": "The placeholder image files are all identical 1x1 transparent pixels, not real photographs, despite being referenced as meaningful hero images and headshots.",
+      "where": "images/*.jpg, images/ledger-logo.png",
+      "why_it_hurts": "This is a cosmetic/test-harness artifact (explicitly permitted by the task brief for placeholder assets), not a structural discoverability defect: every fact and figure that matters (headline, byline, dates, body text, figure captions) lives in real crawlable HTML text, not inside the images. The images are decorative/illustrative supplements, not sole carriers of information, so I am not counting this as a genuine finding \u2014 flagging it only for transparency.",
+      "severity": "low"
+    }
+  ],
+  "legitimate_and_traps": [
+    {
+      "aspect": "Correction notice appended to the lede article (\"Correction, August 30, 2026: An earlier version of this article misstated...\")",
+      "why_it_is_fine": "This looks like an admission of an error and might superficially read as a quality problem, but transparent, dated correction notices are a hallmark of trustworthy, well-run journalism (matches AP/NYT-style corrections practice) and should never be flagged as a defect \u2014 it is a positive signal of editorial rigor, not sloppiness."
+    },
+    {
+      "aspect": "robots.txt uses a blanket `User-agent: *` / `Allow: /` with no bot-specific blocks (no GPTBot, ClaudeBot, PerplexityBot, Google-Extended disallow rules)",
+      "why_it_is_fine": "This is the deliberate, correct choice for a discoverability control: the site is not opting out of AI crawling, so assistants should be able to fetch and cite it. Do not flag the absence of AI-bot blocks as a problem, and do not flag the presence of a permissive robots.txt as if it were unusual/suspicious."
+    },
+    {
+      "aspect": "Empty/decorative visual separators are not used at all; every <img> has substantive alt text describing real photo content (hero shots, headshots)",
+      "why_it_is_fine": "There is no decorative image with alt=\"\" in this site to worry about \u2014 all images are content images and correctly carry descriptive alt text. Nothing to flag either way; noting this only so the absence of empty-alt usage isn't mistaken for an oversight."
+    },
+    {
+      "aspect": "datePublished and dateModified differ by a small but real interval (e.g. published 12:12 PM, updated 9:05 AM the next day) rather than being identical or wildly stale",
+      "why_it_is_fine": "Identical publish/modify timestamps can be a sign of fabricated freshness, and a modified date far in the future/past can look manipulated. These small, plausible gaps reflect genuine light editing/updating and should read as authentic freshness, not be penalized as inconsistent."
+    },
+    {
+      "aspect": "Internal navigation only links to pages that actually exist (index.html, articles/texas-battery-co-op-heat-dome.html, author/priya-chandran.html) rather than a full multi-section nav with placeholder sections",
+      "why_it_is_fine": "This was a deliberate choice to avoid introducing broken links / 404s in a control site meant to be clean; a real large news site would have many more nav sections, but every link here resolves. This should not be flagged as a 'thin site' problem \u2014 it's intentionally scoped to what was built."
+    },
+    {
+      "aspect": "JSON-LD NewsArticle/ProfilePage structured data is present, valid, and consistent with the visible on-page content (same headline, same author name, same dates)",
+      "why_it_is_fine": "This is the correct, expected implementation for a news article and should be recognized as a positive signal (machine-readable author/date/publisher facts matching the human-visible content), not treated with suspicion as 'too perfect.'"
+    },
+    {
+      "aspect": "Content is 100% server-delivered static HTML with no client-side rendering, no JS required to see the article text, headline, byline, or date",
+      "why_it_is_fine": "This is correct and intentional: a crawler or assistant fetching the raw HTML gets the full article immediately. Do not expect or require a noscript fallback warning here since there is no JS-gated content at all."
+    },
+    {
+      "aspect": "author page email and social links (mailto:, linkedin.example, x.example) point to non-resolving example domains",
+      "why_it_is_fine": "These are placeholder/example domains consistent with the whole site living on the fictional continentalledger.example domain; this is a natural artifact of building an offline test fixture, not a real dead-link defect a live crawl would encounter on the real internet, so it should not be scored as a broken-link problem."
+    }
+  ],
+  "notes": "Design intent: this is the CONTROL site and was built to have essentially no genuine defects. Structure: index.html is itself the flagship article (not a homepage-with-teasers layout), with a second full article and an author bio page for realistic internal linking, plus robots.txt and sitemap.xml covering all three real URLs.\\n\\nDiscoverability strengths deliberately built in: single canonical URL per page with matching og:url; complete Open Graph + Twitter Card tags; valid schema.org NewsArticle JSON-LD on both articles (headline, image, datePublished, dateModified, author with URL, publisher with logo, mainEntityOfPage) and ProfilePage/Person JSON-LD on the author page; semantic HTML (article/header/figure/figcaption/address/time with machine-readable datetime attributes); a single H1 per page with a clean H2 subhead hierarchy; descriptive, keyword-relevant alt text on every image; permissive robots.txt with an explicit Sitemap directive; a sitemap.xml listing exactly the three real pages with accurate lastmod dates; clear named author with title, bio, contact, and a byline link that round-trips to the author page; consistent NAP-style publisher identity (\\\"The Continental Ledger\\\") across both articles.\\n\\nEngagement strengths deliberately built in: a real, specific, non-clickbait headline and dek; a visible byline + published/updated timestamps + read-time estimate immediately under the headline; a lede that states the concrete finding in the first sentence; a named, quoted source with attribution context; a genuine cross-link between the two articles (\\\"related coverage\\\") that is contextual and bidirectional; a transparent, dated correction notice (signals editorial trustworthiness rather than being a defect); an author bio page with credentials and a list of recent bylines; no popups, no paywall, no infinite-scroll trickery, no autoplay media \u2014 nothing standing between the visitor and the text.\\n\\nThe only thing I flagged at all is that the placeholder image files are 1x1 stand-ins (unavoidable/explicitly sanctioned for this fixture-building exercise) rather than real photos \u2014 but since no fact in either article depends on the image (all captions, figures, and claims are in the surrounding text), this does not create an actual discoverability gap, so I rated it low/informational rather than a real problem. I made a deliberate choice to keep the nav scoped only to pages that exist rather than simulate a fuller site with dead links, to avoid accidentally injecting an unintended defect into what is supposed to be the clean control."
+}

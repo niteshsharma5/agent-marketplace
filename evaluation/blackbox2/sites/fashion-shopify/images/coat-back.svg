@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000">
+  <rect width="800" height="1000" fill="#e3d5b9"/>
+  <rect x="220" y="160" width="360" height="620" rx="40" fill="#a87f49"/>
+  <rect x="240" y="180" width="320" height="12" fill="#7d5c30"/>
+  <circle cx="400" cy="140" r="70" fill="#d8c7a1"/>
+  <text x="400" y="920" font-family="Helvetica, Arial, sans-serif" font-size="28" fill="#4a3728" text-anchor="middle">Merino Wool Wrap Coat — Camel, back view</text>
+</svg>

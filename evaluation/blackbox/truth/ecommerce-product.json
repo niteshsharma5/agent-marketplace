@@ -1,0 +1,69 @@
+{
+  "name": "ecommerce-product",
+  "archetype": "Single-brand e-commerce storefront (product detail page as centerpiece), static-export feel similar to a lightweight Shopify/hand-rolled catalog site",
+  "overall": "mixed",
+  "start_path": "/index.html",
+  "files_written": [
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/ecommerce-product/index.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/ecommerce-product/products/trailblazer-40l-backpack.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/ecommerce-product/products/summit-20l-daypack.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/ecommerce-product/robots.txt",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/ecommerce-product/sitemap.xml",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/ecommerce-product/css/style.css",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/ecommerce-product/images/logo.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/ecommerce-product/images/trailblazer-40l-front.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/ecommerce-product/images/trailblazer-40l-side.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/ecommerce-product/images/trailblazer-40l-back.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/ecommerce-product/images/summit-20l-front.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/ecommerce-product/images/category-backpacks.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/ecommerce-product/images/category-daypacks.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/ecommerce-product/images/category-accessories.svg"
+  ],
+  "real_problems": [
+    {
+      "half": "discoverability",
+      "severity": "high",
+      "where": "products/trailblazer-40l-backpack.html \u2014 the Product JSON-LD block's offers.price field (\"149.99\") versus the visible on-page price ($129.99 with a \"Save 13%\" badge)",
+      "problem": "The structured-data price is stale: it still reflects the pre-sale price even though the visible HTML clearly shows a discounted $129.99. All other schema fields (sku, brand, availability, aggregateRating, breadcrumb) are internally consistent and correctly formed \u2014 only the price field was not updated when the sale started, which mirrors how this bug happens in production (marketing updates the visible price/banner but the schema-generation step reads from a different, uncached field).",
+      "why_it_hurts": "Any system that trusts machine-readable data over rendered text (rich snippets, shopping feeds, or an AI assistant quoting \"price\" from schema.org markup) will state $149.99, a fact a human on the same page would immediately see is wrong. This is a factual-accuracy/citation-trust problem: the brand gets misquoted on its own page, and the error is easy to miss because the JSON-LD is syntactically valid and passes any schema linter \u2014 it only fails a cross-check against the visible content."
+    },
+    {
+      "half": "engagement",
+      "severity": "medium",
+      "where": "products/trailblazer-40l-backpack.html \u2014 \"You may also like\" section, the two accessory cards (\"2L Hydration Bladder\" and \"Pack Rain Cover\") both use href=\"#\"",
+      "problem": "Two of the three related-product cards are dead links \u2014 clicking them does nothing (or jumps to the top of the current page) instead of going to a product page. This is a classic leftover-from-development pattern: the card markup and imagery were built before the actual accessory pages existed.",
+      "why_it_hurts": "A visitor who is engaged enough to browse related items and clicks one gets no feedback and no destination, which reads as a broken/unfinished site and increases the chance they abandon the session right there rather than continuing to browse or convert."
+    }
+  ],
+  "legitimate_and_traps": [
+    {
+      "aspect": "robots.txt allows all crawling and points to sitemap.xml; sitemap.xml lists exactly the three real pages (home + two products) with plain <loc> entries",
+      "why_it_is_fine": "This is the correct, minimal configuration for a small static catalog \u2014 nothing is blocked that shouldn't be, and the sitemap doesn't reference the non-existent cart/checkout pages. Must not be flagged as incomplete just because it's short."
+    },
+    {
+      "aspect": "Decorative star-rating glyphs use aria-hidden=\"true\" and the visible text next to them (\"4.6 out of 5 \u00b7 238 reviews\") carries the actual rating information",
+      "why_it_is_fine": "The rating is fully available as real text to any crawler or screen reader; the star glyphs are pure visual flourish correctly hidden from assistive tech, not a case of information trapped in a non-text element."
+    },
+    {
+      "aspect": "All product photography <img> tags carry specific, descriptive alt text (e.g. \"Trailforge Trailblazer 40L hiking backpack in forest green, front view showing side compression straps\") while thumbnail/category icons still get shorter but real alt text",
+      "why_it_is_fine": "This is what good alt text looks like \u2014 descriptive where the image conveys product information. No image on the page relies on being purely decorative-with-empty-alt, so there's no accessibility/discoverability gap to flag here."
+    },
+    {
+      "aspect": "\"Add to Cart\" / \"Buy Now\" buttons are plain, non-functional <button type=\"button\"> elements with no backend",
+      "why_it_is_fine": "This is an inherent, expected limitation of a static-file-server test fixture (no server-side cart/checkout exists to wire up), not a designed site defect \u2014 it shouldn't be scored as a broken purchase flow the way the dead related-product links should be."
+    },
+    {
+      "aspect": "Canonical URLs, Open Graph tags, and JSON-LD url/item fields on every page all point to the same fictional absolute domain (https://www.trailforgeoutdoor.com/...) consistently, including on the homepage's Organization schema",
+      "why_it_is_fine": "Internal consistency across canonical, OG, and structured data is exactly the correct pattern; the fictional domain itself is just a stand-in appropriate for a test fixture, not a mismatch bug."
+    },
+    {
+      "aspect": "Full product description, specs table, price, stock status, and reviews summary for the Trailblazer 40L are all present as plain server-rendered HTML text (no JS required to reveal them)",
+      "why_it_is_fine": "Every fact a shopper or an AI assistant would want to cite (capacity, weight, material, price, warranty, rating) is directly in the raw HTML \u2014 there is no client-side-rendering-only content gap on this page; the only inaccuracy is the one deliberately placed in the JSON-LD price field."
+    },
+    {
+      "aspect": "The secondary product page (Summit 20L Daypack) has fully consistent JSON-LD, correct canonical/OG tags, and a single valid related-product link back to the Trailblazer",
+      "why_it_is_fine": "This page exists as a clean control/contrast to the main product page \u2014 it should not be flagged with the same defects, since none were introduced there."
+    }
+  ],
+  "notes": "Two intentional defects were built in: (1) a discoverability-side stale-price mismatch between the visible sale price and the Product JSON-LD offers.price on the main product page (the one defect the directive required, chosen because it's a common, realistic real-world bug and is subtle \u2014 the schema is otherwise valid and complete), and (2) an engagement-side pair of dead \"#\" links in the related-products carousel. Everything else (robots.txt, sitemap.xml, alt text, heading structure, canonical/OG consistency, breadcrumb schema, full text content, the secondary product page) was deliberately kept clean and correct so it functions as a control against false positives. No source code files (only HTML/CSS/SVG/XML/txt) were created this turn, so no Semgrep scan was triggered per policy."
+}

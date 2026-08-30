@@ -1,0 +1,114 @@
+{
+  "archetype": "WordPress-style ad-supported recipe/food blog (personal narrative + recipe card format)",
+  "name": "recipe-blog",
+  "overall": "problematic",
+  "start_path": "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/recipe-blog/index.html",
+  "files_written": [
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/recipe-blog/index.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/recipe-blog/recipe-chocolate-chip-cookies.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/recipe-blog/recipe-banana-bread.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/recipe-blog/about.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/recipe-blog/style.css",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/recipe-blog/subscribe-popup.js",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/recipe-blog/robots.txt",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/recipe-blog/sitemap.xml",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/recipe-blog/images/hero-home.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/recipe-blog/images/hero-cookies.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/recipe-blog/images/hero-banana-bread.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/recipe-blog/images/ad-banner.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/recipe-blog/images/ad-square.svg"
+  ],
+  "real_problems": [
+    {
+      "half": "discoverability",
+      "severity": "critical",
+      "where": "robots.txt",
+      "problem": "robots.txt contains \"Disallow: /recipe-\", which by standard prefix matching blocks both actual recipe pages (recipe-chocolate-chip-cookies.html and recipe-banana-bread.html) \u2014 the only substantive content on the site.",
+      "why_it_hurts": "Any crawler (search or AI) that respects robots.txt as a simple path-prefix rule will refuse to fetch the two URLs that contain the real recipes, even though a sitemap.xml exists advertising them. The site effectively hides its own core content from well-behaved crawlers while the homepage/about page remain visible, so the brand shows up in the index but its actual product (recipes) does not."
+    },
+    {
+      "half": "discoverability",
+      "severity": "medium",
+      "where": "sitemap.xml",
+      "problem": "sitemap.xml lists only index.html, recipe-chocolate-chip-cookies.html, and about.html; recipe-banana-bread.html is omitted entirely.",
+      "why_it_hurts": "Crawlers or AI ingestion pipelines that seed discovery from the sitemap (rather than purely following in-page links) will never learn that the banana bread page exists, reducing its odds of being indexed or cited even though it is fully linked from the homepage and nav."
+    },
+    {
+      "half": "discoverability",
+      "severity": "medium",
+      "where": "recipe-chocolate-chip-cookies.html and recipe-banana-bread.html",
+      "problem": "Neither recipe page includes any schema.org Recipe structured data (JSON-LD) covering ingredients, instructions, yield, or times, despite being unambiguous recipe content.",
+      "why_it_hurts": "AI assistants and search engines that prefer structured data for extracting discrete facts (ingredient lists, cook time, servings) have to fall back to parsing free-form prose mixed with a long narrative, increasing the chance of incomplete or incorrect facts surfacing in citations/answers, and making the page less likely to be selected as an authoritative source for a factual query like \"how long do you bake banana bread.\""
+    },
+    {
+      "half": "discoverability",
+      "severity": "low",
+      "where": "recipe-chocolate-chip-cookies.html and recipe-banana-bread.html <head>",
+      "problem": "Recipe pages have no meta description tag (homepage and about.html both have one).",
+      "why_it_hurts": "When a search engine or AI tool needs a short summary/snippet for these specific pages, it must auto-extract text; given the long personal-story preamble that precedes the recipe in the DOM, the auto-extracted snippet is likely to surface a life-story sentence instead of a recipe summary, weakening how the page is represented in results."
+    },
+    {
+      "half": "engagement",
+      "severity": "high",
+      "where": "subscribe-popup.js + email-modal markup on every page",
+      "problem": "A full-screen newsletter modal auto-opens ~1.5s after every page load (home, both recipes, about) and has no persistence mechanism (no cookie/localStorage flag) to suppress it after a visitor has already dismissed it once.",
+      "why_it_hurts": "A visitor closes the popup on the homepage, clicks into a recipe, and the identical popup reopens 1.5 seconds later; it will keep reopening on every subsequent page they visit in the same session. Repeated, unacknowledged interruption of this kind is a well-known driver of visitors abandoning a site rather than reading the content they came for."
+    },
+    {
+      "half": "engagement",
+      "severity": "high",
+      "where": "recipe-chocolate-chip-cookies.html and recipe-banana-bread.html",
+      "problem": "There is no \"Jump to recipe\" link/anchor anywhere on either recipe page; roughly 250-350 words of personal narrative sit in the DOM before the recipe card, with no shortcut past them.",
+      "why_it_hurts": "Visitors who land on the page specifically wanting the ingredient list or instructions (the majority of recipe-search traffic) must scroll through unrelated narrative first; the well-documented visitor behavior on this content type is to bounce back to search results rather than scroll, so this measurably reduces on-page engagement and time-on-task completion."
+    },
+    {
+      "half": "engagement",
+      "severity": "medium",
+      "where": "recipe-chocolate-chip-cookies.html and recipe-banana-bread.html, .recipe-card instruction list",
+      "problem": "An ad block is inserted between almost every individual numbered instruction step inside the recipe card itself, rather than only around the content (header/footer/sidebar).",
+      "why_it_hurts": "It breaks the visual and logical continuity of a short sequential task (cooking steps) into disconnected fragments separated by ad units, forcing a cook to scroll past ads repeatedly while trying to follow along, which is disruptive specifically because this content is meant to be read step-by-step while actively cooking."
+    },
+    {
+      "half": "engagement",
+      "severity": "low",
+      "where": "style.css .hero-image rule + <img> usage across all pages",
+      "problem": "Hero images are large (up to 1200x700) but the layout relies on CSS width:100%/height:auto without the images carrying a matching intrinsic aspect ratio reservation beyond their width/height attributes being present only as raw pixel values from a much larger source size, so the rendered box height is only known once each image finishes loading relative to its container width.",
+      "why_it_hurts": "On a content type built around large hero photography, any residual shift as each hero image finishes rendering is proportionally more disruptive to reading flow than on text-heavy pages, nudging the page below and above content around during the first seconds of a visit."
+    }
+  ],
+  "legitimate_and_traps": [
+    {
+      "aspect": "The long personal-story preamble (grandmother anecdotes, technique backstory) appearing before the recipe card",
+      "why_it_is_fine": "This is a standard, legitimate content-marketing convention for food blogs (adds original long-form text, personal voice, and context that generic recipe aggregators lack). Its mere presence should not be flagged as broken \u2014 only the missing in-page shortcut past it (already listed as a real problem) is the actual defect."
+    },
+    {
+      "aspect": "The email-capture modal has a visible, working close (\u00d7) button, and clicking the dark backdrop also dismisses it",
+      "why_it_is_fine": "The modal is not a dead-end or focus trap \u2014 a visitor can always get rid of it in one click. The genuine defect is narrower and specific: it lacks any memory of that dismissal across page loads, not that it is undismissable."
+    },
+    {
+      "aspect": "Multiple ad slots in the header banner, sidebar widgets, and footer area",
+      "why_it_is_fine": "Ad-supported placement in conventional zones (header, sidebar, between post summaries on the homepage) is the expected, typical monetization model for a recipe blog and is not itself a defect; only the specific mid-instruction-step placement inside the recipe card is flagged."
+    },
+    {
+      "aspect": "Every content image (hero photos and decorative ad placeholders) carries a descriptive, non-generic alt attribute",
+      "why_it_is_fine": "Alt text is present and meaningfully descriptive (e.g. describing the scene, not just the filename) on every hero image, so missing/empty alt text should not be flagged \u2014 it was deliberately included correctly precisely because image-heavy pages are often assumed to have this problem."
+    },
+    {
+      "aspect": "Newsletter and comment forms use onsubmit=\"return false\"/preventDefault with no real backend endpoint",
+      "why_it_is_fine": "This is a static test site with no server; a non-functional form submission is expected and appropriate here, not a sign of a broken production feature."
+    },
+    {
+      "aspect": "Every page has a unique, descriptive <title> and a correct self-referencing <link rel=\"canonical\">",
+      "why_it_is_fine": "Titles are not duplicated boilerplate across pages and canonical URLs correctly point to each page's own URL, so this should not be flagged as a duplicate-content or canonicalization problem."
+    },
+    {
+      "aspect": "robots.txt disallowing /wp-admin/ and /wp-includes/",
+      "why_it_is_fine": "These are legitimate, conventional WordPress-admin-path exclusions and reflect normal, correct robots.txt practice; only the separate /recipe- rule (already flagged) is the actual bug \u2014 the overall intent and structure of the robots.txt is sound."
+    },
+    {
+      "aspect": "All internal navigation uses plain relative <a href=\"...\"> links across index.html, both recipe pages, and about.html with no client-side routing/JS gating",
+      "why_it_is_fine": "Every page is reachable via ordinary crawlable anchor tags without requiring JavaScript execution, which is a positive baseline for crawlability and should not be mistaken for a discoverability gap."
+    }
+  ],
+  "notes": "Built as a 4-page static WordPress-style food blog (index.html, two recipe posts, about.html) plus robots.txt, sitemap.xml, a shared stylesheet, a shared popup script, and SVG placeholder images for hero photos and ad slots. Two deliberate discoverability landmines were planted for realism: an over-broad robots.txt Disallow rule that accidentally blocks the very pages carrying the recipes, and a sitemap.xml that omits one of the two recipe pages. Engagement problems center on a non-persistent auto-opening newsletter modal, a missing jump-to-recipe shortcut past a deliberately long life-story preamble, and ads spliced between individual numbered cooking steps. Ran the required Semgrep scan on the one newly created script file (subscribe-popup.js); no issues were found, so no fixes were needed."
+}

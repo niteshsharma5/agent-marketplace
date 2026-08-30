@@ -1,0 +1,381 @@
+{
+  "site": "http://127.0.0.1:45377",
+  "audited_at": "2026-01-01T00:00:00Z",
+  "summary": {
+    "total_findings": 14,
+    "critical": 1,
+    "high": 3,
+    "medium": 6,
+    "low": 4,
+    "discoverability": 11,
+    "engagement": 7
+  },
+  "scope": {
+    "pages_sampled": 6,
+    "pages_readable": 5,
+    "urls": [
+      "http://127.0.0.1:45377/index.html",
+      "http://127.0.0.1:45377/archives.html",
+      "http://127.0.0.1:45377/faq.html",
+      "http://127.0.0.1:45377/hours-locations.html",
+      "http://127.0.0.1:45377/public-records-law.html",
+      "http://127.0.0.1:45377/services.html"
+    ],
+    "render_available": false,
+    "robots_txt_found": true,
+    "offline_replay": false,
+    "skills_run": [
+      "crawler-access",
+      "machine-readability",
+      "fact-extractability",
+      "entity-trust",
+      "onsite-engagement"
+    ],
+    "skill_errors": []
+  },
+  "limitations": [
+    "Single-variant fetch: one geography, one device profile, no logged-in state, no cookie consent accepted. Personalization and geo/consent-gated content are not observed.",
+    "Lab proxy, not field data: latency and Core Web Vitals appear as risk factors measured once, not real-user metrics.",
+    "Network-dependent checks (sameAs resolvability, broken links) reflect what was reachable at audit time and are excluded from the byte-for-byte determinism guarantee."
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "title": "robots.txt blocks AI citation crawlers from the homepage",
+      "severity": "critical",
+      "category": "robots-citation-bot-block",
+      "half": "discoverability",
+      "evidence": "2/11 citation bots Disallowed for homepage http://127.0.0.1:45377/index.html: ChatGPT-User, PerplexityBot. Resolved verdicts: Amazonbot=Allow; Applebot=Allow; Bingbot=Allow; ChatGPT-User=DISALLOW; Claude-SearchBot=Allow; Claude-User=Allow; DuckDuckBot=Allow; Googlebot=Allow; OAI-SearchBot=Allow; Perplexity-User=Allow; PerplexityBot=DISALLOW",
+      "evidence_detail": {
+        "blocked_bots": [
+          "ChatGPT-User",
+          "PerplexityBot"
+        ],
+        "resolved_verdicts": [
+          "Amazonbot=Allow",
+          "Applebot=Allow",
+          "Bingbot=Allow",
+          "ChatGPT-User=DISALLOW",
+          "Claude-SearchBot=Allow",
+          "Claude-User=Allow",
+          "DuckDuckBot=Allow",
+          "Googlebot=Allow",
+          "OAI-SearchBot=Allow",
+          "Perplexity-User=Allow",
+          "PerplexityBot=DISALLOW"
+        ],
+        "homepage": "http://127.0.0.1:45377/index.html"
+      },
+      "mechanism": "AI assistants retrieve live pages via citation crawlers; a Disallow for one of these bots removes the brand from that assistant's answers.",
+      "suggested_action": {
+        "summary": "Remove or narrow the Disallow rules for these citation/search bots in robots.txt (ChatGPT-User, PerplexityBot). Keep training-only opt-outs if desired, but allow the crawlers that power AI answers to reach the homepage.",
+        "priority": "critical",
+        "mechanism": "AI assistants retrieve live pages via citation crawlers; a Disallow for one of these bots removes the brand from that assistant's answers.",
+        "effort": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-002",
+      "title": "noindex directive on content pages",
+      "severity": "high",
+      "category": "indexability-directives",
+      "half": "discoverability",
+      "evidence": "1/5 content pages carry a noindex directive: http://127.0.0.1:45377/services.html (meta name=robots content='noindex, nofollow')",
+      "evidence_detail": {
+        "pages": [
+          {
+            "url": "http://127.0.0.1:45377/services.html",
+            "source": "meta name=robots content='noindex, nofollow'"
+          }
+        ],
+        "considered_pages": 5
+      },
+      "mechanism": "A noindex directive instructs indexing engines to exclude the page, so it cannot surface as a citation source even if crawling is allowed.",
+      "suggested_action": {
+        "summary": "Remove the noindex directive (meta tag or X-Robots-Tag header) from pages you want cited. noindex tells search/citation engines to drop the page from their index entirely.",
+        "priority": "high",
+        "mechanism": "A noindex directive instructs indexing engines to exclude the page, so it cannot surface as a citation source even if crawling is allowed.",
+        "effort": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-003",
+      "title": "Site is served over plain HTTP",
+      "severity": "high",
+      "category": "mixed-content-https",
+      "half": "both",
+      "evidence": "Origin http://127.0.0.1:45377 declares no HTTPS (no https canonical, og:url, or sitemap); traffic is unencrypted and browsers mark it 'Not secure'.",
+      "evidence_detail": {},
+      "mechanism": "Non-HTTPS pages are flagged insecure, blocked from modern APIs, and ranked down; visitors distrust and abandon them.",
+      "suggested_action": {
+        "summary": "Obtain a TLS certificate and redirect all HTTP traffic to HTTPS.",
+        "priority": "high",
+        "mechanism": "Non-HTTPS pages are flagged insecure, blocked from modern APIs, and ranked down; visitors distrust and abandon them.",
+        "effort": "medium",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-004",
+      "title": "No Organization entity anchor in JSON-LD",
+      "severity": "high",
+      "category": "org-entity-anchor-idgraph",
+      "half": "discoverability",
+      "evidence": "No Organization/LocalBusiness/Corporation JSON-LD node on any sampled page (0/5 pages). Engines have no machine-readable brand node to anchor to.",
+      "evidence_detail": {},
+      "mechanism": "AI engines resolve the brand string to a knowledge-graph node BEFORE evaluating page content; with no stable anchor, entity consolidation and knowledge-panel eligibility never begin.",
+      "suggested_action": {
+        "summary": "Add one Organization JSON-LD node with a stable @id, plus name, url and logo, on the homepage (and reference it site-wide).",
+        "priority": "high",
+        "mechanism": "AI engines resolve the brand string to a knowledge-graph node BEFORE evaluating page content; with no stable anchor, entity consolidation and knowledge-panel eligibility never begin.",
+        "effort": "medium",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-005",
+      "title": "Missing rel=canonical",
+      "severity": "medium",
+      "category": "canonical-lang-hreflang",
+      "half": "discoverability",
+      "evidence": "5/5 pages have no rel=canonical link (e.g. http://127.0.0.1:45377/faq.html).",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:45377/faq.html",
+          "http://127.0.0.1:45377/hours-locations.html",
+          "http://127.0.0.1:45377/index.html",
+          "http://127.0.0.1:45377/public-records-law.html",
+          "http://127.0.0.1:45377/services.html"
+        ]
+      },
+      "mechanism": "Without a canonical, engines may index a duplicate URL and attribute the fact to the wrong page, splitting authority.",
+      "suggested_action": {
+        "summary": "Add a self-referential absolute rel=canonical to each key page.",
+        "priority": "medium",
+        "mechanism": "Without a canonical, engines may index a duplicate URL and attribute the fact to the wrong page, splitting authority.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "F-006",
+      "title": "Media without reserved space and fonts without font-display cause layout shift",
+      "severity": "medium",
+      "category": "cls-layout-stability",
+      "half": "engagement",
+      "evidence": "6 <img>/<video>/<iframe> with no width/height attrs and no inline size/aspect-ratio across 5/5 pages.",
+      "evidence_detail": {
+        "dimensionless_media_pages": [
+          "http://127.0.0.1:45377/faq.html",
+          "http://127.0.0.1:45377/hours-locations.html",
+          "http://127.0.0.1:45377/index.html",
+          "http://127.0.0.1:45377/public-records-law.html",
+          "http://127.0.0.1:45377/services.html"
+        ],
+        "fontface_no_display_pages": [],
+        "dimensionless_count": 6,
+        "fontface_count": 0
+      },
+      "mechanism": "Media that loads without reserved dimensions and late-swapping fonts reflow the page (Cumulative Layout Shift), which frustrates readers and mis-taps.",
+      "suggested_action": {
+        "summary": "Set width/height (or CSS aspect-ratio) on media so space is reserved before load, and add font-display: swap to @font-face rules.",
+        "priority": "medium",
+        "mechanism": "Media that loads without reserved dimensions and late-swapping fonts reflow the page (Cumulative Layout Shift), which frustrates readers and mis-taps.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "F-007",
+      "title": "Non-200 final status on sampled URLs",
+      "severity": "medium",
+      "category": "http-status-redirect-canonical-integrity",
+      "half": "both",
+      "evidence": "1/6 sampled URLs return a non-200 final status: http://127.0.0.1:45377/archives.html -> HTTP 404 (not_found)",
+      "evidence_detail": {
+        "urls": [
+          {
+            "url": "http://127.0.0.1:45377/archives.html",
+            "status": "HTTP 404 (not_found)"
+          }
+        ]
+      },
+      "mechanism": "A crawler that hits a non-200 final response gets no content to index or cite from that URL.",
+      "suggested_action": {
+        "summary": "Investigate and restore 200 responses, or remove the dead links pointing here.",
+        "priority": "medium",
+        "mechanism": "A crawler that hits a non-200 final response gets no content to index or cite from that URL.",
+        "effort": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "F-008",
+      "title": "Images ship at one size and load eagerly below the fold",
+      "severity": "medium",
+      "category": "image-optimization-lazyload",
+      "half": "engagement",
+      "evidence": "2 below-fold content images missing loading=lazy across 2/5 pages. (Hero/first image intentionally excluded.)",
+      "evidence_detail": {
+        "unresponsive_pages": [],
+        "nonlazy_pages": [
+          "http://127.0.0.1:45377/index.html",
+          "http://127.0.0.1:45377/public-records-law.html"
+        ],
+        "unresponsive_count": 0,
+        "nonlazy_count": 2
+      },
+      "mechanism": "Oversized single-resolution images waste bandwidth and delay paint; eager below-fold images compete with above-fold content for the network.",
+      "suggested_action": {
+        "summary": "Add srcset/<picture> responsive variants to large images and loading=lazy to below-fold content images; leave the hero/LCP image eager.",
+        "priority": "medium",
+        "mechanism": "Oversized single-resolution images waste bandwidth and delay paint; eager below-fold images compete with above-fold content for the network.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "F-009",
+      "title": "No off-site identity surface found",
+      "severity": "medium",
+      "category": "offsite-corroboration-surface",
+      "half": "discoverability",
+      "evidence": "No sameAs, no footer/social profile links, and no Wikipedia/Wikidata link on any of the 5 sampled pages.",
+      "evidence_detail": {},
+      "mechanism": "The large majority of AI brand mentions are sourced from third-party pages; with zero off-site surface there is structurally little for an engine to cite.",
+      "suggested_action": {
+        "summary": "Establish and link off-site identity surfaces (social profiles, Crunchbase, Wikidata/Wikipedia) and mirror them in Organization.sameAs.",
+        "priority": "medium",
+        "mechanism": "The large majority of AI brand mentions are sourced from third-party pages; with zero off-site surface there is structurally little for an engine to cite.",
+        "effort": "medium",
+        "confidence": "low"
+      }
+    },
+    {
+      "id": "F-010",
+      "title": "Missing or generic <title>",
+      "severity": "medium",
+      "category": "title-meta-heading-orientation",
+      "half": "both",
+      "evidence": "4/5 pages have a missing/generic title (e.g. http://127.0.0.1:45377/index.html: \"home\").",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:45377/faq.html",
+          "http://127.0.0.1:45377/hours-locations.html",
+          "http://127.0.0.1:45377/index.html",
+          "http://127.0.0.1:45377/services.html"
+        ]
+      },
+      "mechanism": "The title is the strongest orientation signal an extractor has for what fact the page answers; a generic title leaves it guessing.",
+      "suggested_action": {
+        "summary": "Give each page a specific, descriptive <title> naming the page's subject.",
+        "priority": "medium",
+        "mechanism": "The title is the strongest orientation signal an extractor has for what fact the page answers; a generic title leaves it guessing.",
+        "effort": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-011",
+      "title": "<html> missing lang attribute",
+      "severity": "low",
+      "category": "canonical-lang-hreflang",
+      "half": "discoverability",
+      "evidence": "4/5 pages have an <html> element with no lang attribute (e.g. http://127.0.0.1:45377/faq.html).",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:45377/faq.html",
+          "http://127.0.0.1:45377/hours-locations.html",
+          "http://127.0.0.1:45377/index.html",
+          "http://127.0.0.1:45377/services.html"
+        ]
+      },
+      "mechanism": "The lang attribute tells machines which language the fact is written in; its absence hurts correct interpretation and localization.",
+      "suggested_action": {
+        "summary": "Set a lang attribute on <html> (e.g. lang=\"en\").",
+        "priority": "low",
+        "mechanism": "The lang attribute tells machines which language the fact is written in; its absence hurts correct interpretation and localization.",
+        "effort": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-012",
+      "title": "Missing landmarks, skip link, or a clear above-fold value proposition",
+      "severity": "low",
+      "category": "landmarks-skiplink-valueprop",
+      "half": "engagement",
+      "evidence": "no skip-to-content link on 5/5 pages; no clear above-fold value prop (H1 + descriptive paragraph) on 1/5 pages. Heuristic; value-prop baked into a hero image is not detected.",
+      "evidence_detail": {
+        "no_main_pages": [],
+        "no_skiplink_pages": [
+          "http://127.0.0.1:45377/faq.html",
+          "http://127.0.0.1:45377/hours-locations.html",
+          "http://127.0.0.1:45377/index.html",
+          "http://127.0.0.1:45377/public-records-law.html",
+          "http://127.0.0.1:45377/services.html"
+        ],
+        "no_valueprop_pages": [
+          "http://127.0.0.1:45377/faq.html"
+        ]
+      },
+      "mechanism": "Landmarks and skip links aid keyboard/screen-reader navigation; a clear above-fold value prop tells arrivals they're in the right place, reducing bounce.",
+      "suggested_action": {
+        "summary": "Wrap primary content in <main>, add a skip-to-content link, and lead with an H1 plus a one-line description of what the page offers.",
+        "priority": "low",
+        "mechanism": "Landmarks and skip links aid keyboard/screen-reader navigation; a clear above-fold value prop tells arrivals they're in the right place, reducing bounce.",
+        "effort": "low",
+        "confidence": "low"
+      }
+    },
+    {
+      "id": "F-013",
+      "title": "Non-sequential heading levels",
+      "severity": "low",
+      "category": "title-meta-heading-orientation",
+      "half": "both",
+      "evidence": "3/5 pages skip heading levels (e.g. http://127.0.0.1:45377/index.html jumps h1->h4).",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:45377/hours-locations.html",
+          "http://127.0.0.1:45377/index.html",
+          "http://127.0.0.1:45377/services.html"
+        ]
+      },
+      "mechanism": "Level jumps break the document outline machines build to locate a fact within a section.",
+      "suggested_action": {
+        "summary": "Keep headings sequential (no skipping levels) so the outline parses cleanly.",
+        "priority": "low",
+        "mechanism": "Level jumps break the document outline machines build to locate a fact within a section.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "F-014",
+      "title": "Missing meta description",
+      "severity": "low",
+      "category": "title-meta-heading-orientation",
+      "half": "discoverability",
+      "evidence": "4/5 pages have no meta description (e.g. http://127.0.0.1:45377/faq.html).",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:45377/faq.html",
+          "http://127.0.0.1:45377/hours-locations.html",
+          "http://127.0.0.1:45377/index.html",
+          "http://127.0.0.1:45377/services.html"
+        ]
+      },
+      "mechanism": "A meta description gives extractors a ready-made summary snippet; its absence is a minor, recoverable gap.",
+      "suggested_action": {
+        "summary": "Add a concise meta description summarizing the page (soft advisory).",
+        "priority": "low",
+        "mechanism": "A meta description gives extractors a ready-made summary snippet; its absence is a minor, recoverable gap.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-labelledby="logoTitle">
+  <title id="logoTitle">Loomstack logo</title>
+  <rect width="32" height="32" rx="8" fill="#0f7a6b"/>
+  <path d="M8 22V10h3v9h7v3H8z" fill="#ffffff"/>
+  <circle cx="23" cy="12" r="3" fill="#ffffff"/>
+</svg>

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Brand AI-Readiness Audit Report",
+  "type": "object",
+  "required": ["site", "audited_at", "summary", "findings"],
+  "additionalProperties": true,
+  "properties": {
+    "site": { "type": "string", "minLength": 1 },
+    "audited_at": { "type": "string", "minLength": 1 },
+    "summary": {
+      "type": "object",
+      "required": ["total_findings", "critical", "high", "medium"],
+      "additionalProperties": true,
+      "properties": {
+        "total_findings": { "type": "integer", "minimum": 0 },
+        "critical": { "type": "integer", "minimum": 0 },
+        "high": { "type": "integer", "minimum": 0 },
+        "medium": { "type": "integer", "minimum": 0 },
+        "low": { "type": "integer", "minimum": 0 },
+        "discoverability": { "type": "integer", "minimum": 0 },
+        "engagement": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "limitations": { "type": "array", "items": { "type": "string" } },
+    "scope": { "type": "object" },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "severity", "evidence", "suggested_action"],
+        "additionalProperties": true,
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "title": { "type": "string", "minLength": 1 },
+          "severity": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+          "category": { "type": "string" },
+          "half": { "type": "string", "enum": ["discoverability", "engagement", "both"] },
+          "evidence": { "type": "string", "minLength": 1 },
+          "evidence_detail": { "type": "object" },
+          "mechanism": { "type": "string" },
+          "suggested_action": {
+            "type": "object",
+            "required": ["summary", "priority"],
+            "additionalProperties": true,
+            "properties": {
+              "summary": { "type": "string", "minLength": 1 },
+              "priority": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+              "mechanism": { "type": "string" },
+              "effort": { "type": "string", "enum": ["low", "medium", "high"] },
+              "confidence": { "type": "string", "enum": ["high", "medium", "low"] }
+            }
+          }
+        }
+      }
+    }
+  }
+}

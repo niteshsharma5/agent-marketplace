@@ -1,0 +1,508 @@
+[
+  {
+    "site": "b2b-enterprise",
+    "verdicts": [
+      {
+        "id": "F-001",
+        "category": "sameas-resolvability",
+        "verdict": "false_positive",
+        "fix_quality": "partial",
+        "reason": "Factually correct: Organization.sameAs lists only LinkedIn + GitHub, no Wikidata/Wikipedia. Wikidata/Wikipedia are indeed the strongest entity-reconciliation anchors, so this is a legitimate entity-trust observation, not a trap (truth does not list sameAs as a trap). However 'high' severity is inflated for an otherwise strong entity setup (Organization schema, consistent NAP, foundingDate, two valid sameAs). Fix is partial/conditional: you cannot simply add a Wikidata URL that does not exist; a 92-person private company may have no Wikidata node to link, so the action is only actionable if/when notability supports an entry.",
+        "debated": true
+      },
+      {
+        "id": "F-002",
+        "category": "title-meta-heading-orientation",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Technically accurate: the document outline skips from the CTA-band h2 to the footer column h4 (Product/Company/Resources) with no intervening h3, on 3/4 pages. Low severity and the skip lives in boilerplate footer nav that carries no extractable facts, so real impact on fact-location is minimal, but the observation is correct and the fix (make footer headings sequential, e.g. h3) is trivial and sound."
+      }
+    ],
+    "missed": [
+      {
+        "problem": "Every page reuses the identical og:image/twitter:image (og-image.png); Platform, Pricing, and Company have no page-specific social preview card.",
+        "half": "engagement",
+        "severity": "low",
+        "mechanism": "When an inner page like Pricing is shared on LinkedIn/Slack/X, the preview is visually identical to the homepage share, removing any cue of which page it is and giving a minor CTR/conversion drag on shared links. This is the one real problem the author logged and the tool did not surface."
+      },
+      {
+        "problem": "The 'Start free trial' CTA never reaches a self-serve trial: header and hero trial buttons funnel to /pricing.html, and every pricing plan's 'Start free trial' button links to /company.html#contact (a sales contact section), despite hero copy promising 'No credit card required. Full platform access for 14 days.'",
+        "half": "engagement",
+        "severity": "low",
+        "mechanism": "The self-serve promise ('no credit card required') sets an expectation that clicking the button starts a trial, but visitors instead land on a contact-sales form. The expectation mismatch adds friction and can erode trust/conversion for visitors who wanted to try before talking to sales. (Common in enterprise B2B, hence low, but the copy-vs-destination mismatch is a genuine engagement gap the tool did not flag.)"
+      }
+    ],
+    "gt_disputes": [],
+    "debated": 1,
+    "referee_notes": "Verified against the actual homepage HTML. Only F-001 was contested. The raw evidence is accurate, but the finding is a false positive on the merits: it penalizes a legitimate, complete Organization entity (with two valid sameAs anchors) at 'high' severity, relies on an overstated 'cannot merge' mechanism (LinkedIn is a valid reconciliation anchor), and prescribes a fix that is an external notability precondition rather than a site defect. Note: the referee's task was to rule the finding as issued; a recalibrated low/informational note would be defensible, but the high-severity framing as delivered does not survive."
+  },
+  {
+    "site": "crypto-startup",
+    "verdicts": [
+      {
+        "id": "F-001",
+        "category": "jsonld-presence-validity",
+        "verdict": "true_positive",
+        "fix_quality": "partial",
+        "reason": "The page carries zero JSON-LD, which is a genuine discoverability gap confirmed in the raw HTML head, and ground truth also lists missing structured data as a real problem. However the tool mischaracterizes an Aurorachain L2 landing page as a 'product/article' page and recommends Product or Article schema, which is a poor type fit. For this content WebSite + Organization + FAQPage (the FAQ section is textbook schema-friendly) would be correct, so the fix direction is only partially right.",
+        "debated": true
+      },
+      {
+        "id": "F-002",
+        "category": "org-entity-anchor-idgraph",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed: there is no Organization/Corporation JSON-LD node anywhere. Ground truth explicitly names the missing Organization anchor (with sameAs to the X/Discord/GitHub profiles present in the footer) as part of the real structured-data gap. The suggested fix (one Organization node with stable @id, name, url, logo) is correct and directly actionable. Severity 'high' is arguably a notch above GT's 'medium', but the observation and fix are sound."
+      },
+      {
+        "id": "F-003",
+        "category": "broken-internal-links",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Verified on disk: /whitepaper.pdf does not exist, so the nav link, footer link, and hero secondary CTA all 404. This is the one deliberate genuine defect per ground truth (matches real_problem #2). The FAQ copy even hedges 'If the download link is unavailable', confirming intent. Fix (restore or redirect the file) is correct. Requires a network probe but the absence is unambiguous here."
+      },
+      {
+        "id": "F-004",
+        "category": "title-meta-heading-orientation",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed by heading scan: the Roadmap section jumps from its h2 straight to four h4 milestone titles with no intervening h3, while Features and Team correctly use h3. A real (if minor, low-severity) outline defect. Not in GT's explicit list but it is a legitimate correct observation, not a trap. Fix (make the roadmap titles h3) is sound."
+      }
+    ],
+    "missed": [
+      {
+        "problem": "Meta description is generic boilerplate ('Aurorachain is a blockchain platform.') that ignores the rich, specific value proposition present in the title and hero (zk Layer 2, real-time DeFi settlement, EVM-compatible, live on mainnet).",
+        "half": "discoverability",
+        "severity": "medium",
+        "mechanism": "Search and AI answer engines frequently lean on the meta description as a low-cost snippet/summary before deep-parsing the page. A thin, mismatched description raises the chance an assistant surfaces a vague or off one-liner even though the body copy is accurate and detailed. This is ground-truth real_problem #1 and the tool did not flag it."
+      },
+      {
+        "problem": "Hero stat captions (.stat .label) are hardcoded to #45454f on the #0b0b12 background, roughly a 2:1 contrast ratio, far below WCAG AA 4.5:1 for normal text.",
+        "half": "engagement",
+        "severity": "medium",
+        "mechanism": "These labels ('Total Value Locked (USD)', 'Active Wallets', 'Transactions Settled') are what give the big animated numbers meaning; near-invisible captions undercut comprehension of the site's core trust signals and can drive early bounce. This is ground-truth real_problem #4 and the tool missed it entirely (it ran an onsite-engagement skill but did no contrast check)."
+      },
+      {
+        "problem": "og:image is set to a relative path pointing at an SVG ('assets/images/logo.svg').",
+        "half": "discoverability",
+        "severity": "low",
+        "mechanism": "Open Graph requires an absolute URL and most social/answer-engine preview renderers do not accept SVG for og:image, so link unfurls and social cards will render with no image, weakening off-site brand presentation. Minor, not in ground truth, but a real correct observation."
+      }
+    ],
+    "gt_disputes": [],
+    "debated": 1,
+    "referee_notes": "F-001 verified directly: grep for application/ld+json in the crypto-startup index.html returns 0 matches (exit 1), confirming zero JSON-LD. Page is an Aurorachain zk L2 landing page with hero, stats, features, tokenomics table, roadmap, team, and a real FAQ section (5 <details>/<summary> Q&A pairs, lines 219-238). The tool's Product/Article type suggestion is a poor fit (no product/article properties exist on the page); the accurate remedy would be WebSite + Organization + FAQPage. However the finding's core claim (absence of any structured data, high-severity discoverability gap) is correct and ground-truth-confirmed, and the suggested_action hedges with 'matching each page's role,' so the imprecise example does not invalidate the finding. Defense's harm argument (fabricating Product/Article properties could draw a manual action) is a valid critique of the literal example but does not overturn the verified core detection."
+  },
+  {
+    "site": "dental-clinic",
+    "verdicts": [
+      {
+        "id": "F-001",
+        "category": "mobile-viewport-zoom",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed: no <meta name=viewport> in the head of any of the 4 real pages (index, services, about, contact). Mobile browsers render at ~980px and shrink, hurting readability/bounce. Matches GT high-severity problem. Fix (add width=device-width viewport) is correct."
+      },
+      {
+        "id": "F-002",
+        "category": "org-entity-anchor-idgraph",
+        "verdict": "false_positive",
+        "fix_quality": "partial",
+        "reason": "Factually wrong: index.html DOES carry a JSON-LD node with @type 'Dentist', which is a schema.org subtype of LocalBusiness/Organization and includes name, url, address, telephone. The claim '0/5 pages have any Organization/LocalBusiness node' is incorrect; the detector failed to recognize Dentist as a LocalBusiness subtype. GT explicitly treats this Dentist block as a sufficient, legitimate entity declaration. The only real kernel (no stable @id) does not justify 'high'. Adding an @id is a minor improvement, so the fix is partial.",
+        "debated": true
+      },
+      {
+        "id": "F-003",
+        "category": "canonical-lang-hreflang",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed: no rel=canonical on any page. Low-to-moderate impact for a single-domain static site, but a correct observation and not the localhost-canonical trap (there is no canonical at all, so a self-referential one is appropriate). Fix sound."
+      },
+      {
+        "id": "F-004",
+        "category": "cls-layout-stability",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed: img/iframe elements carry no width/height attrs or aspect-ratio (only about.html team-photo has an inline max-width). Correctly reported 0 @font-face rules since the site uses only system/web-safe fonts. Real, if modest, CLS/engagement observation. Fix sound."
+      },
+      {
+        "id": "F-005",
+        "category": "http-status-redirect-canonical-integrity",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed: blog.html is linked in the nav of every page but the file does not exist, so it returns 404. Matches GT broken-nav-link problem. Fix (restore page or remove the dead links) is sound."
+      },
+      {
+        "id": "F-006",
+        "category": "image-optimization-lazyload",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed: no images use loading=lazy or srcset. Below-fold service/team/hours images load eagerly at one size. Impact is modest here (placeholder solid-fill PNGs), but the markup observation is correct and hero was correctly excluded. Fix sound."
+      },
+      {
+        "id": "F-007",
+        "category": "offsite-corroboration-surface",
+        "verdict": "true_positive",
+        "fix_quality": "partial",
+        "reason": "Confirmed: no sameAs in the JSON-LD, no social/profile links in footer or body, no Wikipedia/Wikidata. Legitimate discoverability gap for AI corroboration. Fix is partial: adding sameAs is sound, but 'establish off-site identity surfaces' is largely off-site work beyond the site markup itself.",
+        "debated": true
+      },
+      {
+        "id": "F-008",
+        "category": "landmarks-skiplink-valueprop",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Narrowed correctly by evidence: <main> is present on all pages and value prop lives in the hero (both empty lists), so the real, confirmed sub-issue is the absent skip-to-content link on all pages. Correct low-severity a11y observation. Fix sound."
+      },
+      {
+        "id": "F-009",
+        "category": "title-meta-heading-orientation",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed: index.html/homepage has no meta description while about/services/contact do. Matches GT-adjacent minor gap. Fix sound."
+      }
+    ],
+    "missed": [
+      {
+        "problem": "robots.txt globally allows '*' but adds explicit Disallow: / blocks for GPTBot, Google-Extended, CCBot, and ClaudeBot \u2014 i.e. it specifically bars the OpenAI, Google-AI, Common Crawl, and Anthropic crawlers, including citation/answer bots (GPTBot, ClaudeBot), not just training-only bots.",
+        "half": "discoverability",
+        "severity": "critical",
+        "mechanism": "An AI-audit tool that ran a 'crawler-access' skill and reported robots_txt_found:true should flag AI-crawler exclusions. These directives instruct the major answer engines not to fetch any page, so the clinic cannot be found, read, or cited by AI assistants despite otherwise clean, crawlable markup. This is the single most consequential AI-discoverability defect and the tool missed it entirely."
+      },
+      {
+        "problem": "Opening hours exist only as a placeholder image (images/hours-graphic.png) with non-descriptive alt='Hours graphic'; no plain-text hours anywhere, and contact.html defers to that image instead of stating hours in text.",
+        "half": "discoverability",
+        "severity": "high",
+        "mechanism": "Text crawlers and LLM/RAG pipelines read DOM text, not pixels. A core local query ('what time does Bright Smile open Saturday?') has zero extractable answer in the markup, so AI assistants cannot cite hours and may omit or hallucinate them. A 'fact-extractability' skill ran but did not catch this."
+      },
+      {
+        "problem": "The homepage Dentist JSON-LD includes name/address/telephone/url but omits openingHoursSpecification entirely.",
+        "half": "discoverability",
+        "severity": "medium",
+        "mechanism": "Structured data is the highest-confidence hours signal for AI/search. With neither visible text nor schema carrying hours, there is no reliable machine-readable path to the clinic's hours. Missed."
+      },
+      {
+        "problem": "The primary homepage CTA 'Book an Appointment' links to href=\"#\", a placeholder that does nothing.",
+        "half": "engagement",
+        "severity": "high",
+        "mechanism": "This is the main conversion path. A high-intent visitor who clicks hits a dead end at the moment of highest intent, directly increasing bounce/abandonment. An 'onsite-engagement' skill ran but did not detect the dead primary CTA."
+      },
+      {
+        "problem": "sitemap.xml lists only index.html, services.html, and about.html \u2014 contact.html (the page carrying the citable phone/address/email) is omitted (blog.html is also absent, though it does not exist).",
+        "half": "discoverability",
+        "severity": "low",
+        "mechanism": "Crawlers leaning on the sitemap for discovery/prioritization may under-prioritize the contact page relative to listed pages. Minor but real; missed."
+      }
+    ],
+    "gt_disputes": [],
+    "debated": 2,
+    "referee_notes": "Confirmed by inspection: only index.html contains a JSON-LD block (a Dentist node with name/telephone/PostalAddress/url); about.html, contact.html, services.html contain no JSON-LD; blog.html 404s. No sameAs, social, or Wikipedia/Wikidata links anywhere. F-002 fails on its own stated evidence because a valid LocalBusiness-subtype (Dentist) entity node with full NAP does exist, contradicting the '0/5, no brand node' claim and its 'high' severity. F-007's factual basis is fully confirmed and correctly calibrated."
+  },
+  {
+    "site": "fashion-shopify",
+    "verdicts": [
+      {
+        "id": "F-001",
+        "category": "offsite-corroboration-surface",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "The mechanism (off-site pages drive most AI brand mentions) is legitimate for a real deployment, but on THIS site it flags a deliberately-planted trap: the author omitted sameAs/social links specifically to avoid fabricating dead URLs for a fictional brand (ground truth lists this as a legitimate/correct choice). The suggested fix (establish social/Crunchbase/Wikidata and mirror in sameAs) cannot be honestly applied to a placeholder fixture and would require inventing unverifiable profiles. Also partly unverifiable on-site (true off-site presence needs network checks).",
+        "debated": true
+      },
+      {
+        "id": "F-002",
+        "category": "landmarks-skiplink-valueprop",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "The landmark/skip-link portion of the title is factually wrong here (the tool's own no_main_pages and no_skiplink_pages arrays are empty; <main id=main-content> and .skip-link exist on all 5 pages). The only substantive claim is 'no above-fold value prop' on the two product pages, but both lead with a clear H1 (product name) plus brand link, star rating, price, and descriptive bullets immediately below \u2014 a conventional, clear PDP orientation. The heuristic is self-described as low-confidence and admits it misses value props in hero content.",
+        "debated": true
+      },
+      {
+        "id": "F-003",
+        "category": "title-meta-heading-orientation",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Verified accurate: collections.html has h1 (page hero) then jumps straight to the footer h3s with no intervening h2, a genuine outline skip. The tool correctly named exactly this one page (index/about/scarf all have body h2s before the footer h3s). Low severity but a real, correct machine-readability/accessibility nit; 'keep headings sequential' is a sound fix."
+      }
+    ],
+    "missed": [
+      {
+        "problem": "The header 'Bag' link is href=\"#\" on every page and there is no cart/checkout page, so clicking it (especially right after 'Add to bag') is a no-op that reads as broken at the moment of purchase intent.",
+        "half": "engagement",
+        "severity": "low",
+        "mechanism": "A dead link at peak purchase intent erodes trust and momentum; the visitor gets no feedback when trying to review their bag."
+      },
+      {
+        "problem": "Product JSON-LD on index.html models only the default Camel variant (single sku/color/offer); there is no ProductGroup or variant-level schema even though a Charcoal colorway and multiple sizes are sold on-page.",
+        "half": "discoverability",
+        "severity": "low",
+        "mechanism": "An AI/shopping-feed parser reading only the JSON-LD sees one SKU and cannot confirm price/availability for other variants from structured data alone, narrowing what it can confidently cite."
+      },
+      {
+        "problem": "All og:image and twitter:image tags point to .svg files site-wide (coat-front.svg, scarf-main.svg, about-hero.svg).",
+        "half": "both",
+        "severity": "low",
+        "mechanism": "Major social/link-preview surfaces (Facebook, X/Twitter, LinkedIn, iMessage) and many card renderers do not render SVG og:images and require raster JPEG/PNG/WebP, so shared links and AI-surfaced cards show a blank image, weakening brand presence and click-through. This is a format-compatibility issue independent of the placeholder-art constraint."
+      },
+      {
+        "problem": "index.html has a visible FAQ section with three genuine Q&As but no FAQPage JSON-LD markup (the page marks up Product and BreadcrumbList only).",
+        "half": "discoverability",
+        "severity": "low",
+        "mechanism": "Answer engines and AI assistants preferentially extract and cite FAQPage-structured Q&A; leaving real FAQ content unmarked forgoes an easy citation surface."
+      },
+      {
+        "problem": "The catalog is intentionally shallow (2 products, 4 pages, no blog/editorial/press/sustainability-detail pages).",
+        "half": "discoverability",
+        "severity": "low",
+        "mechanism": "Fewer indexable, topically-varied pages means fewer opportunities for an assistant to encounter and cite the brand across query types (e.g. 'best sustainable wool coats', 'where is X made')."
+      }
+    ],
+    "gt_disputes": [
+      {
+        "gt_problem": "Shallow catalog/content depth listed as a real discoverability problem (low).",
+        "judge_view": "Reasonable to note, but this is arguably an inherent characteristic of a small brand rather than a fixable site defect \u2014 the pages that exist are well-optimized. I'd treat it as a soft/structural limitation more than a defect, though listing it at low severity is defensible."
+      },
+      {
+        "gt_problem": "Scarf page has aggregateRating (4.8, 46 reviews) with no review nodes and no visible reviews on the page \u2014 not called out in ground truth.",
+        "judge_view": "Minor omission from ground truth: asserting an aggregate rating with zero substantiating review content (unlike the coat page, which includes real reviews) is a small trust/structured-data quality nit worth a low-severity mention."
+      }
+    ],
+    "debated": 2,
+    "referee_notes": "Both contested findings ruled false_positive. F-001: the missing off-site surface / sameAs is a deliberately planted, legitimate omission (fictional brand, cannot honestly fabricate real profiles; ground truth marks it correct) \u2014 evidence accurate but flags an intentional, defensible choice. F-002: title asserts missing landmarks/skip-link that provably exist on both product pages (tool's own arrays empty), and the value-prop claim fails because both PDPs present a conventional, clear above-fold orientation with visible descriptive content including the sustainability story. F-003 (heading-skip on collections.html) was not contested and was not adjudicated here."
+  },
+  {
+    "site": "recipe-blog",
+    "verdicts": [
+      {
+        "id": "F-001",
+        "category": "org-entity-anchor-idgraph",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed: no Organization/Person/LocalBusiness JSON-LD exists on any page (0 JSON-LD blocks site-wide). For a named brand ('Grandma's Kitchen' / author Marge Callahan) an entity anchor genuinely aids AI entity consolidation, so this is a real discoverability gap. Fix (add one Organization node with stable @id, name, url, logo) is correct. Caveat: 'high' is arguably over-weighted for a personal recipe blog relative to the far larger, un-flagged Recipe-schema and robots-block gaps, but the observation itself is accurate."
+      },
+      {
+        "id": "F-002",
+        "category": "offsite-corroboration-surface",
+        "verdict": "true_positive",
+        "fix_quality": "partial",
+        "reason": "Confirmed: zero sameAs, zero social/footer profile links, no Wikidata/Wikipedia link anywhere. Factually correct off-site-surface gap. Fix is partial: adding social profiles + sameAs is sound, but the Crunchbase/Wikidata/Wikipedia recommendation is enterprise-flavored overkill for a home-baker blog. Tool's own 'low' confidence is appropriate.",
+        "debated": true
+      },
+      {
+        "id": "F-003",
+        "category": "title-meta-heading-orientation",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed: index.html has no <h1> (post titles are <h2>); about.html does have an <h1>. Homepage lacking an h1 is a genuine machine-outline gap. Note the '2/3 pages' count is inflated because '/' and '/index.html' are the same file counted twice, but the underlying defect is real. Fix (add one h1 stating primary subject) is sound."
+      },
+      {
+        "id": "F-004",
+        "category": "landmarks-skiplink-valueprop",
+        "verdict": "true_positive",
+        "fix_quality": "partial",
+        "reason": "Mixed but net-correct. <main> IS present on all pages (tool's own no_main_pages is empty), so the 'wrap primary content in <main>' portion of the fix is redundant/wrong. However the skip-to-content link is genuinely absent on all pages and the homepage has no h1+descriptive-paragraph value prop, both correct low-severity observations. Fix rated partial because part of the suggested action addresses a non-issue.",
+        "debated": true
+      },
+      {
+        "id": "F-005",
+        "category": "title-meta-heading-orientation",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed on about.html: <h1> 'Why I Started Grandma's Kitchen' is followed by sidebar widget <h3> headings with no intervening <h2>, a real h1->h3 level skip. Minor but accurate; fix (keep headings sequential) is sound. Common WordPress sidebar pattern, hence correctly rated low."
+      }
+    ],
+    "missed": [
+      {
+        "problem": "robots.txt line 'Disallow: /recipe-' prefix-matches and blocks BOTH recipe pages (recipe-chocolate-chip-cookies.html, recipe-banana-bread.html) from every compliant crawler, including AI/citation bots. The site's only substantive content is hidden while homepage/about stay visible. The tool found robots.txt but never parsed its rules.",
+        "half": "discoverability",
+        "severity": "critical",
+        "mechanism": "Well-behaved search and AI crawlers apply robots.txt Disallow as a path-prefix rule and refuse to fetch the two recipe URLs. The brand can appear in the index via home/about, but its actual product (the recipes) is uncrawlable and thus uncitable, no matter how good the on-page content is."
+      },
+      {
+        "problem": "Neither recipe page carries schema.org/Recipe JSON-LD (ingredients, instructions, prepTime/cookTime, recipeYield, author). For a recipe blog this is the single most important structured-data type and it is entirely absent.",
+        "half": "discoverability",
+        "severity": "high",
+        "mechanism": "AI assistants and search engines preferentially extract discrete recipe facts from Recipe structured data; without it they must parse free prose interleaved with a long personal narrative and ad blocks, raising the chance of incomplete/incorrect facts and lowering the page's odds of being chosen as an authoritative source for queries like 'how long to bake banana bread'."
+      },
+      {
+        "problem": "sitemap.xml omits recipe-banana-bread.html entirely (lists only index, chocolate-chip-cookies, about), AND advertises recipe-chocolate-chip-cookies.html which robots.txt simultaneously blocks \u2014 a direct sitemap/robots contradiction.",
+        "half": "discoverability",
+        "severity": "medium",
+        "mechanism": "Crawlers that seed discovery from the sitemap never learn banana-bread exists, and the one recipe that is listed is disallowed, so the sitemap either fails to surface content or sends conflicting signals that waste crawl budget and undermine trust in the site's crawl directives."
+      },
+      {
+        "problem": "Both recipe pages have no <meta name=\"description\"> (homepage and about.html both have one).",
+        "half": "discoverability",
+        "severity": "low",
+        "mechanism": "With no description, an engine auto-extracts a snippet from the DOM; because ~250-350 words of personal life-story precede the recipe card, the extracted snippet is likely a narrative sentence rather than a recipe summary, weakening how the page is represented in results/answers."
+      },
+      {
+        "problem": "subscribe-popup.js auto-opens a full-screen newsletter modal 1.5s after EVERY page load and deliberately stores no dismissal flag (no cookie/localStorage), so it reopens even immediately after a visitor closes it and clicks to another recipe.",
+        "half": "engagement",
+        "severity": "high",
+        "mechanism": "Repeated, unacknowledged full-screen interruption on every pageview in a session is a well-documented driver of abandonment; visitors who came to read a recipe are re-blocked on each click-through and bounce back to search."
+      },
+      {
+        "problem": "No 'Jump to recipe' anchor/link on either recipe page; ~250-350 words of personal narrative sit in the DOM before the recipe card with no shortcut.",
+        "half": "engagement",
+        "severity": "high",
+        "mechanism": "Most recipe-search visitors want the ingredients/steps immediately; forcing them to scroll past unrelated narrative (the long preamble itself is genre-legitimate, but the missing shortcut is the defect) drives the well-known scroll-or-bounce behavior, reducing task completion and time-on-page."
+      },
+      {
+        "problem": "Ad blocks are spliced between nearly every individual numbered instruction step inside the recipe card (the <ol> is fragmented into <ol start=2>, <ol start=3>... with ad units between).",
+        "half": "engagement",
+        "severity": "medium",
+        "mechanism": "Breaking a short sequential cooking task into disconnected fragments separated by ads forces repeated scrolling past ad units while following steps during active cooking; it also fragments the instruction list structurally, making step extraction harder for parsers."
+      }
+    ],
+    "gt_disputes": [
+      {
+        "gt_problem": "Engagement/low: hero images cause residual layout shift because CSS width:100%/height:auto means rendered box height is only known once each image loads.",
+        "judge_view": "Weak/likely not a real defect. Every hero <img> carries explicit width and height attributes (e.g. 1200x700). Modern browsers derive an aspect-ratio box from those attributes even with responsive width:100%/height:auto CSS, so space IS reserved and CLS is largely mitigated. The ground-truth reasoning is convoluted and the practice shown (width/height attributes present) is actually the recommended CLS fix, not a bug. I'd treat this as a genuinely-fine aspect rather than a real problem."
+      }
+    ],
+    "debated": 2,
+    "referee_notes": "Verified directly against /tests/blackbox2/sites/recipe-blog/index.html and about.html. F-002: no JSON-LD, no sameAs, no social/footer links (footer only About/Home), no Wikidata/Wikipedia anywhere \u2014 off-site-surface gap is factual; over-broad Crunchbase/Wikidata portion of fix is a minor imprecision, not disqualifying. F-004: <main class='content-wrap'> IS present on all pages (tool's no_main_pages correctly empty), so the 'wrap in <main>' fix clause is redundant; however skip-link is genuinely absent 3/3 and index.html has no <h1>, both correct low-severity items. Header tagline gives some above-fold orientation, weakening the value-prop sub-claim, but the finding is net-correct given the skip-link and h1 facts. Both ruled true_positive as low-severity correct observations with appropriate low/medium confidence calibration."
+  },
+  {
+    "site": "university-dept",
+    "verdicts": [
+      {
+        "id": "F-001",
+        "category": "mixed-content-https",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "The origin is a local test harness (http://127.0.0.1:35567). Serving over plain HTTP is an artifact of the localhost/staging origin, not a property of the real site, which would sit behind the university's TLS. Guidance explicitly treats staging/localhost-origin artifacts as traps. The author's ground truth does not list HTTP as a real problem. Flagging it here is a false positive.",
+        "debated": true
+      },
+      {
+        "id": "F-002",
+        "category": "mobile-viewport-zoom",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Verified: no <meta name=viewport> in any page head, and the layout is a fixed width=780 table that cannot reflow. On mobile this renders desktop-width and shrinks. Author's #1 engagement problem (high). Fix (add width=device-width viewport) is correct, though the fixed table also needs CSS to truly reflow."
+      },
+      {
+        "id": "F-003",
+        "category": "org-entity-anchor-idgraph",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Verified: zero JSON-LD/structured data anywhere. For an academic department, an Organization/EducationalOrganization anchor with stable @id would genuinely help entity resolution. Real discoverability gap; fix is appropriate."
+      },
+      {
+        "id": "F-004",
+        "category": "canonical-lang-hreflang",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Verified: no rel=canonical on any page. Correct low/medium observation; self-referential absolute canonical is sound advice."
+      },
+      {
+        "id": "F-005",
+        "category": "facts-in-images-alt",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Verified: 8 content images (banner x4, faculty x3, letterhead x1) have no alt. Notably the letterhead.svg carries address, room, fax and office hours as image text, so those facts are lost to text extractors. Correct and important; fix sound. Undercounts because courses.html was not sampled."
+      },
+      {
+        "id": "F-006",
+        "category": "freshness-signals",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Verified: footer reads (c) 2011 on all pages while content references the 2026 academic year, so it is a genuine inconsistency that reads as neglect to a human. The 'recency engines discount stale pages' mechanism is overstated (author flags that inference as a trap), but the human-trust angle and the correct observation stand. Auto-generating the year is the right fix."
+      },
+      {
+        "id": "F-007",
+        "category": "offsite-corroboration-surface",
+        "verdict": "true_positive",
+        "fix_quality": "partial",
+        "reason": "Verified on-page: no sameAs, no social/off-site profile links, no Wikipedia/Wikidata references anywhere. The on-page absence is a real discoverability gap. Fix is partial because establishing off-site surfaces is largely outside site control; only adding links/sameAs is directly actionable here.",
+        "debated": true
+      },
+      {
+        "id": "F-008",
+        "category": "canonical-lang-hreflang",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Verified: <html> has no lang attribute on any page. Correct low-severity finding; add lang=\"en\"."
+      },
+      {
+        "id": "F-009",
+        "category": "landmarks-skiplink-valueprop",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Verified: table-based layout with no <main>/role=main and no skip link on any page. The finding correctly notes no value-prop pages (each page does have an H1 + intro). Real low-severity accessibility/orientation gap; fix sound."
+      },
+      {
+        "id": "F-010",
+        "category": "readability-scannability",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Verified: the homepage welcome paragraph is a single ~180-word run-on sentence, and news/degree paragraphs are 100+ word blocks. Flags home/index only, correctly avoiding the legitimately-dense course catalog. Well-calibrated with its own domain caveat; author also lists dense prose as a real problem."
+      },
+      {
+        "id": "F-011",
+        "category": "title-meta-heading-orientation",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Verified: every page jumps H1 straight to H4 (e.g. index H1 then H4 'Latest Department News'), skipping H2/H3. Correct low-severity outline issue; author lists it too."
+      },
+      {
+        "id": "F-012",
+        "category": "title-meta-heading-orientation",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Verified: no meta description on any page. Correct; author lists it. Fix sound. (Tool caught the missing description but missed the co-located, higher-value problem that all four titles are identical.)"
+      }
+    ],
+    "missed": [
+      {
+        "problem": "robots.txt contains 'Disallow: /courses.html', which blocks the full course catalog from compliant crawlers and AI fetchers even though the page is in the nav and the sitemap. The tool itself silently skipped courses.html (only 4 of 5 pages sampled) yet never reported the disallow as a problem.",
+        "half": "discoverability",
+        "severity": "critical",
+        "mechanism": "Rule-respecting fetchers read robots.txt before requesting a URL; the entire six-course catalog is never ingested or citable, and it contradicts the sitemap which lists courses.html as indexable. This is the author's headline problem and the tool missed it entirely."
+      },
+      {
+        "problem": "All four pages share the identical <title>Department of Computer Science</title>. The tool flagged missing meta descriptions (F-012) but never noticed the duplicate titles.",
+        "half": "discoverability",
+        "severity": "medium",
+        "mechanism": "Titles are a primary signal engines/AI use to distinguish and preview pages; identical titles make faculty/courses/contact/home indistinguishable in result lists and citations."
+      },
+      {
+        "problem": "Contact form inputs (Name, Email, Message) have no <label> elements; identification relies solely on placeholder text.",
+        "half": "engagement",
+        "severity": "medium",
+        "mechanism": "Placeholders vanish on typing and are not reliably announced by assistive tech, so screen-reader and returning users lose track of what each field expects on the site's only interactive element."
+      },
+      {
+        "problem": "Faculty bios exist only as paragraphs in one shared table on faculty.html with no per-person id/anchor or dedicated URL.",
+        "half": "discoverability",
+        "severity": "medium",
+        "mechanism": "There is no way to deep-link or precisely cite a single faculty member; any attribution of a specific claim can only point at the whole page that mixes three unrelated bios, reducing citation precision."
+      },
+      {
+        "problem": "The contact form posts to action=\"#\" so it does not submit anywhere, and no department email is listed on any page.",
+        "half": "engagement",
+        "severity": "low",
+        "mechanism": "The primary conversion/contact path is a dead end; a visitor who fills it out gets no result and has no email fallback (only a phone number). Lower confidence since the '#' handler may be a fixture simplification."
+      },
+      {
+        "problem": "Legacy tiny fixed font sizes (<font size=\"2\"> body, <font size=\"1\"> footer) instead of scalable typography.",
+        "half": "engagement",
+        "severity": "low",
+        "mechanism": "Numeric legacy sizes render small and do not scale with modern responsive typography, hurting readability on phones and for users relying on zoom; partially overlaps with the missing-viewport root cause."
+      }
+    ],
+    "gt_disputes": [
+      {
+        "gt_problem": "Ground truth lists 'Navy-blue body text against the light-blue (#CCDDEE) sidebar background' as a medium-severity contrast problem that 'falls short of typical text-contrast expectations.'",
+        "judge_view": "This is not a real contrast problem. #003366 navy on #CCDDEE light blue computes to a 9.09:1 contrast ratio, which exceeds WCAG AAA (7:1). The pairing is comfortably readable; the ground-truth author's contrast concern is unfounded for the nav column. (The tool correctly did not flag this.)"
+      },
+      {
+        "gt_problem": "Ground truth places the stale (c) 2011 copyright in 'legitimate_and_traps', arguing it should not be read as evidence the page content is out of date.",
+        "judge_view": "I partly agree the 'content is therefore stale' inference is a trap, but the stale copyright is still a genuine minor trust/credibility signal for human visitors (a 15-year-old year alongside 2026 content reads as neglect). So the tool's F-006 is a defensible true positive, not a pure trap catch, provided it is scoped to the human-trust angle rather than engine freshness scoring."
+      }
+    ],
+    "debated": 2,
+    "referee_notes": "Reviewed the actual site (index.html legacy HTML4 table layout, 2011 copyright, scheme-relative sitemap, outbound HTTPS links to parent university), the findings file, all five sibling fixtures, and the author ground truth. F-001: ruled false_positive -- HTTP is a 127.0.0.1 loopback harness artifact; the missing HTTPS self-reference is over-determined by the legacy archetype (no modern meta at all), not a deliberate un-migration signal, and the exhaustive ground truth lists neither HTTP as a real problem nor as a trap. F-007: ruled true_positive -- exhaustively verified zero off-site identity surface; a legitimate, appropriately low-confidence entity-trust gap with a partially on-page-actionable fix, not designated a legitimate/trap aspect."
+  }
+]

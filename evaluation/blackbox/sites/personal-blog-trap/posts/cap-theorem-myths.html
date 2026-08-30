@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Three Things People Get Wrong About CAP — Marginal Notes</title>
+  <meta name="description" content="A short, precise pass through what the CAP theorem actually bounds, what it says nothing about, and why 'CA system' is usually a category error.">
+  <link rel="canonical" href="https://marginalnotes.example/posts/cap-theorem-myths.html">
+  <meta name="author" content="Priya Raghunathan">
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Three Things People Get Wrong About CAP">
+  <meta property="og:description" content="What the CAP theorem actually bounds, and what it says nothing about.">
+  <meta property="og:url" content="https://marginalnotes.example/posts/cap-theorem-myths.html">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="site-title" href="../index.html">Marginal Notes</a>
+      <nav class="site-nav">
+        <a href="../index.html">Home</a>
+        <a href="raft-in-production.html">Posts</a>
+        <a href="../about.html">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <article>
+      <h1>Three Things People Get Wrong About CAP</h1>
+      <p class="post-meta">Published January 14, 2026 by <a href="../about.html">Priya Raghunathan</a> · 9 min read</p>
+
+      <p>
+        CAP gets taught as a slogan — "consistency, availability, partition tolerance: pick two" — and the slogan
+        is imprecise enough that most of the ways people apply it are wrong. Here are the three I correct most
+        often when reviewing design docs.
+      </p>
+
+      <h2>1. "Pick two" misstates the actual tradeoff</h2>
+      <p>
+        Partition tolerance isn't really a choice in a distributed system with more than one network link between
+        nodes — partitions happen whether or not you've "picked" to tolerate them. Eric Brewer's own later writing
+        clarifies that the real choice is only exercised <em>during</em> a partition: does the system return
+        potentially-stale data to preserve availability, or does it refuse to answer to preserve consistency? Outside
+        of an active partition, a system can be both consistent and available at the same time, which is exactly
+        what most CP and AP systems are, most of the time.
+      </p>
+
+      <h2>2. "CA system" is usually a category error</h2>
+      <p>
+        A single-node database is trivially CA because it has no partition to be intolerant of. Calling a
+        multi-node system "CA" almost always means one of two things: either it hasn't been tested under a real
+        partition yet, or it silently becomes unavailable (which is indistinguishable from choosing CP) the moment
+        one occurs. If a vendor markets a distributed system as CA without qualification, ask what it does
+        specifically when a minority of nodes cannot reach the majority — the answer will resolve which side of
+        CAP it's actually on.
+      </p>
+
+      <h2>3. CAP says nothing about latency</h2>
+      <p>
+        This is the one that causes the most real design mistakes. CAP is a theorem about the choice under a
+        <em>partition</em>, full stop — it has nothing to say about the everyday tradeoff between consistency and
+        latency that exists even when the network is completely healthy. That tradeoff is better described by
+        PACELC (if Partitioned, choose Availability or Consistency; Else, choose Latency or Consistency), which is
+        a more useful mental model for the 99.9% of operating time your system spends not partitioned. Teams that
+        only know CAP tend to under-think the latency cost of synchronous replication during normal operation,
+        because CAP simply doesn't address it.
+      </p>
+
+      <p>
+        None of this makes CAP wrong — it's a real theorem with a real proof. It just answers a narrower question
+        than the slogan implies, and most of the interesting engineering tradeoffs live outside that question.
+      </p>
+    </article>
+
+    <p style="margin-top:2rem;"><a href="raft-in-production.html">&larr; Previous: Raft in Production</a> &nbsp;·&nbsp; <a href="../index.html">Back to all posts</a></p>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>&copy; 2026 Priya Raghunathan. Text is free to quote and link to with attribution.</p>
+    </div>
+  </footer>
+</body>
+</html>

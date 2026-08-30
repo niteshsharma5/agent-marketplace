@@ -1,0 +1,8 @@
+.site-header nav,
+.cookie-banner {
+  display: none;
+}
+
+body {
+  color: #000000;
+}

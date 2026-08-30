@@ -1,0 +1,311 @@
+{
+  "site": "http://127.0.0.1:35567",
+  "audited_at": "2026-01-01T00:00:00Z",
+  "summary": {
+    "total_findings": 12,
+    "critical": 0,
+    "high": 3,
+    "medium": 4,
+    "low": 5,
+    "discoverability": 9,
+    "engagement": 7
+  },
+  "scope": {
+    "pages_sampled": 4,
+    "pages_readable": 4,
+    "urls": [
+      "http://127.0.0.1:35567/",
+      "http://127.0.0.1:35567/contact.html",
+      "http://127.0.0.1:35567/faculty.html",
+      "http://127.0.0.1:35567/index.html"
+    ],
+    "render_available": false,
+    "robots_txt_found": true,
+    "offline_replay": false,
+    "skills_run": [
+      "crawler-access",
+      "machine-readability",
+      "fact-extractability",
+      "entity-trust",
+      "onsite-engagement"
+    ],
+    "skill_errors": []
+  },
+  "limitations": [
+    "Single-variant fetch: one geography, one device profile, no logged-in state, no cookie consent accepted. Personalization and geo/consent-gated content are not observed.",
+    "Lab proxy, not field data: latency and Core Web Vitals appear as risk factors measured once, not real-user metrics.",
+    "Network-dependent checks (sameAs resolvability, broken links) reflect what was reachable at audit time and are excluded from the byte-for-byte determinism guarantee."
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "title": "Site is served over plain HTTP",
+      "severity": "high",
+      "category": "mixed-content-https",
+      "half": "both",
+      "evidence": "Origin http://127.0.0.1:35567 declares no HTTPS (no https canonical, og:url, or sitemap); traffic is unencrypted and browsers mark it 'Not secure'.",
+      "evidence_detail": {},
+      "mechanism": "Non-HTTPS pages are flagged insecure, blocked from modern APIs, and ranked down; visitors distrust and abandon them.",
+      "suggested_action": {
+        "summary": "Obtain a TLS certificate and redirect all HTTP traffic to HTTPS.",
+        "priority": "high",
+        "mechanism": "Non-HTTPS pages are flagged insecure, blocked from modern APIs, and ranked down; visitors distrust and abandon them.",
+        "effort": "medium",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-002",
+      "title": "Missing mobile viewport meta tag",
+      "severity": "high",
+      "category": "mobile-viewport-zoom",
+      "half": "engagement",
+      "evidence": "No <meta name=viewport> on 4/4 pages; mobile browsers render at a desktop width and zoom out, leaving text tiny.",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:35567/",
+          "http://127.0.0.1:35567/contact.html",
+          "http://127.0.0.1:35567/faculty.html",
+          "http://127.0.0.1:35567/index.html"
+        ]
+      },
+      "mechanism": "Without a viewport tag, mobile devices assume ~980px width and shrink the page, making content unreadable without manual zoom and driving bounce.",
+      "suggested_action": {
+        "summary": "Add <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> to the head.",
+        "priority": "high",
+        "mechanism": "Without a viewport tag, mobile devices assume ~980px width and shrink the page, making content unreadable without manual zoom and driving bounce.",
+        "effort": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-003",
+      "title": "No Organization entity anchor in JSON-LD",
+      "severity": "high",
+      "category": "org-entity-anchor-idgraph",
+      "half": "discoverability",
+      "evidence": "No Organization/LocalBusiness/Corporation JSON-LD node on any sampled page (0/4 pages). Engines have no machine-readable brand node to anchor to.",
+      "evidence_detail": {},
+      "mechanism": "AI engines resolve the brand string to a knowledge-graph node BEFORE evaluating page content; with no stable anchor, entity consolidation and knowledge-panel eligibility never begin.",
+      "suggested_action": {
+        "summary": "Add one Organization JSON-LD node with a stable @id, plus name, url and logo, on the homepage (and reference it site-wide).",
+        "priority": "high",
+        "mechanism": "AI engines resolve the brand string to a knowledge-graph node BEFORE evaluating page content; with no stable anchor, entity consolidation and knowledge-panel eligibility never begin.",
+        "effort": "medium",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-004",
+      "title": "Missing rel=canonical",
+      "severity": "medium",
+      "category": "canonical-lang-hreflang",
+      "half": "discoverability",
+      "evidence": "4/4 pages have no rel=canonical link (e.g. http://127.0.0.1:35567/).",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:35567/",
+          "http://127.0.0.1:35567/contact.html",
+          "http://127.0.0.1:35567/faculty.html",
+          "http://127.0.0.1:35567/index.html"
+        ]
+      },
+      "mechanism": "Without a canonical, engines may index a duplicate URL and attribute the fact to the wrong page, splitting authority.",
+      "suggested_action": {
+        "summary": "Add a self-referential absolute rel=canonical to each key page.",
+        "priority": "medium",
+        "mechanism": "Without a canonical, engines may index a duplicate URL and attribute the fact to the wrong page, splitting authority.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "F-005",
+      "title": "Content images missing an alt attribute",
+      "severity": "medium",
+      "category": "facts-in-images-alt",
+      "half": "both",
+      "evidence": "8 content <img> across 4/4 pages have no alt attribute (e.g. http://127.0.0.1:35567/: 1 image(s)).",
+      "evidence_detail": {
+        "total_missing": 8,
+        "pages": [
+          "http://127.0.0.1:35567/",
+          "http://127.0.0.1:35567/contact.html",
+          "http://127.0.0.1:35567/faculty.html",
+          "http://127.0.0.1:35567/index.html"
+        ]
+      },
+      "mechanism": "Text locked in an image with no alt is invisible to text extractors, so any fact it carries is lost.",
+      "suggested_action": {
+        "summary": "Add descriptive alt text to content images (leave alt=\"\" only for decorative ones).",
+        "priority": "medium",
+        "mechanism": "Text locked in an image with no alt is invisible to text extractors, so any fact it carries is lost.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "F-006",
+      "title": "Stale footer copyright year",
+      "severity": "medium",
+      "category": "freshness-signals",
+      "half": "both",
+      "evidence": "Newest footer copyright year is 2011, 15 years behind current year 2026 (4/4 pages carry a copyright year).",
+      "evidence_detail": {},
+      "mechanism": "Recency-sensitive engines discount stale pages, and human visitors read an old copyright year as a sign the site is abandoned.",
+      "suggested_action": {
+        "summary": "Update the footer copyright year (ideally auto-generated) so it reflects the current year.",
+        "priority": "medium",
+        "mechanism": "Recency-sensitive engines discount stale pages, and human visitors read an old copyright year as a sign the site is abandoned.",
+        "effort": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-007",
+      "title": "No off-site identity surface found",
+      "severity": "medium",
+      "category": "offsite-corroboration-surface",
+      "half": "discoverability",
+      "evidence": "No sameAs, no footer/social profile links, and no Wikipedia/Wikidata link on any of the 4 sampled pages.",
+      "evidence_detail": {},
+      "mechanism": "The large majority of AI brand mentions are sourced from third-party pages; with zero off-site surface there is structurally little for an engine to cite.",
+      "suggested_action": {
+        "summary": "Establish and link off-site identity surfaces (social profiles, Crunchbase, Wikidata/Wikipedia) and mirror them in Organization.sameAs.",
+        "priority": "medium",
+        "mechanism": "The large majority of AI brand mentions are sourced from third-party pages; with zero off-site surface there is structurally little for an engine to cite.",
+        "effort": "medium",
+        "confidence": "low"
+      }
+    },
+    {
+      "id": "F-008",
+      "title": "<html> missing lang attribute",
+      "severity": "low",
+      "category": "canonical-lang-hreflang",
+      "half": "discoverability",
+      "evidence": "4/4 pages have an <html> element with no lang attribute (e.g. http://127.0.0.1:35567/).",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:35567/",
+          "http://127.0.0.1:35567/contact.html",
+          "http://127.0.0.1:35567/faculty.html",
+          "http://127.0.0.1:35567/index.html"
+        ]
+      },
+      "mechanism": "The lang attribute tells machines which language the fact is written in; its absence hurts correct interpretation and localization.",
+      "suggested_action": {
+        "summary": "Set a lang attribute on <html> (e.g. lang=\"en\").",
+        "priority": "low",
+        "mechanism": "The lang attribute tells machines which language the fact is written in; its absence hurts correct interpretation and localization.",
+        "effort": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-009",
+      "title": "Missing landmarks, skip link, or a clear above-fold value proposition",
+      "severity": "low",
+      "category": "landmarks-skiplink-valueprop",
+      "half": "engagement",
+      "evidence": "no <main>/role=main on 4/4 pages; no skip-to-content link on 4/4 pages. Heuristic; value-prop baked into a hero image is not detected.",
+      "evidence_detail": {
+        "no_main_pages": [
+          "http://127.0.0.1:35567/",
+          "http://127.0.0.1:35567/contact.html",
+          "http://127.0.0.1:35567/faculty.html",
+          "http://127.0.0.1:35567/index.html"
+        ],
+        "no_skiplink_pages": [
+          "http://127.0.0.1:35567/",
+          "http://127.0.0.1:35567/contact.html",
+          "http://127.0.0.1:35567/faculty.html",
+          "http://127.0.0.1:35567/index.html"
+        ],
+        "no_valueprop_pages": []
+      },
+      "mechanism": "Landmarks and skip links aid keyboard/screen-reader navigation; a clear above-fold value prop tells arrivals they're in the right place, reducing bounce.",
+      "suggested_action": {
+        "summary": "Wrap primary content in <main>, add a skip-to-content link, and lead with an H1 plus a one-line description of what the page offers.",
+        "priority": "low",
+        "mechanism": "Landmarks and skip links aid keyboard/screen-reader navigation; a clear above-fold value prop tells arrivals they're in the right place, reducing bounce.",
+        "effort": "low",
+        "confidence": "low"
+      }
+    },
+    {
+      "id": "F-010",
+      "title": "Content is dense and hard to scan",
+      "severity": "low",
+      "category": "readability-scannability",
+      "half": "engagement",
+      "evidence": "Flesch reading ease < 30 (very hard) on 2/4 pages (avg 4.9 across 2 scored, 400+ words each). English Flesch heuristic; legal/technical copy is legitimately dense.",
+      "evidence_detail": {
+        "dense_pages": [
+          "http://127.0.0.1:35567/",
+          "http://127.0.0.1:35567/index.html"
+        ],
+        "wall_of_text_pages": [],
+        "scores": {
+          "http://127.0.0.1:35567/": 4.9,
+          "http://127.0.0.1:35567/index.html": 4.9
+        }
+      },
+      "mechanism": "Dense, unstructured prose is hard to skim; visitors who can't scan for their answer leave. Caveat: dense reading level can be appropriate for the domain.",
+      "suggested_action": {
+        "summary": "Shorten sentences, break long paragraphs, and add subheadings/lists so pages are scannable (unless the domain is inherently technical/legal).",
+        "priority": "low",
+        "mechanism": "Dense, unstructured prose is hard to skim; visitors who can't scan for their answer leave. Caveat: dense reading level can be appropriate for the domain.",
+        "effort": "medium",
+        "confidence": "low"
+      }
+    },
+    {
+      "id": "F-011",
+      "title": "Non-sequential heading levels",
+      "severity": "low",
+      "category": "title-meta-heading-orientation",
+      "half": "both",
+      "evidence": "3/4 pages skip heading levels (e.g. http://127.0.0.1:35567/ jumps h1->h4).",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:35567/",
+          "http://127.0.0.1:35567/faculty.html",
+          "http://127.0.0.1:35567/index.html"
+        ]
+      },
+      "mechanism": "Level jumps break the document outline machines build to locate a fact within a section.",
+      "suggested_action": {
+        "summary": "Keep headings sequential (no skipping levels) so the outline parses cleanly.",
+        "priority": "low",
+        "mechanism": "Level jumps break the document outline machines build to locate a fact within a section.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "F-012",
+      "title": "Missing meta description",
+      "severity": "low",
+      "category": "title-meta-heading-orientation",
+      "half": "discoverability",
+      "evidence": "4/4 pages have no meta description (e.g. http://127.0.0.1:35567/).",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:35567/",
+          "http://127.0.0.1:35567/contact.html",
+          "http://127.0.0.1:35567/faculty.html",
+          "http://127.0.0.1:35567/index.html"
+        ]
+      },
+      "mechanism": "A meta description gives extractors a ready-made summary snippet; its absence is a minor, recoverable gap.",
+      "suggested_action": {
+        "summary": "Add a concise meta description summarizing the page (soft advisory).",
+        "priority": "low",
+        "mechanism": "A meta description gives extractors a ready-made summary snippet; its absence is a minor, recoverable gap.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    }
+  ]
+}

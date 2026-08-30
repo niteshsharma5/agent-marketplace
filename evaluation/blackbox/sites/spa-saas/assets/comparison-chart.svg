@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 220">
+<rect width="400" height="220" fill="#ffffff"/>
+<rect x="40" y="140" width="60" height="60" fill="#a5b4fc"/>
+<rect x="170" y="90" width="60" height="110" fill="#6366f1"/>
+<rect x="300" y="50" width="60" height="150" fill="#4338ca"/>
+<text x="70" y="215" font-size="12" text-anchor="middle" fill="#111827">Starter</text>
+<text x="200" y="215" font-size="12" text-anchor="middle" fill="#111827">Team</text>
+<text x="330" y="215" font-size="12" text-anchor="middle" fill="#111827">Enterprise</text>
+<text x="70" y="132" font-size="12" text-anchor="middle" fill="#111827">99.5%</text>
+<text x="200" y="82" font-size="12" text-anchor="middle" fill="#111827">99.9%</text>
+<text x="330" y="42" font-size="12" text-anchor="middle" fill="#111827">99.99%</text>
+</svg>

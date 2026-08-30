@@ -1,0 +1,107 @@
+{
+  "site": "http://127.0.0.1:32897",
+  "audited_at": "2026-01-01T00:00:00Z",
+  "summary": {
+    "total_findings": 3,
+    "critical": 0,
+    "high": 1,
+    "medium": 0,
+    "low": 2,
+    "discoverability": 2,
+    "engagement": 2
+  },
+  "scope": {
+    "pages_sampled": 3,
+    "pages_readable": 3,
+    "urls": [
+      "http://127.0.0.1:32897/index.html",
+      "http://127.0.0.1:32897/products/summit-20l-daypack.html",
+      "http://127.0.0.1:32897/products/trailblazer-40l-backpack.html"
+    ],
+    "render_available": false,
+    "robots_txt_found": true,
+    "offline_replay": false,
+    "skills_run": [
+      "crawler-access",
+      "machine-readability",
+      "fact-extractability",
+      "entity-trust",
+      "onsite-engagement"
+    ],
+    "skill_errors": []
+  },
+  "limitations": [
+    "Single-variant fetch: one geography, one device profile, no logged-in state, no cookie consent accepted. Personalization and geo/consent-gated content are not observed.",
+    "Lab proxy, not field data: latency and Core Web Vitals appear as risk factors measured once, not real-user metrics.",
+    "Network-dependent checks (sameAs resolvability, broken links) reflect what was reachable at audit time and are excluded from the byte-for-byte determinism guarantee."
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "title": "No Wikidata/Wikipedia link in sameAs",
+      "severity": "high",
+      "category": "sameas-resolvability",
+      "half": "discoverability",
+      "evidence": "Organization sameAs lists 2 URL(s) but none point to Wikidata or Wikipedia (0/2).",
+      "evidence_detail": {},
+      "mechanism": "Wikidata/Wikipedia are the primary reconciliation targets engines use to identify a brand entity; without them sameAs cannot merge to the canonical node.",
+      "suggested_action": {
+        "summary": "Add the brand's Wikidata (and/or Wikipedia) URL to Organization.sameAs to anchor the entity to the authoritative knowledge graph.",
+        "priority": "high",
+        "mechanism": "Wikidata/Wikipedia are the primary reconciliation targets engines use to identify a brand entity; without them sameAs cannot merge to the canonical node.",
+        "effort": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "F-002",
+      "title": "Missing landmarks, skip link, or a clear above-fold value proposition",
+      "severity": "low",
+      "category": "landmarks-skiplink-valueprop",
+      "half": "engagement",
+      "evidence": "no <main>/role=main on 3/3 pages; no skip-to-content link on 3/3 pages. Heuristic; value-prop baked into a hero image is not detected.",
+      "evidence_detail": {
+        "no_main_pages": [
+          "http://127.0.0.1:32897/index.html",
+          "http://127.0.0.1:32897/products/summit-20l-daypack.html",
+          "http://127.0.0.1:32897/products/trailblazer-40l-backpack.html"
+        ],
+        "no_skiplink_pages": [
+          "http://127.0.0.1:32897/index.html",
+          "http://127.0.0.1:32897/products/summit-20l-daypack.html",
+          "http://127.0.0.1:32897/products/trailblazer-40l-backpack.html"
+        ],
+        "no_valueprop_pages": []
+      },
+      "mechanism": "Landmarks and skip links aid keyboard/screen-reader navigation; a clear above-fold value prop tells arrivals they're in the right place, reducing bounce.",
+      "suggested_action": {
+        "summary": "Wrap primary content in <main>, add a skip-to-content link, and lead with an H1 plus a one-line description of what the page offers.",
+        "priority": "low",
+        "mechanism": "Landmarks and skip links aid keyboard/screen-reader navigation; a clear above-fold value prop tells arrivals they're in the right place, reducing bounce.",
+        "effort": "low",
+        "confidence": "low"
+      }
+    },
+    {
+      "id": "F-003",
+      "title": "Non-sequential heading levels",
+      "severity": "low",
+      "category": "title-meta-heading-orientation",
+      "half": "both",
+      "evidence": "1/3 pages skip heading levels (e.g. http://127.0.0.1:32897/index.html jumps h1->h3).",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:32897/index.html"
+        ]
+      },
+      "mechanism": "Level jumps break the document outline machines build to locate a fact within a section.",
+      "suggested_action": {
+        "summary": "Keep headings sequential (no skipping levels) so the outline parses cleanly.",
+        "priority": "low",
+        "mechanism": "Level jumps break the document outline machines build to locate a fact within a section.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    }
+  ]
+}

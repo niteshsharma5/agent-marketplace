@@ -1,0 +1,15 @@
+{
+  "name": "brand-ai-audit",
+  "version": "1.0.0",
+  "description": "Audit any website for AI discoverability (getting found and cited by AI assistants) and on-site engagement (keeping visitors once they arrive), and emit a prioritized findings-plus-fixes report.",
+  "license": "MIT",
+  "entrypoint": "website-ai-audit",
+  "skills": [
+    { "id": "website-ai-audit", "path": "skills/website-ai-audit", "entrypoint": true },
+    { "id": "crawler-access", "path": "skills/crawler-access" },
+    { "id": "machine-readability", "path": "skills/machine-readability" },
+    { "id": "fact-extractability", "path": "skills/fact-extractability" },
+    { "id": "entity-trust", "path": "skills/entity-trust" },
+    { "id": "onsite-engagement", "path": "skills/onsite-engagement" }
+  ]
+}

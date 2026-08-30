@@ -1,0 +1,197 @@
+{
+  "site": "http://127.0.0.1:43737",
+  "audited_at": "2026-01-01T00:00:00Z",
+  "summary": {
+    "total_findings": 7,
+    "critical": 0,
+    "high": 2,
+    "medium": 4,
+    "low": 1,
+    "discoverability": 4,
+    "engagement": 4
+  },
+  "scope": {
+    "pages_sampled": 4,
+    "pages_readable": 4,
+    "urls": [
+      "http://127.0.0.1:43737/index.html",
+      "http://127.0.0.1:43737/about.html",
+      "http://127.0.0.1:43737/posts/cap-theorem-myths.html",
+      "http://127.0.0.1:43737/posts/raft-in-production.html"
+    ],
+    "render_available": false,
+    "robots_txt_found": true,
+    "offline_replay": false,
+    "skills_run": [
+      "crawler-access",
+      "machine-readability",
+      "fact-extractability",
+      "entity-trust",
+      "onsite-engagement"
+    ],
+    "skill_errors": []
+  },
+  "limitations": [
+    "Single-variant fetch: one geography, one device profile, no logged-in state, no cookie consent accepted. Personalization and geo/consent-gated content are not observed.",
+    "Lab proxy, not field data: latency and Core Web Vitals appear as risk factors measured once, not real-user metrics.",
+    "Network-dependent checks (sameAs resolvability, broken links) reflect what was reachable at audit time and are excluded from the byte-for-byte determinism guarantee."
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "title": "Type-warranting pages have no JSON-LD structured data",
+      "severity": "high",
+      "category": "jsonld-presence-validity",
+      "half": "discoverability",
+      "evidence": "3/4 pages that read as product/article pages carry no matching schema.org JSON-LD (e.g. http://127.0.0.1:43737/index.html). Sampled 3 type-warranting page(s).",
+      "evidence_detail": {
+        "pages_missing": [
+          "http://127.0.0.1:43737/index.html",
+          "http://127.0.0.1:43737/posts/cap-theorem-myths.html",
+          "http://127.0.0.1:43737/posts/raft-in-production.html"
+        ],
+        "role_pages": 3
+      },
+      "mechanism": "Structured data lets machines read the exact fact (price, headline, author) instead of inferring it from prose; missing schema forfeits rich results.",
+      "suggested_action": {
+        "summary": "Add schema.org JSON-LD (Product or Article) matching each page's role so engines can extract the fact, not guess it.",
+        "priority": "high",
+        "mechanism": "Structured data lets machines read the exact fact (price, headline, author) instead of inferring it from prose; missing schema forfeits rich results.",
+        "effort": "medium",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-002",
+      "title": "No Organization entity anchor in JSON-LD",
+      "severity": "high",
+      "category": "org-entity-anchor-idgraph",
+      "half": "discoverability",
+      "evidence": "No Organization/LocalBusiness/Corporation JSON-LD node on any sampled page (0/4 pages). Engines have no machine-readable brand node to anchor to.",
+      "evidence_detail": {},
+      "mechanism": "AI engines resolve the brand string to a knowledge-graph node BEFORE evaluating page content; with no stable anchor, entity consolidation and knowledge-panel eligibility never begin.",
+      "suggested_action": {
+        "summary": "Add one Organization JSON-LD node with a stable @id, plus name, url and logo, on the homepage (and reference it site-wide).",
+        "priority": "high",
+        "mechanism": "AI engines resolve the brand string to a knowledge-graph node BEFORE evaluating page content; with no stable anchor, entity consolidation and knowledge-panel eligibility never begin.",
+        "effort": "medium",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-003",
+      "title": "Media without reserved space and fonts without font-display cause layout shift",
+      "severity": "medium",
+      "category": "cls-layout-stability",
+      "half": "engagement",
+      "evidence": "2 <img>/<video>/<iframe> with no width/height attrs and no inline size/aspect-ratio across 2/4 pages.",
+      "evidence_detail": {
+        "dimensionless_media_pages": [
+          "http://127.0.0.1:43737/index.html",
+          "http://127.0.0.1:43737/posts/raft-in-production.html"
+        ],
+        "fontface_no_display_pages": [],
+        "dimensionless_count": 2,
+        "fontface_count": 0
+      },
+      "mechanism": "Media that loads without reserved dimensions and late-swapping fonts reflow the page (Cumulative Layout Shift), which frustrates readers and mis-taps.",
+      "suggested_action": {
+        "summary": "Set width/height (or CSS aspect-ratio) on media so space is reserved before load, and add font-display: swap to @font-face rules.",
+        "priority": "medium",
+        "mechanism": "Media that loads without reserved dimensions and late-swapping fonts reflow the page (Cumulative Layout Shift), which frustrates readers and mis-taps.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "F-004",
+      "title": "Images ship at one size and load eagerly below the fold",
+      "severity": "medium",
+      "category": "image-optimization-lazyload",
+      "half": "engagement",
+      "evidence": "2 below-fold content images missing loading=lazy across 2/4 pages. (Hero/first image intentionally excluded.)",
+      "evidence_detail": {
+        "unresponsive_pages": [],
+        "nonlazy_pages": [
+          "http://127.0.0.1:43737/index.html",
+          "http://127.0.0.1:43737/posts/raft-in-production.html"
+        ],
+        "unresponsive_count": 0,
+        "nonlazy_count": 2
+      },
+      "mechanism": "Oversized single-resolution images waste bandwidth and delay paint; eager below-fold images compete with above-fold content for the network.",
+      "suggested_action": {
+        "summary": "Add srcset/<picture> responsive variants to large images and loading=lazy to below-fold content images; leave the hero/LCP image eager.",
+        "priority": "medium",
+        "mechanism": "Oversized single-resolution images waste bandwidth and delay paint; eager below-fold images compete with above-fold content for the network.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "F-005",
+      "title": "No off-site identity surface found",
+      "severity": "medium",
+      "category": "offsite-corroboration-surface",
+      "half": "discoverability",
+      "evidence": "No sameAs, no footer/social profile links, and no Wikipedia/Wikidata link on any of the 4 sampled pages.",
+      "evidence_detail": {},
+      "mechanism": "The large majority of AI brand mentions are sourced from third-party pages; with zero off-site surface there is structurally little for an engine to cite.",
+      "suggested_action": {
+        "summary": "Establish and link off-site identity surfaces (social profiles, Crunchbase, Wikidata/Wikipedia) and mirror them in Organization.sameAs.",
+        "priority": "medium",
+        "mechanism": "The large majority of AI brand mentions are sourced from third-party pages; with zero off-site surface there is structurally little for an engine to cite.",
+        "effort": "medium",
+        "confidence": "low"
+      }
+    },
+    {
+      "id": "F-006",
+      "title": "Page has no <h1>",
+      "severity": "medium",
+      "category": "title-meta-heading-orientation",
+      "half": "both",
+      "evidence": "1/4 pages render zero <h1> elements (e.g. http://127.0.0.1:43737/index.html).",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:43737/index.html"
+        ]
+      },
+      "mechanism": "The h1 anchors the page's main topic for machine outlining; without it the content hierarchy is ambiguous.",
+      "suggested_action": {
+        "summary": "Add exactly one <h1> stating the page's primary subject.",
+        "priority": "medium",
+        "mechanism": "The h1 anchors the page's main topic for machine outlining; without it the content hierarchy is ambiguous.",
+        "effort": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-007",
+      "title": "Missing landmarks, skip link, or a clear above-fold value proposition",
+      "severity": "low",
+      "category": "landmarks-skiplink-valueprop",
+      "half": "engagement",
+      "evidence": "no skip-to-content link on 3/4 pages; no clear above-fold value prop (H1 + descriptive paragraph) on 1/4 pages. Heuristic; value-prop baked into a hero image is not detected.",
+      "evidence_detail": {
+        "no_main_pages": [],
+        "no_skiplink_pages": [
+          "http://127.0.0.1:43737/about.html",
+          "http://127.0.0.1:43737/index.html",
+          "http://127.0.0.1:43737/posts/cap-theorem-myths.html"
+        ],
+        "no_valueprop_pages": [
+          "http://127.0.0.1:43737/index.html"
+        ]
+      },
+      "mechanism": "Landmarks and skip links aid keyboard/screen-reader navigation; a clear above-fold value prop tells arrivals they're in the right place, reducing bounce.",
+      "suggested_action": {
+        "summary": "Wrap primary content in <main>, add a skip-to-content link, and lead with an H1 plus a one-line description of what the page offers.",
+        "priority": "low",
+        "mechanism": "Landmarks and skip links aid keyboard/screen-reader navigation; a clear above-fold value prop tells arrivals they're in the right place, reducing bounce.",
+        "effort": "low",
+        "confidence": "low"
+      }
+    }
+  ]
+}

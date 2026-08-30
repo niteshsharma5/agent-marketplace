@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marginal Notes — a blog about distributed systems and databases by Priya Raghunathan</title>
+  <meta name="description" content="Marginal Notes is a personal engineering blog by Priya Raghunathan covering distributed consensus, storage engines, and the practical failure modes of production databases.">
+  <link rel="canonical" href="https://marginalnotes.example/index.html">
+  <meta name="author" content="Priya Raghunathan">
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Marginal Notes — distributed systems, storage engines, and databases">
+  <meta property="og:description" content="Long-form, deeply technical writing on consensus protocols, storage engines, and why databases fail the way they do in production.">
+  <meta property="og:url" content="https://marginalnotes.example/index.html">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="site-title" href="index.html">Marginal Notes</a>
+      <p class="site-tagline">Distributed systems, storage engines, and the gap between the paper and the pager alert.</p>
+      <nav class="site-nav">
+        <a href="index.html">Home</a>
+        <a href="posts/raft-in-production.html">Posts</a>
+        <a href="about.html">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <img class="hero-banner" src="images/hero-banner.png" alt="" width="760" height="180">
+
+    <p style="color:#5b6570; font-size:0.95rem; margin-top:-1rem; margin-bottom:2rem;">
+      Nine years writing storage engines and consensus layers, mostly the parts that page you at 3am. This is where the notes from that go.
+    </p>
+
+    <article class="post-card">
+      <p class="post-meta">March 3, 2026 · 22 min read</p>
+      <h2><a href="posts/raft-in-production.html">Raft in Production: The Eleven Ways Leader Election Actually Fails</a></h2>
+      <p class="post-excerpt">Every Raft tutorial ends at the point where the algorithm gets interesting. This is a field guide to the failure modes that show up once you have real disks, real clocks, and real network partitions underneath the pseudocode — with the actual timelines from three outages we caused.</p>
+    </article>
+
+    <article class="post-card">
+      <p class="post-meta">January 14, 2026 · 9 min read</p>
+      <h2><a href="posts/cap-theorem-myths.html">Three Things People Get Wrong About CAP</a></h2>
+      <p class="post-excerpt">CAP is usually taught as a slogan and misapplied as a result. A short, precise pass through what the theorem actually bounds, and what it says nothing about.</p>
+    </article>
+
+    <img class="divider" src="images/divider-1.png" alt="">
+
+    <p style="color:#5b6570; font-size:0.9rem;">
+      Older posts are being migrated from a previous static site generator. If a link is broken, the archive is not gone — it just hasn't been ported yet.
+    </p>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>&copy; 2026 Priya Raghunathan. Text is free to quote and link to with attribution. See <a href="/robots.txt">robots.txt</a> for crawler access.</p>
+    </div>
+  </footer>
+</body>
+</html>

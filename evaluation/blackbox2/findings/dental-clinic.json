@@ -1,0 +1,254 @@
+{
+  "site": "http://127.0.0.1:45275",
+  "audited_at": "2026-01-01T00:00:00Z",
+  "summary": {
+    "total_findings": 9,
+    "critical": 0,
+    "high": 2,
+    "medium": 5,
+    "low": 2,
+    "discoverability": 5,
+    "engagement": 5
+  },
+  "scope": {
+    "pages_sampled": 6,
+    "pages_readable": 5,
+    "urls": [
+      "http://127.0.0.1:45275/",
+      "http://127.0.0.1:45275/about.html",
+      "http://127.0.0.1:45275/blog.html",
+      "http://127.0.0.1:45275/contact.html",
+      "http://127.0.0.1:45275/index.html",
+      "http://127.0.0.1:45275/services.html"
+    ],
+    "render_available": false,
+    "robots_txt_found": true,
+    "offline_replay": false,
+    "skills_run": [
+      "crawler-access",
+      "machine-readability",
+      "fact-extractability",
+      "entity-trust",
+      "onsite-engagement"
+    ],
+    "skill_errors": []
+  },
+  "limitations": [
+    "Single-variant fetch: one geography, one device profile, no logged-in state, no cookie consent accepted. Personalization and geo/consent-gated content are not observed.",
+    "Lab proxy, not field data: latency and Core Web Vitals appear as risk factors measured once, not real-user metrics.",
+    "Network-dependent checks (sameAs resolvability, broken links) reflect what was reachable at audit time and are excluded from the byte-for-byte determinism guarantee."
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "title": "Missing mobile viewport meta tag",
+      "severity": "high",
+      "category": "mobile-viewport-zoom",
+      "half": "engagement",
+      "evidence": "No <meta name=viewport> on 5/5 pages; mobile browsers render at a desktop width and zoom out, leaving text tiny.",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:45275/",
+          "http://127.0.0.1:45275/about.html",
+          "http://127.0.0.1:45275/contact.html",
+          "http://127.0.0.1:45275/index.html",
+          "http://127.0.0.1:45275/services.html"
+        ]
+      },
+      "mechanism": "Without a viewport tag, mobile devices assume ~980px width and shrink the page, making content unreadable without manual zoom and driving bounce.",
+      "suggested_action": {
+        "summary": "Add <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"> to the head.",
+        "priority": "high",
+        "mechanism": "Without a viewport tag, mobile devices assume ~980px width and shrink the page, making content unreadable without manual zoom and driving bounce.",
+        "effort": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-002",
+      "title": "No Organization entity anchor in JSON-LD",
+      "severity": "high",
+      "category": "org-entity-anchor-idgraph",
+      "half": "discoverability",
+      "evidence": "No Organization/LocalBusiness/Corporation JSON-LD node on any sampled page (0/5 pages). Engines have no machine-readable brand node to anchor to.",
+      "evidence_detail": {},
+      "mechanism": "AI engines resolve the brand string to a knowledge-graph node BEFORE evaluating page content; with no stable anchor, entity consolidation and knowledge-panel eligibility never begin.",
+      "suggested_action": {
+        "summary": "Add one Organization JSON-LD node with a stable @id, plus name, url and logo, on the homepage (and reference it site-wide).",
+        "priority": "high",
+        "mechanism": "AI engines resolve the brand string to a knowledge-graph node BEFORE evaluating page content; with no stable anchor, entity consolidation and knowledge-panel eligibility never begin.",
+        "effort": "medium",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-003",
+      "title": "Missing rel=canonical",
+      "severity": "medium",
+      "category": "canonical-lang-hreflang",
+      "half": "discoverability",
+      "evidence": "5/5 pages have no rel=canonical link (e.g. http://127.0.0.1:45275/).",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:45275/",
+          "http://127.0.0.1:45275/about.html",
+          "http://127.0.0.1:45275/contact.html",
+          "http://127.0.0.1:45275/index.html",
+          "http://127.0.0.1:45275/services.html"
+        ]
+      },
+      "mechanism": "Without a canonical, engines may index a duplicate URL and attribute the fact to the wrong page, splitting authority.",
+      "suggested_action": {
+        "summary": "Add a self-referential absolute rel=canonical to each key page.",
+        "priority": "medium",
+        "mechanism": "Without a canonical, engines may index a duplicate URL and attribute the fact to the wrong page, splitting authority.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "F-004",
+      "title": "Media without reserved space and fonts without font-display cause layout shift",
+      "severity": "medium",
+      "category": "cls-layout-stability",
+      "half": "engagement",
+      "evidence": "15 <img>/<video>/<iframe> with no width/height attrs and no inline size/aspect-ratio across 5/5 pages.",
+      "evidence_detail": {
+        "dimensionless_media_pages": [
+          "http://127.0.0.1:45275/",
+          "http://127.0.0.1:45275/about.html",
+          "http://127.0.0.1:45275/contact.html",
+          "http://127.0.0.1:45275/index.html",
+          "http://127.0.0.1:45275/services.html"
+        ],
+        "fontface_no_display_pages": [],
+        "dimensionless_count": 15,
+        "fontface_count": 0
+      },
+      "mechanism": "Media that loads without reserved dimensions and late-swapping fonts reflow the page (Cumulative Layout Shift), which frustrates readers and mis-taps.",
+      "suggested_action": {
+        "summary": "Set width/height (or CSS aspect-ratio) on media so space is reserved before load, and add font-display: swap to @font-face rules.",
+        "priority": "medium",
+        "mechanism": "Media that loads without reserved dimensions and late-swapping fonts reflow the page (Cumulative Layout Shift), which frustrates readers and mis-taps.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "F-005",
+      "title": "Non-200 final status on sampled URLs",
+      "severity": "medium",
+      "category": "http-status-redirect-canonical-integrity",
+      "half": "both",
+      "evidence": "1/6 sampled URLs return a non-200 final status: http://127.0.0.1:45275/blog.html -> HTTP 404 (not_found)",
+      "evidence_detail": {
+        "urls": [
+          {
+            "url": "http://127.0.0.1:45275/blog.html",
+            "status": "HTTP 404 (not_found)"
+          }
+        ]
+      },
+      "mechanism": "A crawler that hits a non-200 final response gets no content to index or cite from that URL.",
+      "suggested_action": {
+        "summary": "Investigate and restore 200 responses, or remove the dead links pointing here.",
+        "priority": "medium",
+        "mechanism": "A crawler that hits a non-200 final response gets no content to index or cite from that URL.",
+        "effort": "medium",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "F-006",
+      "title": "Images ship at one size and load eagerly below the fold",
+      "severity": "medium",
+      "category": "image-optimization-lazyload",
+      "half": "engagement",
+      "evidence": "11 below-fold content images missing loading=lazy across 3/5 pages. (Hero/first image intentionally excluded.)",
+      "evidence_detail": {
+        "unresponsive_pages": [],
+        "nonlazy_pages": [
+          "http://127.0.0.1:45275/",
+          "http://127.0.0.1:45275/about.html",
+          "http://127.0.0.1:45275/index.html"
+        ],
+        "unresponsive_count": 0,
+        "nonlazy_count": 11
+      },
+      "mechanism": "Oversized single-resolution images waste bandwidth and delay paint; eager below-fold images compete with above-fold content for the network.",
+      "suggested_action": {
+        "summary": "Add srcset/<picture> responsive variants to large images and loading=lazy to below-fold content images; leave the hero/LCP image eager.",
+        "priority": "medium",
+        "mechanism": "Oversized single-resolution images waste bandwidth and delay paint; eager below-fold images compete with above-fold content for the network.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "F-007",
+      "title": "No off-site identity surface found",
+      "severity": "medium",
+      "category": "offsite-corroboration-surface",
+      "half": "discoverability",
+      "evidence": "No sameAs, no footer/social profile links, and no Wikipedia/Wikidata link on any of the 5 sampled pages.",
+      "evidence_detail": {},
+      "mechanism": "The large majority of AI brand mentions are sourced from third-party pages; with zero off-site surface there is structurally little for an engine to cite.",
+      "suggested_action": {
+        "summary": "Establish and link off-site identity surfaces (social profiles, Crunchbase, Wikidata/Wikipedia) and mirror them in Organization.sameAs.",
+        "priority": "medium",
+        "mechanism": "The large majority of AI brand mentions are sourced from third-party pages; with zero off-site surface there is structurally little for an engine to cite.",
+        "effort": "medium",
+        "confidence": "low"
+      }
+    },
+    {
+      "id": "F-008",
+      "title": "Missing landmarks, skip link, or a clear above-fold value proposition",
+      "severity": "low",
+      "category": "landmarks-skiplink-valueprop",
+      "half": "engagement",
+      "evidence": "no skip-to-content link on 5/5 pages. Heuristic; value-prop baked into a hero image is not detected.",
+      "evidence_detail": {
+        "no_main_pages": [],
+        "no_skiplink_pages": [
+          "http://127.0.0.1:45275/",
+          "http://127.0.0.1:45275/about.html",
+          "http://127.0.0.1:45275/contact.html",
+          "http://127.0.0.1:45275/index.html",
+          "http://127.0.0.1:45275/services.html"
+        ],
+        "no_valueprop_pages": []
+      },
+      "mechanism": "Landmarks and skip links aid keyboard/screen-reader navigation; a clear above-fold value prop tells arrivals they're in the right place, reducing bounce.",
+      "suggested_action": {
+        "summary": "Wrap primary content in <main>, add a skip-to-content link, and lead with an H1 plus a one-line description of what the page offers.",
+        "priority": "low",
+        "mechanism": "Landmarks and skip links aid keyboard/screen-reader navigation; a clear above-fold value prop tells arrivals they're in the right place, reducing bounce.",
+        "effort": "low",
+        "confidence": "low"
+      }
+    },
+    {
+      "id": "F-009",
+      "title": "Missing meta description",
+      "severity": "low",
+      "category": "title-meta-heading-orientation",
+      "half": "discoverability",
+      "evidence": "2/5 pages have no meta description (e.g. http://127.0.0.1:45275/).",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:45275/",
+          "http://127.0.0.1:45275/index.html"
+        ]
+      },
+      "mechanism": "A meta description gives extractors a ready-made summary snippet; its absence is a minor, recoverable gap.",
+      "suggested_action": {
+        "summary": "Add a concise meta description summarizing the page (soft advisory).",
+        "priority": "low",
+        "mechanism": "A meta description gives extractors a ready-made summary snippet; its absence is a minor, recoverable gap.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    }
+  ]
+}

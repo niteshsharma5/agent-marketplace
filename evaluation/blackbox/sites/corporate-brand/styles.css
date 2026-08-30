@@ -1,0 +1,53 @@
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #222222;
+}
+
+.site-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: #f5f5f5;
+}
+
+.site-nav ul {
+  display: flex;
+  gap: 16px;
+  list-style: none;
+}
+
+.brand-mark {
+  font-weight: bold;
+  text-decoration: none;
+  color: #222222;
+}
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.hero {
+  padding: 40px 0;
+}
+
+.cta-button {
+  display: inline-block;
+  margin-top: 16px;
+  padding: 10px 20px;
+  background: #2a2a72;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+footer {
+  text-align: center;
+  padding: 16px;
+  background: #f5f5f5;
+  margin-top: 40px;
+}

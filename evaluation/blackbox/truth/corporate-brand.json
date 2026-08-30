@@ -1,0 +1,140 @@
+{
+  "name": "corporate-brand",
+  "archetype": "Small B2B consultancy \"About Us\" corporate site with a deliberately weak/ambiguous brand identity and unestablished real-world entity signals, built as a plain 3-page static site (home, about, contact) with a generic nav, hero section, and footer \u2014 the kind of site a small agency might have shipped a decade ago and never revisited.",
+  "overall": "mixed",
+  "start_path": "/index.html",
+  "files_written": [
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/corporate-brand/index.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/corporate-brand/about.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/corporate-brand/contact.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/corporate-brand/robots.txt",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/corporate-brand/sitemap.xml",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/corporate-brand/styles.css",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/corporate-brand/images/logo.png",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/corporate-brand/images/hero-banner.jpg"
+  ],
+  "real_problems": [
+    {
+      "half": "discoverability",
+      "problem": "robots.txt explicitly disallows GPTBot, CCBot, and Google-Extended for the whole site, and separately disallows /about.html for all other user agents.",
+      "where": "robots.txt",
+      "why_it_hurts": "This directly and mechanically blocks the major AI crawlers from fetching any page of the site, and blocks the one page (about.html) that actually contains the company's history/positioning from every other crawler too \u2014 an AI assistant respecting robots.txt cannot ingest this brand's content at all.",
+      "severity": "critical"
+    },
+    {
+      "half": "discoverability",
+      "problem": "The brand name used across the site, 'Apex Solutions', is a highly generic, extremely common business name with no disambiguating qualifier (no location, no industry niche, no legal suffix used consistently) anywhere in the crawlable text.",
+      "where": "index.html, about.html, contact.html (nav brand-mark, headings, body copy)",
+      "why_it_hurts": "A name this generic collides with hundreds of unrelated 'Apex Solutions' businesses worldwide. Without a distinguishing signal (city, industry, legal entity name, unique founder/product name) an AI system has almost nothing to key on to resolve this specific entity versus namesakes.",
+      "severity": "high"
+    },
+    {
+      "half": "discoverability",
+      "problem": "The legal/brand name is inconsistent across pages: homepage footer says 'Apex Solutions', about.html footer says 'Apex Solutions Inc.', contact.html says 'Apex Solutions Group LLC'.",
+      "where": "index.html footer, about.html footer, contact.html body/footer",
+      "why_it_hurts": "Conflicting entity names on the same domain make it impossible for an AI or search engine to know which is the canonical/legal name, undermining entity resolution and any attempt to match this brand to external registries or knowledge bases.",
+      "severity": "high"
+    },
+    {
+      "half": "discoverability",
+      "problem": "Page titles are non-descriptive and contain no brand name at all: <title>Home</title>, <title>About</title>, <title>Contact</title>.",
+      "where": "index.html, about.html, contact.html <title> tags",
+      "why_it_hurts": "Titles are one of the strongest, cheapest signals crawlers and LLM-facing search use to identify what a page/entity is. 'Home'/'About'/'Contact' with no brand name gives zero identifying signal and would collide with millions of other pages using the same generic titles.",
+      "severity": "high"
+    },
+    {
+      "half": "discoverability",
+      "problem": "Meta description is identical boilerplate copy-pasted verbatim on all three pages ('Welcome to our website. We provide solutions for businesses of all sizes.') and says nothing brand- or industry-specific.",
+      "where": "index.html, about.html, contact.html <meta name=\"description\">",
+      "why_it_hurts": "Duplicate, generic descriptions give search/AI summarization no differentiated signal per page and no real information about who the company is or what it actually does.",
+      "severity": "medium"
+    },
+    {
+      "half": "discoverability",
+      "problem": "No structured data (no JSON-LD Organization/LocalBusiness schema) and no outbound links to any authoritative third-party profile (LinkedIn, Crunchbase, Wikipedia, industry directory) anywhere on the site.",
+      "where": "all pages (absence, sitewide)",
+      "why_it_hurts": "There is nothing tying this website to a verifiable real-world entity beyond the text on the page itself \u2014 no sameAs signals, no machine-readable org name/address/founding date, nothing an AI system could cross-reference to confirm the brand exists as a distinct organization.",
+      "severity": "high"
+    },
+    {
+      "half": "discoverability",
+      "problem": "No physical address, city, phone number, founding year, or employee count appears anywhere in the HTML text of any page; the only place a founding-year/HQ-style fact would conventionally live is the About page hero banner image, which has empty alt text (alt=\"\") and no caption or nearby text repeating that information.",
+      "where": "about.html hero image (images/hero-banner.jpg) and sitewide absence of NAP data",
+      "why_it_hurts": "Any identifying facts implied by that banner graphic are invisible to text-based crawling/parsing since the alt attribute is empty and nothing in the surrounding markup restates them \u2014 a real 'fact locked inside an image' discoverability gap, compounded by the site never stating a location or founding date anywhere else either.",
+      "severity": "critical"
+    },
+    {
+      "half": "discoverability",
+      "problem": "sitemap.xml lists only index.html and about.html; contact.html is omitted entirely, and the URLs use a placeholder domain (example-apexsolutions.com) rather than being left generically relative/consistent.",
+      "where": "sitemap.xml",
+      "why_it_hurts": "An incomplete sitemap means crawlers relying on it to discover the site's full page set will miss the contact page, reducing the odds any renderer captures the (already thin) contact info at all.",
+      "severity": "medium"
+    },
+    {
+      "half": "engagement",
+      "problem": "The homepage hero's primary call-to-action button links to '#' \u2014 it goes nowhere.",
+      "where": "index.html, <a href=\"#\" class=\"cta-button\">Learn More</a>",
+      "why_it_hurts": "A visitor who clicks the single most prominent action on the homepage gets no response (page just jumps to itself), a dead-end that kills engagement momentum right at the top of the funnel.",
+      "severity": "high"
+    },
+    {
+      "half": "engagement",
+      "problem": "The contact form submits to action=\"#\" with no real endpoint, and no phone number or email address is given anywhere on the contact page as a fallback.",
+      "where": "contact.html <form>",
+      "why_it_hurts": "A visitor motivated enough to fill out the form has no way to actually reach the company \u2014 the form does not go anywhere, and there is no alternative contact channel, so a converting visitor is lost entirely.",
+      "severity": "high"
+    },
+    {
+      "half": "engagement",
+      "problem": "Every page's nav includes a 'Careers' link to careers.html, which was never created.",
+      "where": "index.html, about.html, contact.html <nav>",
+      "why_it_hurts": "Clicking a persistent, always-visible nav item on every page produces a 404, a broken-navigation experience that erodes trust and interrupts the visit.",
+      "severity": "medium"
+    },
+    {
+      "half": "engagement",
+      "problem": "The homepage hero paragraph is a single ~180-word run-on sentence of marketing filler with inline style color:#cccccc on a white background, placed above the fold before any real information or the CTA resolves to anything.",
+      "where": "index.html hero <p> inline style",
+      "why_it_hurts": "Very low contrast light-gray-on-white text is hard to read for most users (and fails basic contrast expectations), and a dense unbroken wall of vague filler text gives a visitor no quick reason to keep reading or scrolling further.",
+      "severity": "medium"
+    },
+    {
+      "half": "engagement",
+      "problem": "No viewport meta tag is present on any page.",
+      "where": "index.html, about.html, contact.html <head>",
+      "why_it_hurts": "Without <meta name=\"viewport\">, mobile browsers render the page at desktop width and scale it down, producing tiny unreadable text/tap targets on phones and typically driving up mobile bounce rate.",
+      "severity": "medium"
+    }
+  ],
+  "legitimate_and_traps": [
+    {
+      "aspect": "The About page hero banner image (images/hero-banner.jpg) has alt=\"\".",
+      "why_it_is_fine": "This is intentionally the one genuine problem, not a trap: it's flagged above as 'critical' because it's the conventional spot for founding-year/HQ facts and nothing textual backs it up. It is listed here only to clarify it should NOT additionally be miscategorized as a simple 'missing alt text accessibility nit' \u2014 the real issue is the missing textual equivalent of facts, not the empty alt attribute in isolation (plenty of purely decorative images correctly use alt=\"\")."
+    },
+    {
+      "aspect": "The footer logo image (images/logo.png) has alt=\"Apex Solutions logo\".",
+      "why_it_is_fine": "This is a deliberate trap: correct, descriptive alt text on a real logo image. A tool should not flag this as an accessibility/discoverability problem \u2014 it's the site doing the right thing in exactly one place, to check that the auditor isn't flagging all images indiscriminately."
+    },
+    {
+      "aspect": "About page's 'Our Story' and 'How We Work' sections are two reasonably long, multi-sentence paragraphs under proper <h2> headings.",
+      "why_it_is_fine": "This is a deliberate trap: it looks like it could be flagged as 'too much text' or a 'wall of text' engagement problem, but it's legitimately organized long-form narrative content under clear headings \u2014 exactly the kind of substantive, real content an About page should have, and should not be penalized just for length. The actual wall-of-text problem is confined to the homepage hero paragraph, which lacks headings and uses low-contrast styling."
+    },
+    {
+      "aspect": "robots.txt permits crawling of /robots.txt and /sitemap.xml themselves and only lists specific disallow rules rather than a blanket 'Disallow: /' for the default user-agent.",
+      "why_it_is_fine": "This is correct, standard robots.txt syntax and not itself a bug \u2014 the underlying problem is the specific bot-blocking choices made (blocking AI crawlers entirely, blocking /about.html for everyone else), not the file's syntax or structure."
+    },
+    {
+      "aspect": "All pages declare <html lang=\"en\">, use semantic elements (header/nav/main/footer), and images that are present carry explicit width/height attributes.",
+      "why_it_is_fine": "These are correct, unremarkable baseline practices (language declaration, semantic structure, layout-shift prevention) and should not be flagged as issues \u2014 they're included to make the site otherwise look like a normal, competently coded (if content-poor) small business site rather than a strawman."
+    },
+    {
+      "aspect": "No page sets meta robots to noindex/nofollow, and there's no X-Robots-Tag reliance.",
+      "why_it_is_fine": "The site is fully indexable by default at the meta-tag level; the discoverability problems are about entity/brand signal quality and the robots.txt bot-blocking, not about accidental noindexing, so a tool should not find or need to check for a noindex issue here \u2014 there isn't one."
+    },
+    {
+      "aspect": "The site is a plain static 3-page HTML/CSS site with relative links, no JavaScript framework, no build step, and no custom server headers or redirects.",
+      "why_it_is_fine": "This is an intentional realism choice for a small/legacy corporate site (many real small-business sites look exactly like this) and is servable as-is by a plain static file server; it is not itself a discoverability or engagement defect."
+    }
+  ],
+  "notes": "Design intent: the two halves of the problem are entangled through one core theme \u2014 a corporate identity that was never properly established online. On the discoverability side, the robots.txt AI-bot block and the missing/inconsistent entity name+address+structured-data signals mean an AI assistant has almost no reliable way to identify who this company is, even before considering ranking quality. On the engagement side, the dead CTA, dead-end contact form, broken Careers link, and low-contrast unbroken hero paragraph mean a human who does land on the site is likely to bounce without converting. I deliberately kept one page (about.html) reasonably well-written in prose to serve as a trap against 'thin content' false positives, and added exactly one correctly-alt-texted image as a trap against blanket 'missing alt' false positives. I did not fabricate any secrets, tracking codes, or copyrighted text; all placeholder images are tiny synthetic PNG/JPEG bytes with no embedded real text (the 'fact locked in an image' problem is scored on the mechanism \u2014 empty alt + no textual equivalent elsewhere \u2014 not on OCR-able pixel content, since I have no way to render real text into an image file with the tools available)."
+}

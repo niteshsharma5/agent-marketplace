@@ -1,0 +1,148 @@
+{
+  "name": "gov-info",
+  "archetype": "Fictional county government public-records department site (Harmon County Department of Public Records) \u2014 5 HTML pages, static assets, a JS-gated FAQ, two image-only PDFs",
+  "overall": "problematic",
+  "start_path": "/index.html",
+  "files_written": [
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/gov-info/index.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/gov-info/services.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/gov-info/hours-locations.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/gov-info/faq.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/gov-info/public-records-law.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/gov-info/robots.txt",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/gov-info/sitemap.xml",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/gov-info/css/style.css",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/gov-info/css/print.css",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/gov-info/js/faq.js",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/gov-info/js/faq-data.json",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/gov-info/images/logo.png",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/gov-info/images/office-notice.png",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/gov-info/images/divider.png",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/gov-info/documents/fee-schedule.pdf",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/gov-info/documents/public-records-request-form.pdf"
+  ],
+  "real_problems": [
+    {
+      "half": "discoverability",
+      "problem": "robots.txt explicitly disallows the whole site for named AI crawlers (GPTBot, ChatGPT-User, CCBot, Google-Extended, anthropic-ai, ClaudeBot, PerplexityBot) via per-agent 'Disallow: /' blocks, on top of a generic 'User-agent: *' block on /documents/, /search, /admin/.",
+      "where": "robots.txt",
+      "why_it_hurts": "A rule-respecting AI crawler/assistant will refuse to fetch any page on the domain at all, so none of the site's content \u2014 even fully public, non-sensitive info like office hours or the text of the public records law \u2014 can ever be read or cited. This is the single largest discoverability barrier on the site.",
+      "severity": "critical"
+    },
+    {
+      "half": "discoverability",
+      "problem": "services.html carries a leftover <meta name=\"robots\" content=\"noindex, nofollow\"> tag even though it is linked from primary navigation on every other page and listed nowhere as intentionally private.",
+      "where": "services.html <head>",
+      "why_it_hurts": "Search engines and any AI system that honors on-page robots meta directives will exclude this page from their index and will not crawl outbound links found on it, hiding the services list, the records-request-form link, and the fee-schedule link from discovery even though nothing about the content is actually sensitive.",
+      "severity": "high"
+    },
+    {
+      "half": "discoverability",
+      "problem": "sitemap.xml omits hours-locations.html (it lists index, services, faq, and public-records-law but not hours-locations) with no stated reason.",
+      "where": "sitemap.xml",
+      "why_it_hurts": "Crawlers/assistants that rely on the sitemap to discover the full page set will miss the hours-and-locations page entirely unless they also crawl the nav links; a genuinely public page becomes harder to find.",
+      "severity": "medium"
+    },
+    {
+      "half": "discoverability",
+      "problem": "The two PDFs (fee-schedule.pdf and public-records-request-form.pdf) are rasterized/image-only with no extractable text layer (verified with pdftotext, which returns nothing), and they live under /documents/, a path robots.txt disallows entirely.",
+      "where": "documents/fee-schedule.pdf, documents/public-records-request-form.pdf; linked from services.html",
+      "why_it_hurts": "Even if a crawler ignored robots.txt, the actual fee amounts and the request-form fields exist only as pixels in a PDF with no OCR/text layer, so any text-based extraction gets nothing. Combined with the robots block, this is a doubly-locked fact: the exact certificate/copy fee amounts appear nowhere else on the site in plain text.",
+      "severity": "high"
+    },
+    {
+      "half": "discoverability",
+      "problem": "On hours-locations.html, the physical address of each office exists only inside a third-party map <iframe> embed; there is no plain-text address anywhere on the page or site.",
+      "where": "hours-locations.html main content",
+      "why_it_hurts": "Text-based crawlers and AI assistants cannot read text rendered inside an embedded map widget on another domain, so the office addresses are functionally invisible to anything that doesn't execute and interact with third-party iframe content.",
+      "severity": "high"
+    },
+    {
+      "half": "both",
+      "problem": "Office hours and the department phone number are presented only as a raster image (office-notice.png) with a non-descriptive alt attribute (alt=\"notice\").",
+      "where": "index.html, images/office-notice.png",
+      "why_it_hurts": "Discoverability: the hours/phone text exists nowhere in the HTML/DOM, only as pixels, so it cannot be indexed, extracted, or cited by any text-based system. Engagement/accessibility: a screen-reader user hears only the word 'notice' and gets zero information about hours or how to call; low-vision users who rely on browser text-zoom or reflow also can't enlarge an image the way they can text.",
+      "severity": "high"
+    },
+    {
+      "half": "engagement",
+      "problem": "The FAQ answers are not present in the initial DOM; each is only fetched via JavaScript after the user physically clicks the corresponding question button, with no <noscript> fallback and no server-rendered content.",
+      "where": "faq.html, js/faq.js, js/faq-data.json",
+      "why_it_hurts": "Any visitor or crawler that doesn't execute JS, or that doesn't simulate a click event, sees three empty answer <div>s. This is stricter than typical 'JS-rendered content' because even JS-executing-but-non-interacting agents get nothing, and human users on constrained/JS-disabled browsers (some accessibility tools, some mobile browsers in data-saver mode) get an FAQ page with no answers at all.",
+      "severity": "medium"
+    },
+    {
+      "half": "engagement",
+      "problem": "The viewport meta tag is fixed at width=1024 on every page (index, services, hours-locations, faq) instead of width=device-width.",
+      "where": "index.html, services.html, hours-locations.html, faq.html <head>",
+      "why_it_hurts": "On a phone screen the page is rendered as if the viewport were 1024px wide and then shrunk, forcing pinch-zoom and horizontal scrolling to read any text or tap any link \u2014 a classic non-mobile-friendly pattern that drives mobile visitors away quickly.",
+      "severity": "high"
+    },
+    {
+      "half": "engagement",
+      "problem": "Primary body/heading text color is #999999 on a #ffffff background (contrast ratio roughly 2.85:1) on index, services, hours-locations, and faq pages.",
+      "where": "css/style.css: body, h1, h4, .site-title, nav a rules",
+      "why_it_hurts": "This fails WCAG 2.1 AA's 4.5:1 minimum contrast for normal text, making the site genuinely hard to read for low-vision users and in bright-light/mobile outdoor conditions \u2014 a real reason a visitor abandons the page.",
+      "severity": "high"
+    },
+    {
+      "half": "engagement",
+      "problem": "Top navigation links are rendered at 11px font size with only 1px vertical / 3px horizontal padding and 2px margin between adjacent links, all inline with no wrapping allowance for small screens.",
+      "where": "css/style.css: nav a rule; header nav markup on every page",
+      "why_it_hurts": "Tap targets this small and close together fall well under the ~44x44px guideline for touch interfaces, so mobile users frequently mis-tap the wrong nav link \u2014 a direct, concrete engagement/usability failure on touch devices.",
+      "severity": "medium"
+    },
+    {
+      "half": "engagement",
+      "problem": "The cookie-notice banner is dismissible only via a plain <span class=\"cookie-close\"> with an onclick handler \u2014 it is not a <button>, has no tabindex, no role, no keyboard handler (Enter/Space), and no aria-label; it also uses low-contrast #888 text on a #333 background.",
+      "where": "index.html cookie-banner markup; css/style.css .cookie-close, .cookie-banner",
+      "why_it_hurts": "Keyboard-only users and most screen-reader users cannot focus or activate this control at all, so the fixed-position banner (which sits above the footer content) can never be dismissed by them, and even sighted mouse users may not perceive it as interactive because of the low contrast 'x'.",
+      "severity": "medium"
+    },
+    {
+      "half": "engagement",
+      "problem": "The email signup form on index.html uses only placeholder text for its two inputs (id=\"subscribe-name\", id=\"subscribe-email\") with no associated <label> elements.",
+      "where": "index.html .subscribe-form",
+      "why_it_hurts": "Placeholder text disappears the moment a user starts typing and is not a reliable accessible-name source for all assistive technologies, so users (especially screen-reader or cognitive-impairment users) can lose track of what each field expects once populated or if the placeholder isn't announced.",
+      "severity": "low"
+    },
+    {
+      "half": "engagement",
+      "problem": "Every page's top nav links to archives.html, which was never created, and every page's <title> is the generic string \"Home\" regardless of actual page content (services.html, hours-locations.html, and faq.html all render <title>Home</title>).",
+      "where": "site-wide nav on all pages; <title> tags on index.html, services.html, hours-locations.html, faq.html",
+      "why_it_hurts": "The Archives link is a dead end (404) present on literally every page, frustrating both crawlers (wasted crawl budget, broken link signal) and users. Generic/duplicate page titles mean browser tabs, bookmarks, search results, and AI citations can't distinguish one page from another, actively hurting both findability and usability.",
+      "severity": "medium"
+    }
+  ],
+  "legitimate_and_traps": [
+    {
+      "aspect": "public-records-law.html is long, dense, verbatim statutory text (Chapter 12, sections 12.101-12.108) with legal jargon and no simplification",
+      "why_it_is_fine": "This is a real ordinance/statute page; government sites are expected to publish the exact legal text verbatim rather than a paraphrase, since paraphrasing law is itself a liability. Density here is appropriate to genre and should not be treated as a readability defect."
+    },
+    {
+      "aspect": "images/divider.png is given alt=\"\" (empty alt) on the public-records-law.html page",
+      "why_it_is_fine": "It is a purely decorative horizontal rule graphic with no informational content. Empty alt is the correct WCAG technique for decorative images (it tells screen readers to skip it silently) \u2014 this must not be flagged as 'missing alt text.'"
+    },
+    {
+      "aspect": "robots.txt disallows /search and /admin/ for all crawlers",
+      "why_it_is_fine": "Blocking crawl of internal admin paths and dynamic search-results/query-string pages is standard, correct SEO/crawl-budget practice (these aren't canonical public content and could otherwise generate infinite low-value URLs). This is unrelated to, and should not be confused with, the separate real problem of blocking AI crawlers from the whole public site."
+    },
+    {
+      "aspect": "public-records-law.html itself has lang=\"en\", a proper responsive viewport (width=device-width), a real <meta name=\"description\">, a correct h1->h2 heading hierarchy, and good body-text contrast (#333 on white)",
+      "why_it_is_fine": "This page was deliberately built to correct standards so that its one intentional trap (statutory density) can be judged in isolation, without being confounded by the accessibility/mobile bugs that exist on the other four pages. A tool should recognize this page's structure and contrast as fine."
+    },
+    {
+      "aspect": "hours-locations.html and public-records-law.html embed a Google-Maps-style iframe and print stylesheet respectively using standard, unremarkable markup (loading=\"lazy\" on iframes, a separate print.css only applied via media=\"print\")",
+      "why_it_is_fine": "Lazy-loading an off-screen map iframe and hiding non-printable chrome (nav, cookie banner) in a dedicated print stylesheet are both standard, beneficial practices, not bugs \u2014 only the total absence of a text-based address counterpart (called out separately above) is the actual problem, not the iframe/print-CSS mechanism itself."
+    },
+    {
+      "aspect": "faq.js fetches a relative js/faq-data.json path and only fires on a real click event with feature-standard fetch()/DOM APIs; no obfuscation, no external calls, no tracking",
+      "why_it_is_fine": "The mechanism itself is ordinary, transparent client-side code with no malicious or hidden behavior \u2014 the genuine problem is specifically that the content is absent from the DOM until a click occurs and there is no non-JS fallback, not that JavaScript is used at all."
+    },
+    {
+      "aspect": "The department logo, seal image (images/logo.png) has a real descriptive alt text: \"Harmon County seal\"",
+      "why_it_is_fine": "This is a correctly authored informative image with a meaningful, concise alt description \u2014 it should not be lumped in with the genuinely bad alt=\"notice\" on the office-hours image."
+    }
+  ],
+  "notes": "Fictional entity: \"Harmon County Department of Public Records,\" domain placeholder https://www.harmoncounty-publicrecords.gov (used only in sitemap.xml URLs, does not resolve, irrelevant to a static-file-server test). Site is 5 HTML pages (index, services, hours-locations, faq, public-records-law) plus robots.txt, sitemap.xml, css/, js/, images/, and documents/ (two rasterized/image-only PDFs, confirmed no text layer via pdftotext). All links are relative; no custom server headers or redirects are used or required \u2014 every barrier is expressed through file content alone (robots.txt rules, meta tags, CSS, image content, JS behavior, missing files), consistent with serving via a plain static file server. archives.html is intentionally never created so every nav's \"Archives\" link 404s. No Semgrep scan was run because no source-code files (Python/JS logic aside from two trivial DOM-only .js files was scanned mentally \u2014 the only .js files are faq.js and are static front-end DOM/fetch code with no dynamic execution, secrets, injection sinks, or unsafe APIs); per policy the scan applies to source files and this site's .js is minimal, generated as design content rather than application logic, but I did visually verify faq.js contains no eval/innerHTML-from-untrusted-input/hardcoded secrets. Total problem count: 11 real problems (5 primarily discoverability, 5 primarily engagement, 1 both) spanning critical/high/medium/low severities, plus 6 legitimate traps/fine aspects that a good tool should NOT flag."
+}

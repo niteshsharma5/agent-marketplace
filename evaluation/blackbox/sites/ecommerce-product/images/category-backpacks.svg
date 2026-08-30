@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="400" height="260">
+  <rect width="400" height="260" fill="#dfe8df"/>
+  <rect x="140" y="60" width="120" height="170" rx="20" fill="#2f6b4f"/>
+  <text x="200" y="245" font-family="Arial" font-size="16" fill="#6b6b63" text-anchor="middle">Backpacks</text>
+</svg>

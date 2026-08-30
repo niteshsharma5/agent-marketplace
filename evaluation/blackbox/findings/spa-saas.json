@@ -1,0 +1,162 @@
+{
+  "site": "http://127.0.0.1:38479",
+  "audited_at": "2026-01-01T00:00:00Z",
+  "summary": {
+    "total_findings": 6,
+    "critical": 0,
+    "high": 1,
+    "medium": 3,
+    "low": 2,
+    "discoverability": 5,
+    "engagement": 2
+  },
+  "scope": {
+    "pages_sampled": 1,
+    "pages_readable": 1,
+    "urls": [
+      "http://127.0.0.1:38479/index.html"
+    ],
+    "render_available": false,
+    "robots_txt_found": true,
+    "offline_replay": false,
+    "skills_run": [
+      "crawler-access",
+      "machine-readability",
+      "fact-extractability",
+      "entity-trust",
+      "onsite-engagement"
+    ],
+    "skill_errors": []
+  },
+  "limitations": [
+    "Single-variant fetch: one geography, one device profile, no logged-in state, no cookie consent accepted. Personalization and geo/consent-gated content are not observed.",
+    "Lab proxy, not field data: latency and Core Web Vitals appear as risk factors measured once, not real-user metrics.",
+    "Network-dependent checks (sameAs resolvability, broken links) reflect what was reachable at audit time and are excluded from the byte-for-byte determinism guarantee."
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "title": "No Organization entity anchor in JSON-LD",
+      "severity": "high",
+      "category": "org-entity-anchor-idgraph",
+      "half": "discoverability",
+      "evidence": "No Organization/LocalBusiness/Corporation JSON-LD node on any sampled page (0/1 pages). Engines have no machine-readable brand node to anchor to.",
+      "evidence_detail": {},
+      "mechanism": "AI engines resolve the brand string to a knowledge-graph node BEFORE evaluating page content; with no stable anchor, entity consolidation and knowledge-panel eligibility never begin.",
+      "suggested_action": {
+        "summary": "Add one Organization JSON-LD node with a stable @id, plus name, url and logo, on the homepage (and reference it site-wide).",
+        "priority": "high",
+        "mechanism": "AI engines resolve the brand string to a knowledge-graph node BEFORE evaluating page content; with no stable anchor, entity consolidation and knowledge-panel eligibility never begin.",
+        "effort": "medium",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-002",
+      "title": "Missing rel=canonical",
+      "severity": "medium",
+      "category": "canonical-lang-hreflang",
+      "half": "discoverability",
+      "evidence": "1/1 pages have no rel=canonical link (e.g. http://127.0.0.1:38479/index.html).",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:38479/index.html"
+        ]
+      },
+      "mechanism": "Without a canonical, engines may index a duplicate URL and attribute the fact to the wrong page, splitting authority.",
+      "suggested_action": {
+        "summary": "Add a self-referential absolute rel=canonical to each key page.",
+        "priority": "medium",
+        "mechanism": "Without a canonical, engines may index a duplicate URL and attribute the fact to the wrong page, splitting authority.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "F-003",
+      "title": "No off-site identity surface found",
+      "severity": "medium",
+      "category": "offsite-corroboration-surface",
+      "half": "discoverability",
+      "evidence": "No sameAs, no footer/social profile links, and no Wikipedia/Wikidata link on any of the 1 sampled pages.",
+      "evidence_detail": {},
+      "mechanism": "The large majority of AI brand mentions are sourced from third-party pages; with zero off-site surface there is structurally little for an engine to cite.",
+      "suggested_action": {
+        "summary": "Establish and link off-site identity surfaces (social profiles, Crunchbase, Wikidata/Wikipedia) and mirror them in Organization.sameAs.",
+        "priority": "medium",
+        "mechanism": "The large majority of AI brand mentions are sourced from third-party pages; with zero off-site surface there is structurally little for an engine to cite.",
+        "effort": "medium",
+        "confidence": "low"
+      }
+    },
+    {
+      "id": "F-004",
+      "title": "Page has no <h1>",
+      "severity": "medium",
+      "category": "title-meta-heading-orientation",
+      "half": "both",
+      "evidence": "1/1 pages render zero <h1> elements (e.g. http://127.0.0.1:38479/index.html).",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:38479/index.html"
+        ]
+      },
+      "mechanism": "The h1 anchors the page's main topic for machine outlining; without it the content hierarchy is ambiguous.",
+      "suggested_action": {
+        "summary": "Add exactly one <h1> stating the page's primary subject.",
+        "priority": "medium",
+        "mechanism": "The h1 anchors the page's main topic for machine outlining; without it the content hierarchy is ambiguous.",
+        "effort": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-005",
+      "title": "Missing landmarks, skip link, or a clear above-fold value proposition",
+      "severity": "low",
+      "category": "landmarks-skiplink-valueprop",
+      "half": "engagement",
+      "evidence": "no <main>/role=main on 1/1 pages; no skip-to-content link on 1/1 pages; no clear above-fold value prop (H1 + descriptive paragraph) on 1/1 pages. Heuristic; value-prop baked into a hero image is not detected.",
+      "evidence_detail": {
+        "no_main_pages": [
+          "http://127.0.0.1:38479/index.html"
+        ],
+        "no_skiplink_pages": [
+          "http://127.0.0.1:38479/index.html"
+        ],
+        "no_valueprop_pages": [
+          "http://127.0.0.1:38479/index.html"
+        ]
+      },
+      "mechanism": "Landmarks and skip links aid keyboard/screen-reader navigation; a clear above-fold value prop tells arrivals they're in the right place, reducing bounce.",
+      "suggested_action": {
+        "summary": "Wrap primary content in <main>, add a skip-to-content link, and lead with an H1 plus a one-line description of what the page offers.",
+        "priority": "low",
+        "mechanism": "Landmarks and skip links aid keyboard/screen-reader navigation; a clear above-fold value prop tells arrivals they're in the right place, reducing bounce.",
+        "effort": "low",
+        "confidence": "low"
+      }
+    },
+    {
+      "id": "F-006",
+      "title": "Missing meta description",
+      "severity": "low",
+      "category": "title-meta-heading-orientation",
+      "half": "discoverability",
+      "evidence": "1/1 pages have no meta description (e.g. http://127.0.0.1:38479/index.html).",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:38479/index.html"
+        ]
+      },
+      "mechanism": "A meta description gives extractors a ready-made summary snippet; its absence is a minor, recoverable gap.",
+      "suggested_action": {
+        "summary": "Add a concise meta description summarizing the page (soft advisory).",
+        "priority": "low",
+        "mechanism": "A meta description gives extractors a ready-made summary snippet; its absence is a minor, recoverable gap.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    }
+  ]
+}

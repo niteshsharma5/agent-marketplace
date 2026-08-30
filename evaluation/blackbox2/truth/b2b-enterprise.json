@@ -1,0 +1,78 @@
+{
+  "name": "b2b-enterprise",
+  "archetype": "Server-rendered B2B enterprise SaaS marketing site (fictional company \"Meridian Ops\" \u2014 enterprise workflow/approval automation software), 4 static HTML pages styled like a typical CMS/SSG export (Webflow/marketing-CMS feel) with plain CSS and one small progressive-enhancement JS file.",
+  "overall": "clean",
+  "start_path": "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/index.html",
+  "files_written": [
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/index.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/platform.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/pricing.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/company.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/robots.txt",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/sitemap.xml",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/favicon.png",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/assets/css/styles.css",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/assets/js/main.js",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/assets/img/logo.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/assets/img/hero-illustration.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/assets/img/og-image.png",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/assets/img/favicon-32.png",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/assets/img/logo-northwind.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/assets/img/logo-cascadia.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/assets/img/logo-vaultline.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/assets/img/logo-ironpeak.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/assets/img/avatar-dana-oyelaran.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/assets/img/avatar-priya-natarajan.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/assets/img/avatar-tom-hargrove.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/assets/img/avatar-mei-fujimoto.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/b2b-enterprise/assets/img/avatar-samuel-ortiz.svg"
+  ],
+  "real_problems": [
+    {
+      "half": "engagement",
+      "problem": "Every page reuses the exact same Open Graph/Twitter preview image (og-image.png), rather than a page-specific social card for Platform, Pricing, and Company.",
+      "where": "og:image / twitter:image meta tags on platform.html, pricing.html, company.html",
+      "why_it_hurts": "When a specific inner page (e.g. Pricing) is shared on LinkedIn/Slack/X, the preview card looks identical to the homepage share, giving no visual cue of which page it is \u2014 a very minor conversion/CTR drag on shared links.",
+      "severity": "low"
+    }
+  ],
+  "legitimate_and_traps": [
+    {
+      "aspect": "Contact details use a fictitious domain (meridianops.example), 555-prefixed phone number, and a placeholder street address.",
+      "why_it_is_fine": "This is a required artifact of building any mock/test site \u2014 it is not a real design flaw of the site's information architecture. The NAP (name/address/phone) is present, consistently formatted, machine-readable via tel:/mailto: links, and mirrored in the footer, contact card, JSON-LD ContactPoint, and address block exactly as a real production site would do it. A tool should not penalize the fictitious values themselves, only structural absence of such info."
+    },
+    {
+      "aspect": "Logo images and decorative icons next to the visible 'Meridian Ops' wordmark use alt=\"\".",
+      "why_it_is_fine": "The brand name is already present as adjacent visible text in the same link/element, so the icon is decorative and empty alt is the correct WCAG practice (avoids double-announcing 'Meridian Ops logo, Meridian Ops' to screen readers). This should not be flagged as 'missing alt text.'"
+    },
+    {
+      "aspect": "Root-relative asset/internal links (e.g. /assets/css/styles.css, /platform.html) instead of purely relative (./assets or platform.html) paths.",
+      "why_it_is_fine": "The site is served from the domain root by a plain static file server, so root-relative paths resolve identically to relative ones and are the standard, more robust convention used by virtually every real CMS/SSG (WordPress, Next.js static export, Webflow) to avoid breakage on nested URLs. No 404s result; verified by curling every path against a local static server."
+    },
+    {
+      "aspect": "Same header/nav/footer markup is repeated verbatim across all four HTML files instead of being templated.",
+      "why_it_is_fine": "This is exactly what a server-rendered/static-generator output looks like in the final HTML (the templating happens at build/render time, not in the shipped markup); consistent, complete navigation and footer on every page is a discoverability and engagement positive (crawlable sitewide nav, no orphaned pages), not a red flag."
+    },
+    {
+      "aspect": "FAQ content is implemented with native <details>/<summary> elements (no JS) rather than a JS-driven accordion.",
+      "why_it_is_fine": "All FAQ answer text is present in the raw HTML and readable by any crawler or AI fetcher with JS fully disabled; only the visual collapse/expand behavior is CSS, so nothing here is hidden from non-JS clients. This should not be flagged as 'content hidden behind interaction.'"
+    },
+    {
+      "aspect": "Mobile navigation toggle button relies on assets/js/main.js to open/close the menu, and the script is loaded at the end of body without defer/async.",
+      "why_it_is_fine": "The nav links themselves are always present in the DOM (just visually hidden below a breakpoint via CSS on small screens, or displayed inline on desktop) \u2014 a crawler fetching raw HTML sees every nav link regardless of JS execution. The toggle is a pure progressive-enhancement convenience, not a discoverability gate, and the script is tiny (loads after all render-blocking content) so it doesn't hurt load performance."
+    },
+    {
+      "aspect": "Pricing page shows two concrete plan prices ($1,200/mo, $3,400/mo) plus a 'Custom' Enterprise tier with no listed number.",
+      "why_it_is_fine": "This is standard, honest enterprise SaaS pricing practice (usage/seat-scaled enterprise deals are quoted, not listed) and the JSON-LD AggregateOffer only encodes the two disclosed numeric prices (lowPrice 1200 / highPrice 3400, offerCount 2), so structured data and visible page content match exactly \u2014 not a case of schema making claims the page doesn't support."
+    },
+    {
+      "aspect": "Testimonial section shows a single customer quote rather than a wall of many reviews.",
+      "why_it_is_fine": "One named, attributed testimonial (with title and company) is more credible than a large bank of anonymous quotes, and is common on real enterprise marketing sites; no aggregateRating/review-count schema was added, so there's no structured-data claim outrunning the visible content."
+    },
+    {
+      "aspect": "MCP Semgrep flagged four 'missing subresource-integrity' warnings, one per HTML page, all pointing at the same-origin <link rel=\"canonical\"> tag.",
+      "why_it_is_fine": "This is a false positive from an overly broad HTML linter rule: canonical link tags are pure metadata that browsers never fetch as an executable/renderable subresource, so an integrity attribute is inapplicable and would be meaningless there. The site's actual loaded subresources (local stylesheet, local script, images) are same-origin files under the site's own control, not third-party CDN content, so SRI hashes provide no real protection for them either. Reviewed and consciously left as-is rather than adding a nonsensical attribute to satisfy the rule."
+    }
+  ],
+  "notes": "Built a 4-page fictional B2B enterprise SaaS site for \"Meridian Ops\" (workflow/approval automation for regulated enterprises): index.html (home), platform.html (product/integrations/security teaser), pricing.html (3-tier pricing + FAQPage schema), company.html (about/leadership/security & compliance/contact). Discoverability features: descriptive unique titles/meta descriptions per page, canonical tags, Organization + SoftwareApplication + BreadcrumbList + FAQPage JSON-LD (validated as parseable JSON and checked for consistency against on-page content), robots.txt allowing all + sitemap.xml reference, sitemap.xml listing all 4 URLs, full text content readable without JS (FAQ via native <details>, nav always in DOM), semantic heading hierarchy (single h1 per page, h2/h3 nesting), internal cross-linking between all pages including anchor links to page sections. Engagement features: sticky header with clear nav and dual CTAs (trial + talk to sales), responsive CSS (verified breakpoint rules for grid collapse and mobile nav), accessible skip-link and aria-current/aria-expanded usage, real (if placeholder) contact channels (email, tel:, address) duplicated in footer and dedicated contact section, comparison table for pricing, testimonial with attribution, step-by-step 'how it works' section. Verified via a local static file server that every page, asset, and internal link (including root-relative paths) returns 200 with no broken references, and confirmed no duplicate element IDs and balanced <details> tags. Ran the mandated Semgrep scan on all HTML/JS source files; the only findings were a false-positive HTML linter rule (SRI) matching canonical <link> tags across all 4 pages, documented above rather than 'fixed' with a meaningless attribute. This site is intended as a clean control \u2014 the one real issue logged (repeated OG image) is deliberately minor/low-severity so the audit tool's baseline false-positive rate can be measured against a site that is otherwise correct."
+}

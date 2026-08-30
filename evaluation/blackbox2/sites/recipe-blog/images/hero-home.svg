@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600">
+<rect width="1200" height="600" fill="#f2e2c8"/>
+<rect x="0" y="420" width="1200" height="180" fill="#e0b989"/>
+<circle cx="600" cy="260" r="150" fill="#c97b3d"/>
+<circle cx="600" cy="260" r="120" fill="#d9935a"/>
+<text x="600" y="270" font-family="Georgia, serif" font-size="34" fill="#5a3418" text-anchor="middle">Grandma's Kitchen</text>
+</svg>

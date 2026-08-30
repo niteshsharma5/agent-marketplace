@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+<rect width="1200" height="700" fill="#4a3520"/>
+<rect x="350" y="220" width="500" height="260" rx="40" fill="#caa34a"/>
+<rect x="350" y="220" width="500" height="60" rx="30" fill="#e8c876"/>
+<rect x="420" y="200" width="20" height="60" fill="#5a3c1a"/>
+<rect x="520" y="190" width="20" height="70" fill="#5a3c1a"/>
+<rect x="620" y="195" width="20" height="65" fill="#5a3c1a"/>
+<rect x="720" y="200" width="20" height="60" fill="#5a3c1a"/>
+<text x="600" y="620" font-family="Georgia, serif" font-size="40" fill="#f2e2c8" text-anchor="middle">Banana Bread</text>
+</svg>

@@ -1,0 +1,420 @@
+{
+  "cases": [
+    {
+      "dir": "crawler-access/blocked-render-assets-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "blocked-render-assets"
+      ]
+    },
+    {
+      "dir": "crawler-access/blocked-render-assets-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "blocked-render-assets"
+      ]
+    },
+    {
+      "dir": "crawler-access/citation-bot-block-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "robots-citation-bot-block"
+      ]
+    },
+    {
+      "dir": "crawler-access/citation-bot-block-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "robots-citation-bot-block"
+      ]
+    },
+    {
+      "dir": "crawler-access/discovery-infra-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "discovery-infra-sitemap-orphan-llmstxt"
+      ]
+    },
+    {
+      "dir": "crawler-access/discovery-infra-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "discovery-infra-sitemap-orphan-llmstxt"
+      ]
+    },
+    {
+      "dir": "crawler-access/indexability-noindex-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "indexability-directives"
+      ]
+    },
+    {
+      "dir": "crawler-access/indexability-noindex-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "indexability-directives"
+      ]
+    },
+    {
+      "dir": "crawler-access/broken-final-status-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "http-status-redirect-canonical-integrity"
+      ]
+    },
+    {
+      "dir": "crawler-access/broken-final-status-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "http-status-redirect-canonical-integrity"
+      ]
+    },
+    {
+      "dir": "crawler-access/wildcard-catchall-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "robots-wildcard-catchall"
+      ]
+    },
+    {
+      "dir": "crawler-access/wildcard-catchall-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "robots-wildcard-catchall"
+      ]
+    },
+    {
+      "dir": "entity-trust/author-eeat-contact-citations-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "author-eeat-contact-citations"
+      ]
+    },
+    {
+      "dir": "entity-trust/author-eeat-contact-citations-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "author-eeat-contact-citations"
+      ]
+    },
+    {
+      "dir": "entity-trust/freshness-signals-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "freshness-signals"
+      ]
+    },
+    {
+      "dir": "entity-trust/freshness-signals-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "freshness-signals"
+      ]
+    },
+    {
+      "dir": "entity-trust/name-consistency-ambiguity-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "name-consistency-ambiguity"
+      ]
+    },
+    {
+      "dir": "entity-trust/name-consistency-ambiguity-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "name-consistency-ambiguity"
+      ]
+    },
+    {
+      "dir": "entity-trust/offsite-corroboration-surface-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "offsite-corroboration-surface"
+      ]
+    },
+    {
+      "dir": "entity-trust/offsite-corroboration-surface-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "offsite-corroboration-surface"
+      ]
+    },
+    {
+      "dir": "entity-trust/org-entity-anchor-idgraph-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "org-entity-anchor-idgraph"
+      ]
+    },
+    {
+      "dir": "entity-trust/org-entity-anchor-idgraph-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "org-entity-anchor-idgraph"
+      ]
+    },
+    {
+      "dir": "fact-extractability/answer-ready-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "answer-ready-extractability"
+      ]
+    },
+    {
+      "dir": "fact-extractability/answer-ready-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "answer-ready-extractability"
+      ]
+    },
+    {
+      "dir": "fact-extractability/canonical-lang-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "canonical-lang-hreflang"
+      ]
+    },
+    {
+      "dir": "fact-extractability/canonical-lang-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "canonical-lang-hreflang"
+      ]
+    },
+    {
+      "dir": "fact-extractability/images-alt-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "facts-in-images-alt"
+      ]
+    },
+    {
+      "dir": "fact-extractability/images-alt-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "facts-in-images-alt"
+      ]
+    },
+    {
+      "dir": "fact-extractability/jsonld-presence-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "jsonld-presence-validity"
+      ]
+    },
+    {
+      "dir": "fact-extractability/jsonld-presence-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "jsonld-presence-validity"
+      ]
+    },
+    {
+      "dir": "fact-extractability/schema-visible-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "schema-visible-consistency"
+      ]
+    },
+    {
+      "dir": "fact-extractability/schema-visible-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "schema-visible-consistency"
+      ]
+    },
+    {
+      "dir": "fact-extractability/title-heading-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "title-meta-heading-orientation"
+      ]
+    },
+    {
+      "dir": "fact-extractability/title-heading-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "title-meta-heading-orientation"
+      ]
+    },
+    {
+      "dir": "machine-readability/js-render-gap-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "js-render-gap"
+      ]
+    },
+    {
+      "dir": "machine-readability/js-render-gap-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "js-render-gap"
+      ]
+    },
+    {
+      "dir": "onsite-engagement/broken-internal-links-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "broken-internal-links"
+      ]
+    },
+    {
+      "dir": "onsite-engagement/broken-internal-links-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "broken-internal-links"
+      ]
+    },
+    {
+      "dir": "onsite-engagement/cls-layout-stability-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "cls-layout-stability"
+      ]
+    },
+    {
+      "dir": "onsite-engagement/cls-layout-stability-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "cls-layout-stability"
+      ]
+    },
+    {
+      "dir": "onsite-engagement/contrast-legibility-taptargets-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "contrast-legibility-taptargets"
+      ]
+    },
+    {
+      "dir": "onsite-engagement/contrast-legibility-taptargets-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "contrast-legibility-taptargets"
+      ]
+    },
+    {
+      "dir": "onsite-engagement/image-optimization-lazyload-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "image-optimization-lazyload"
+      ]
+    },
+    {
+      "dir": "onsite-engagement/image-optimization-lazyload-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "image-optimization-lazyload"
+      ]
+    },
+    {
+      "dir": "onsite-engagement/intrusive-interstitial-autoplay-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "intrusive-interstitial-autoplay"
+      ]
+    },
+    {
+      "dir": "onsite-engagement/intrusive-interstitial-autoplay-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "intrusive-interstitial-autoplay"
+      ]
+    },
+    {
+      "dir": "onsite-engagement/landmarks-skiplink-valueprop-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "landmarks-skiplink-valueprop"
+      ]
+    },
+    {
+      "dir": "onsite-engagement/landmarks-skiplink-valueprop-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "landmarks-skiplink-valueprop"
+      ]
+    },
+    {
+      "dir": "onsite-engagement/mobile-viewport-zoom-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "mobile-viewport-zoom"
+      ]
+    },
+    {
+      "dir": "onsite-engagement/mobile-viewport-zoom-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "mobile-viewport-zoom"
+      ]
+    },
+    {
+      "dir": "onsite-engagement/readability-scannability-control",
+      "kind": "control",
+      "start": "/",
+      "expect_absent": [
+        "readability-scannability"
+      ]
+    },
+    {
+      "dir": "onsite-engagement/readability-scannability-defect",
+      "kind": "defect",
+      "start": "/",
+      "expect": [
+        "readability-scannability"
+      ]
+    }
+  ]
+}

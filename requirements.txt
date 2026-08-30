@@ -1,0 +1,18 @@
+# Core (required) — pure-Python, installs well under the 50MB budget.
+httpx>=0.27
+beautifulsoup4>=4.12
+lxml>=5.0
+w3lib>=2.1
+protego>=0.3
+jsonschema>=4.20
+
+# Optional — the audit degrades gracefully when these are absent.
+# Playwright powers the raw-vs-rendered JS-render-gap diff. Without it, the
+# machine-readability skill falls back to a static SPA heuristic.
+#   pip install playwright>=1.40 && playwright install chromium --only-shell
+# playwright>=1.40
+#
+# pytesseract + Pillow enable optional OCR of image-locked facts (needs the
+# tesseract binary installed on the host). Off by default.
+# pytesseract>=0.3
+# Pillow>=10.0

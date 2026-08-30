@@ -1,0 +1,113 @@
+{
+  "name": "dental-clinic",
+  "archetype": "Local business marketing site for a small independent dental clinic (hand-built multi-page HTML/CSS, no CMS/framework) \u2014 homepage, services, about, contact.",
+  "overall": "mixed",
+  "start_path": "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/dental-clinic/index.html",
+  "files_written": [
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/dental-clinic/index.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/dental-clinic/services.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/dental-clinic/about.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/dental-clinic/contact.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/dental-clinic/styles.css",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/dental-clinic/robots.txt",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/dental-clinic/sitemap.xml",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/dental-clinic/images/logo.png",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/dental-clinic/images/favicon.png",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/dental-clinic/images/hero-clinic.png",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/dental-clinic/images/hours-graphic.png",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/dental-clinic/images/team-photo.png",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/dental-clinic/images/service-cleaning.png",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/dental-clinic/images/service-whitening.png",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/dental-clinic/images/service-implants.png"
+  ],
+  "real_problems": [
+    {
+      "half": "discoverability",
+      "severity": "high",
+      "where": "robots.txt",
+      "problem": "robots.txt globally allows '*' but adds explicit blocking blocks for GPTBot, Google-Extended, CCBot, and ClaudeBot (Disallow: /).",
+      "why_it_hurts": "These are the crawlers used by ChatGPT's browsing/training pipeline, Google's AI features, Common Crawl (which many LLM training sets and RAG pipelines draw from), and Anthropic's own crawler. Even though the site content is otherwise well-formed and crawlable by generic bots, these directives specifically instruct the major AI assistants and answer engines not to fetch any page, so the clinic cannot be found, read, or cited by them despite having no other technical barrier."
+    },
+    {
+      "half": "discoverability",
+      "severity": "high",
+      "where": "index.html, section 'Clinic Hours' (images/hours-graphic.png), and contact.html which points back to that image",
+      "problem": "Opening hours exist only as a placeholder image with a non-descriptive alt attribute ('Hours graphic'); there is no plain-text statement of hours anywhere on the site, and contact.html explicitly defers to the image instead of stating hours in text.",
+      "why_it_hurts": "Text-based crawlers and LLM ingestion/RAG pipelines read HTML/DOM text, not pixels. A very common local-business query ('what time does Bright Smile open on Saturday?') has literally no extractable text answer anywhere in the site's markup, so an AI assistant summarizing or citing the business cannot answer it correctly and may hallucinate or omit hours entirely."
+    },
+    {
+      "half": "discoverability",
+      "severity": "medium",
+      "where": "index.html JSON-LD (Dentist schema)",
+      "problem": "The Dentist structured-data block includes name, address, telephone, and url, but omits openingHoursSpecification entirely \u2014 the only structured-data hours source is absent, matching the text-side gap above.",
+      "why_it_hurts": "Structured data is the highest-confidence signal AI systems and search engines use for entity facts like hours. Its absence means neither the visible text nor the machine-readable schema carries this fact, so there is no reliable path for any automated consumer to learn the clinic's hours."
+    },
+    {
+      "half": "engagement",
+      "severity": "high",
+      "where": "index.html hero section, 'Book an Appointment' button (href=\"#\")",
+      "problem": "The single most prominent call-to-action on the homepage links to '#', a placeholder that does nothing when clicked.",
+      "why_it_hurts": "This is the primary conversion path for a dental clinic site. A visitor who is convinced enough to click at the top of the funnel hits a dead end at the exact moment of highest intent, which directly increases bounce and abandonment right when engagement should convert to a booked appointment."
+    },
+    {
+      "half": "both",
+      "severity": "medium",
+      "where": "global nav on every page ('Blog' link to blog.html)",
+      "problem": "Every page's navigation includes a 'Blog' link to blog.html, but that file does not exist anywhere in the site.",
+      "why_it_hurts": "For human visitors, following it produces a dead 404, a frustrating and unprofessional dead-end in primary navigation. For crawlers, it's a broken link that wastes crawl budget and signals an unmaintained or incomplete site."
+    },
+    {
+      "half": "engagement",
+      "severity": "high",
+      "where": "all pages (no <meta name=\"viewport\"> tag; head sections across index.html, services.html, about.html, contact.html)",
+      "problem": "No viewport meta tag is present anywhere, and the flex-based header/nav has no small-screen adaptation.",
+      "why_it_hurts": "Without a viewport meta tag, mobile browsers render the page at a default desktop-width virtual viewport (commonly ~980px) and scale it down, producing tiny unreadable text and a cramped, unusable header/nav. Since most local 'dentist near me' searches happen on mobile, this materially increases bounce rate for the majority of real-world visitors."
+    },
+    {
+      "half": "discoverability",
+      "severity": "low",
+      "where": "sitemap.xml",
+      "problem": "sitemap.xml lists only index.html, services.html, and about.html \u2014 contact.html (the page most likely to carry a directly citable phone number and address) is missing from the sitemap.",
+      "why_it_hurts": "Crawlers that lean on the sitemap for discovery and prioritization may take longer to find, or under-prioritize, the contact page relative to pages that are actually linked in the sitemap."
+    }
+  ],
+  "legitimate_and_traps": [
+    {
+      "aspect": "Homepage <title> is just the brand name ('Bright Smile Dental Clinic') with no descriptive suffix",
+      "why_it_is_fine": "Using the brand name alone as the homepage title is a completely standard, accepted convention; it should not be flagged as thin or incomplete metadata."
+    },
+    {
+      "aspect": "Contact form (contact.html) posts to action=\"#\" with no working backend",
+      "why_it_is_fine": "This is a static-file fixture with no server component, so a demo form with a placeholder action is expected and is not evidence of a production feature being broken."
+    },
+    {
+      "aspect": "Embedded Google Maps iframe on contact.html",
+      "why_it_is_fine": "It depends on outbound internet access to Google's servers; in any offline or network-restricted evaluation environment it simply won't render. That is expected behavior for any static site using a third-party embed, not a defect in this site."
+    },
+    {
+      "aspect": "NAP (name, address, phone) repeated in the footer of every page and again in the contact page body",
+      "why_it_is_fine": "This is intentional, helpful redundancy across pages, not duplicate-content padding \u2014 it increases the chance any single crawled page carries the full contact facts."
+    },
+    {
+      "aspect": "JSON-LD Dentist structured data appears only on index.html, not repeated on every inner page",
+      "why_it_is_fine": "A single canonical entity declaration on the homepage is a normal, sufficient implementation choice; structured data does not need to be duplicated on every subpage to be valid or useful."
+    },
+    {
+      "aspect": "Testimonials on index.html are plain visible text quotes with no Review/aggregateRating schema markup",
+      "why_it_is_fine": "There is no verified third-party review platform behind these quotes, so adding fabricated review/rating structured data would have been the real violation (fake schema); correctly leaving it out is the honest choice, not a gap to flag."
+    },
+    {
+      "aspect": "FAQ block on services.html is a plain, fully visible <dl> list rather than a JS-driven collapsed accordion",
+      "why_it_is_fine": "It reads as a sizeable chunk of static text, but every word is present in the raw HTML and immediately visible/crawlable \u2014 exactly the desired state for AI and search extraction, not thin or hidden content."
+    },
+    {
+      "aspect": "All images (logo, hero, team, services, hours) are plain solid-fill placeholder PNGs generated for this fixture",
+      "why_it_is_fine": "This is a production-value limitation of a test fixture, not a discoverability or engagement defect by itself \u2014 each image (other than the hours graphic, called out separately) carries a real, descriptive alt attribute."
+    },
+    {
+      "aspect": "Address format uses 'Suite 4B', city/state/ZIP all present and consistent across every page and the JSON-LD",
+      "why_it_is_fine": "This is correctly formatted, internally consistent local NAP data \u2014 it should read as a clean signal, not as inconsistent or suspicious formatting."
+    }
+  ],
+  "notes": "Site is a static 4-page HTML/CSS fixture (index, services, about, contact) plus robots.txt, sitemap.xml, styles.css, and 8 placeholder PNGs \u2014 all relative links, servable by any plain static file server. No .py/.js/.ts/.java/etc. source-code files were created or modified (only HTML, CSS, XML/TXT, and PNG), so per the org's static-analysis policy the Semgrep scan trigger condition was not met and the scan was skipped: \"Skipping MCP Semgrep scan: No scannable source code files were modified in this turn.\" Ground truth above intentionally seeds one discoverability blocker (AI-crawler-specific robots.txt disallows), one hours-are-not-machine-readable gap (spanning both plain text and JSON-LD), a dead primary CTA, a sitewide broken nav link, a missing viewport meta tag, and an incomplete sitemap, while keeping the rest of the site (content depth, real NAP data, honest lack of fabricated review schema, working internal links elsewhere) clean."
+}

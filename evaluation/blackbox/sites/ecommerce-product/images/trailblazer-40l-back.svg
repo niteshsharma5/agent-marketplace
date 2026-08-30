@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
+  <rect width="600" height="600" fill="#e4ded0"/>
+  <rect x="190" y="120" width="220" height="360" rx="26" fill="#25573f"/>
+  <line x1="230" y1="140" x2="230" y2="460" stroke="#12301f" stroke-width="8"/>
+  <line x1="370" y1="140" x2="370" y2="460" stroke="#12301f" stroke-width="8"/>
+  <text x="300" y="560" font-family="Arial" font-size="22" fill="#6b6b63" text-anchor="middle">Trailblazer 40L — Back / Straps</text>
+</svg>

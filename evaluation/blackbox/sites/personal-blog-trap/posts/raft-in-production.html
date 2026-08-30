@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Raft in Production: The Eleven Ways Leader Election Actually Fails — Marginal Notes</title>
+  <meta name="description" content="A field guide to how Raft leader election fails once real disks, clocks, and network partitions are involved, with timelines from three production outages.">
+  <link rel="canonical" href="https://marginalnotes.example/posts/raft-in-production.html">
+  <meta name="author" content="Priya Raghunathan">
+  <meta name="robots" content="index, follow">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Raft in Production: The Eleven Ways Leader Election Actually Fails">
+  <meta property="og:description" content="A field guide to how Raft leader election fails once real disks, clocks, and network partitions are involved.">
+  <meta property="og:url" content="https://marginalnotes.example/posts/raft-in-production.html">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="site-title" href="../index.html">Marginal Notes</a>
+      <nav class="site-nav">
+        <a href="../index.html">Home</a>
+        <a href="raft-in-production.html">Posts</a>
+        <a href="../about.html">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <article>
+      <h1>Raft in Production: The Eleven Ways Leader Election Actually Fails</h1>
+      <p class="post-meta">Published March 3, 2026 by <a href="../about.html">Priya Raghunathan</a> · 22 min read</p>
+
+      <details class="toc">
+        <summary>Contents</summary>
+        <ul>
+          <li><a href="#premise">The premise the paper leaves out</a></li>
+          <li><a href="#term-confusion">1–3: Term confusion under partial partitions</a></li>
+          <li><a href="#clock-skew">4–6: Clock skew and election timeout tuning</a></li>
+          <li><a href="#disk">7–9: Disk latency and the fsync you skipped</a></li>
+          <li><a href="#membership">10–11: Membership changes mid-election</a></li>
+          <li><a href="#incident-log">Incident log: three outages, minute by minute</a></li>
+          <li><a href="#checklist">A pre-production checklist</a></li>
+        </ul>
+      </details>
+
+      <p id="premise">
+        The Raft paper is, by consensus-algorithm standards, unusually readable. Diego Ongaro and John Ousterhout
+        built it explicitly to be more approachable than Paxos, and it succeeded — most engineers can trace through
+        the state machine (follower, candidate, leader) and the term-based voting rule in an afternoon. What the
+        paper does not spend much time on, because it isn't a paper about operations, is what happens when the
+        assumptions underneath the algorithm get violated by hardware you actually own. This post is about that gap.
+        It comes out of three separate leader-election incidents across two systems I've operated, and it is written
+        for people who already know what a term number is and don't need <code>RequestVote</code> re-explained.
+      </p>
+
+      <p>
+        If you need the primer first, the original paper ("In Search of an Understandable Consensus Algorithm") and
+        the <a href="https://raft.github.io/" rel="noopener">raft.github.io</a> visualization are both better
+        introductions than anything I'd write here. This post assumes you've read one of them.
+      </p>
+
+      <h2 id="term-confusion">1–3: Term confusion under partial partitions</h2>
+      <p>
+        The textbook partition scenario is clean: the cluster splits into two fully isolated halves, the majority
+        side elects a leader, the minority side cannot, and everything reconciles neatly when the partition heals.
+        Production partitions are rarely that considerate. The failure modes that actually bite are <em>partial</em>
+        and <em>asymmetric</em> — node A can send to B but not receive from it, or a top-of-rack switch drops packets
+        above a certain size so heartbeats (small) get through while log-replication RPCs (larger) don't.
+      </p>
+
+      <h3>1. The one-way link</h3>
+      <p>
+        A follower that can receive from the leader but cannot send its own RPCs back will time out on its
+        election timer even though, from the leader's point of view, nothing is wrong — heartbeats are being
+        delivered. That follower increments its term and starts an election it cannot win, because its
+        <code>RequestVote</code> calls never arrive. But the increment itself is not silent: the *next* successful
+        heartbeat or AppendEntries the follower receives will carry a lower term than the one it just adopted, and
+        by the Raft term-comparison rule the follower rejects it and demands the sender step down. If connectivity
+        is flapping rather than fully severed, this produces a slow-motion oscillation where the real leader keeps
+        getting rejected by a follower whose term keeps climbing for no externally visible reason, and every
+        rejection increments the follower's own term further. We first saw this as a leader that would step down
+        every 40–90 seconds for about six hours before the network team found the failing transceiver.
+      </p>
+
+      <h3>2. Term inflation as a hidden signal</h3>
+      <p>
+        Because term numbers only ever increase, a cluster that has been running for months with a stable leader
+        but has a term counter in the high thousands is telling you something happened, even if nothing paged
+        anyone. We now alert on <code>rate(raft_term_increment_total[1h]) > 0.05</code> specifically because it
+        catches asymmetric connectivity long before it causes a real unavailability window. A healthy long-running
+        leader should have a term number that barely moves.
+      </p>
+
+      <h3>3. Pre-vote does not fully solve this</h3>
+      <p>
+        The pre-vote extension (candidates poll first, before incrementing their term, to check whether they could
+        plausibly win) fixes the specific problem the extension was designed for — a partitioned node spuriously
+        forcing a otherwise-healthy leader to step down by winning a real election with an inflated term. It does
+        not fix case 1 above, because the isolated follower in that scenario never receives replies to its
+        pre-vote requests either; it simply never proceeds to a real election, which is the correct outcome, but it
+        also never stops trying, so you still get the CPU and log noise of a member perpetually attempting
+        elections it can neither win nor be blamed for losing.
+      </p>
+
+      <h2 id="clock-skew">4–6: Clock skew and election timeout tuning</h2>
+      <p>
+        Raft's liveness argument relies on the election timeout being large relative to the broadcast time
+        (<code>broadcastTime ≪ electionTimeout ≪ MTBF</code>, in the paper's notation), and on timeouts being
+        randomized so that a single split vote doesn't repeat indefinitely. The randomization is usually implemented
+        as a uniform draw from a range, commonly something like 150–300ms. Three tuning mistakes show up repeatedly.
+      </p>
+
+      <h3>4. Timeout ranges too tight for cross-AZ deployments</h3>
+      <p>
+        The 150–300ms range in the paper assumes same-datacenter round trips well under 1ms. Once a cluster spans
+        availability zones with 2–5ms typical latency and occasional 40ms+ tail spikes during AZ-level network
+        events, a 150–300ms window gives almost no margin, and you get spurious elections precisely when the cluster
+        is already under network stress — the worst possible time for a leadership change. We moved to 1000–2000ms
+        for a cross-AZ deployment and lost nothing in practical failover latency, because failover time in a
+        healthy system is dominated by detection, not by the size of the random jitter range.
+      </p>
+
+      <h3>5. NTP step corrections triggering false timeouts</h3>
+      <p>
+        Election timers in most Raft implementations are wall-clock or monotonic-clock based, but a surprising
+        number of internal tools still read <code>time.time()</code> equivalents for timer bookkeeping. An NTP
+        step correction (as opposed to a gradual slew) can jump the clock backward or forward by hundreds of
+        milliseconds in one shot. If your timer arithmetic isn't using a monotonic clock source, a single step
+        correction can make an election timer appear to fire early or very late. This is an easy audit: grep your
+        Raft library's timer code for the clock source it actually calls.
+      </p>
+
+      <h3>6. Randomization seeded identically across replicas</h3>
+      <p>
+        This one is almost funny in retrospect. A containerized deployment where every replica's process started
+        from the same base image with the same PRNG seeding behavior (a fixed seed baked in for reproducible test
+        builds, never removed for the production image) meant every follower's "randomized" election timeout was
+        the same duration. Split votes didn't resolve on the next round; they resolved on whichever replica's
+        network path happened to be a few microseconds faster, which was stable enough to repeat the split vote
+        three elections in a row before jitter from OS scheduling finally broke the tie.
+      </p>
+
+      <h2 id="disk">7–9: Disk latency and the fsync you skipped</h2>
+      <p>
+        Raft requires that a node persist its vote and any log entries it accepts before responding, specifically
+        so that a crash-and-restart cannot cause it to vote twice in the same term or forget entries it already
+        acknowledged. This is the part of the algorithm most likely to be quietly weakened for performance reasons,
+        and the failure modes it introduces are subtle because they only manifest on crash, not on the happy path.
+      </p>
+
+      <h3>7. Buffered writes without fsync</h3>
+      <p>
+        Skipping the fsync (or its platform equivalent) on the vote/term file is a real throughput win under normal
+        operation and a correctness violation the moment a node loses power or is killed with SIGKILL mid-write.
+        A node that forgets it already voted in term N can vote again in term N for a different candidate if it
+        restarts before the OS has flushed the page cache to disk, which reopens exactly the double-vote scenario
+        the persistence requirement exists to prevent. We found this during a chaos-engineering exercise that did
+        hard power-cycles rather than clean shutdowns; clean-shutdown testing alone will never catch it, because a
+        clean shutdown gives the OS a chance to flush buffers anyway.
+      </p>
+
+      <h3>8. fsync latency spikes on shared storage</h3>
+      <p>
+        On network-attached block storage (common in cloud deployments), fsync latency is not constant — it is
+        subject to the same noisy-neighbor effects as the rest of the storage fabric. A p50 fsync time of 2ms with
+        a p99.9 of 400ms is enough to make a node occasionally miss its own heartbeat deadline purely because it's
+        blocked on committing its log, not because of anything happening on the network. The fix that worked for us
+        was moving the Raft log to locally-attached NVMe and keeping only the state-machine snapshots on network
+        storage, which decouples the latency-sensitive persistence path from the bulk-storage path.
+      </p>
+
+      <h3>9. Log compaction pausing the write path</h3>
+      <p>
+        A naive log-compaction (snapshotting) implementation that holds a lock across the entire snapshot write can
+        stall AppendEntries processing for the duration of the snapshot. On a large state machine this can be
+        seconds, which is well past most election timeout ranges. The node doesn't lose its leadership because it's
+        unhealthy in any real sense — it loses it because it's busy doing housekeeping. Incremental or
+        copy-on-write snapshotting avoids this; if your storage engine doesn't support it natively, at minimum
+        fork the snapshot onto a background thread that doesn't hold the log-append lock.
+      </p>
+
+      <h2 id="membership">10–11: Membership changes mid-election</h2>
+      <h3>10. Joint consensus and the window it opens</h3>
+      <p>
+        Adding or removing a node from the cluster while an election is in flight is exactly the scenario joint
+        consensus (or single-server membership changes, the simpler alternative many implementations choose
+        instead) is designed to make safe. The bug we hit wasn't in the algorithm; it was in an operational script
+        that added a node to the cluster's configuration and started its process in two separate, non-atomic steps,
+        with the process start lagging the configuration change by however long our deployment tool took to
+        propagate a container image. For about ninety seconds, the "cluster" as the other members understood it
+        included a voter that did not yet exist, which changed the majority size calculation and, in one case,
+        made a legitimate leader briefly unable to reach quorum for a configuration it had itself just committed.
+      </p>
+
+      <h3>11. Learners promoted before they've caught up</h3>
+      <p>
+        Promoting a new replica straight to voting status before it has replayed the log far enough to be useful is
+        safe with respect to correctness — Raft doesn't require a voter to be caught up — but it is operationally
+        dangerous, because that voter can now cast a vote or even win an election while its state machine is
+        materially behind, causing a stall while everyone waits for it to catch up post-election. The fix is
+        procedural rather than algorithmic: keep new replicas as non-voting learners until their log lag is under
+        an explicit threshold, and only then reconfigure them as voters.
+      </p>
+
+      <h2 id="incident-log">Incident log: three outages, minute by minute</h2>
+      <p>These are lightly redacted from internal postmortems. Timestamps are relative to first symptom.</p>
+
+      <h3>Outage A — the flapping transceiver (case 1 above)</h3>
+      <table>
+        <thead><tr><th>T+</th><th>Event</th></tr></thead>
+        <tbody>
+          <tr><td>0:00</td><td>Follower node-4 begins one-way packet loss on its outbound NIC path.</td></tr>
+          <tr><td>0:04</td><td>node-4's election timer fires; it cannot reach peers with RequestVote, times out again.</td></tr>
+          <tr><td>0:05–5:58</td><td>Cycle repeats roughly every 45–90s; node-4's term climbs from 1,204 to roughly 1,340.</td></tr>
+          <tr><td>3:12</td><td>Leader briefly steps down after receiving a higher-term rejection triggered by node-4's climbing term, forcing a real election.</td></tr>
+          <tr><td>3:14</td><td>New leader elected (node-2). Client-visible write latency spikes to 1.8s p99 for ~6s.</td></tr>
+          <tr><td>5:58</td><td>Network team replaces a failing SFP transceiver on node-4's top-of-rack switch port.</td></tr>
+          <tr><td>5:59</td><td>Cluster term stabilizes; no further elections.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Outage B — the identical PRNG seed (case 6 above)</h3>
+      <table>
+        <thead><tr><th>T+</th><th>Event</th></tr></thead>
+        <tbody>
+          <tr><td>0:00</td><td>Leader (node-1) is drained for a routine kernel patch; it steps down cleanly.</td></tr>
+          <tr><td>0:00.15</td><td>node-2 and node-3 both time out within 400 microseconds of each other and start elections in the same term.</td></tr>
+          <tr><td>0:00.16</td><td>Split vote; neither reaches quorum.</td></tr>
+          <tr><td>0:00.31 / 0:00.47 / 0:00.63</td><td>Same split repeats twice more — both nodes drew the same "randomized" timeout.</td></tr>
+          <tr><td>0:00.9</td><td>OS scheduling jitter finally desynchronizes the two timers enough to break the tie; node-3 wins.</td></tr>
+          <tr><td>—</td><td>Total unavailability: ~750ms. Root cause not found until a later audit of the base container image.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Outage C — the non-atomic membership change (case 10 above)</h3>
+      <table>
+        <thead><tr><th>T+</th><th>Event</th></tr></thead>
+        <tbody>
+          <tr><td>0:00</td><td>Deploy tool commits a 5-node configuration (adding node-5) to the Raft log.</td></tr>
+          <tr><td>0:00–1:30</td><td>Container image for node-5 is still pulling; the process has not started.</td></tr>
+          <tr><td>0:41</td><td>Leader (node-1) needs to commit an unrelated write; quorum is now computed against 5 members, requiring 3 acks.</td></tr>
+          <tr><td>0:41–1:29</td><td>Only 3 of the 4 *running* nodes can ack (node-5 isn't up yet), which is sufficient — but a second, coincident single-node restart during this window drops available acks to 2, stalling commits.</td></tr>
+          <tr><td>1:30</td><td>node-5's process starts, catches up, begins acking.</td></tr>
+          <tr><td>1:31</td><td>Commits resume. Total degraded window: ~50s of elevated write latency, no full outage.</td></tr>
+        </tbody>
+      </table>
+
+      <h2 id="checklist">A pre-production checklist</h2>
+      <p>If you're taking a Raft-based system to production, these are the specific things worth verifying before
+      you do, roughly in the order I'd check them:</p>
+      <ul>
+        <li>Confirm your library's election timer uses a monotonic clock, not wall-clock time.</li>
+        <li>Confirm the vote/term persistence path calls fsync (or the platform equivalent) before responding, and verify this with a hard power-cycle test, not a clean shutdown test.</li>
+        <li>Check whether your "randomized" timeout is actually randomized per-process — look for baked-in PRNG seeds in base images used for reproducible builds.</li>
+        <li>Widen election timeout ranges to reflect your actual cross-AZ or cross-region latency distribution, including tail latency, not just the median.</li>
+        <li>Make membership changes (config commit + process start) atomic from an operational standpoint, or accept the window and size your quorum math accordingly.</li>
+        <li>Keep new replicas as non-voting learners until log lag is under an explicit, monitored threshold.</li>
+        <li>Alert on term-increment rate on an otherwise-stable leader; it is one of the earliest signals of asymmetric connectivity.</li>
+        <li>Move log compaction/snapshotting off the critical append path, or make sure it doesn't hold a lock that blocks AppendEntries.</li>
+      </ul>
+
+      <blockquote>
+        None of the eleven failure modes above are bugs in Raft. Every one of them is a gap between an algorithm's
+        formal model and the physical machines that have to implement it. The paper is correct; the disks, clocks,
+        and network cards are what actually misbehave.
+      </blockquote>
+
+      <img class="divider" src="../images/divider-2.png" alt="">
+
+      <div class="author-box">
+        <img src="../images/avatar.png" alt="Priya Raghunathan" width="56" height="56" style="border-radius:50%;">
+        <div>
+          <strong>Priya Raghunathan</strong> writes about distributed systems and storage engines at Marginal Notes.
+          She previously worked on replication for a managed database service. More at the
+          <a href="../about.html">about page</a>.
+        </div>
+      </div>
+    </article>
+
+    <p style="margin-top:2rem;"><a href="../index.html">&larr; Back to all posts</a> &nbsp;·&nbsp; <a href="cap-theorem-myths.html">Next: Three Things People Get Wrong About CAP &rarr;</a></p>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>&copy; 2026 Priya Raghunathan. Text is free to quote and link to with attribution.</p>
+    </div>
+  </footer>
+</body>
+</html>

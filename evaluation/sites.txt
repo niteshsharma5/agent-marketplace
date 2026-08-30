@@ -1,0 +1,33 @@
+# Field-validation site set (~20, diverse by construction). NEVER used for grading —
+# only to confirm the audit runs, stays under budget, and avoids absurd false
+# positives on real-world HTML. Capture each OUTSIDE the sandbox:
+#   while read -r name url; do [ "${name#\#}" = "$name" ] && python3 tests/capture.py "$url" "tests/snapshots/$name.json"; done < tests/sites.txt
+# Columns: <snapshot-name> <url>   (edit freely — diversity matters more than the exact list)
+
+# --- Clean giants: false-positive controls (should surface FEW findings) ---
+wikipedia            https://en.wikipedia.org/wiki/Web_crawler
+stripe               https://stripe.com
+github               https://github.com
+flipkart             https://www.flipkart.com
+irctc                https://www.irctc.co.in
+
+# --- India realism ---
+zomato               https://www.zomato.com
+indianexpress        https://indianexpress.com
+india_gov            https://www.india.gov.in
+ndtv                 https://www.ndtv.com
+
+# --- SPA / client-rendered (render-gap candidates) ---
+notion               https://www.notion.so
+vercel               https://vercel.com
+
+# --- Where real findings live: SMB / varied stacks ---
+shopify_store        https://www.allbirds.com
+wordpress_blog       https://wordpress.org/news/
+wix_site             https://www.wix.com
+squarespace_site     https://www.squarespace.com
+docs_site            https://docs.python.org/3/
+university_edu       https://www.mit.edu
+small_business       https://www.example-local-business.com
+personal_blog        https://overreacted.io
+nonprofit            https://www.redcross.org

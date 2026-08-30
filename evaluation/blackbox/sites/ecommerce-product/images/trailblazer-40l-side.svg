@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
+  <rect width="600" height="600" fill="#ece6d6"/>
+  <path d="M220 130 Q380 130 400 250 L390 470 Q300 500 210 470 L200 250 Z" fill="#2f6b4f"/>
+  <path d="M400 260 Q440 300 420 360 L400 420" fill="none" stroke="#1f4d3a" stroke-width="14"/>
+  <text x="300" y="560" font-family="Arial" font-size="22" fill="#6b6b63" text-anchor="middle">Trailblazer 40L — Side View</text>
+</svg>

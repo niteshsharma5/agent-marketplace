@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" width="480" height="360" role="img" aria-labelledby="heroTitle heroDesc">
+  <title id="heroTitle">Loomstack task board illustration</title>
+  <desc id="heroDesc">A simplified task board with three columns labelled To Do, In Progress, and Done, each holding a few colored task cards, representing how a Loomstack project looks at a glance.</desc>
+  <rect width="480" height="360" rx="16" fill="#f4f6fb"/>
+  <g>
+    <rect x="24" y="32" width="130" height="296" rx="10" fill="#ffffff" stroke="#dde2ee" stroke-width="2"/>
+    <text x="40" y="60" font-family="Arial, sans-serif" font-size="16" fill="#16213a" font-weight="bold">To Do</text>
+    <rect x="40" y="76" width="98" height="36" rx="6" fill="#e6f4f1"/>
+    <rect x="40" y="120" width="98" height="36" rx="6" fill="#e6f4f1"/>
+    <rect x="40" y="164" width="98" height="36" rx="6" fill="#e6f4f1"/>
+  </g>
+  <g>
+    <rect x="175" y="32" width="130" height="296" rx="10" fill="#ffffff" stroke="#dde2ee" stroke-width="2"/>
+    <text x="191" y="60" font-family="Arial, sans-serif" font-size="16" fill="#16213a" font-weight="bold">In Progress</text>
+    <rect x="191" y="76" width="98" height="36" rx="6" fill="#fdf1da"/>
+    <rect x="191" y="120" width="98" height="36" rx="6" fill="#fdf1da"/>
+  </g>
+  <g>
+    <rect x="326" y="32" width="130" height="296" rx="10" fill="#ffffff" stroke="#dde2ee" stroke-width="2"/>
+    <text x="342" y="60" font-family="Arial, sans-serif" font-size="16" fill="#16213a" font-weight="bold">Done</text>
+    <rect x="342" y="76" width="98" height="36" rx="6" fill="#e3ede0"/>
+    <rect x="342" y="120" width="98" height="36" rx="6" fill="#e3ede0"/>
+    <rect x="342" y="164" width="98" height="36" rx="6" fill="#e3ede0"/>
+    <rect x="342" y="208" width="98" height="36" rx="6" fill="#e3ede0"/>
+  </g>
+</svg>

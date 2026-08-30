@@ -1,0 +1,59 @@
+{
+  "name": "personal-blog-trap",
+  "archetype": "Personal long-form technical blog (distributed-systems engineering blog), static HTML/CSS, 4 pages",
+  "overall": "mixed",
+  "start_path": "/index.html",
+  "files_written": [
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/personal-blog-trap/index.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/personal-blog-trap/about.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/personal-blog-trap/posts/raft-in-production.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/personal-blog-trap/posts/cap-theorem-myths.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/personal-blog-trap/robots.txt",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/personal-blog-trap/sitemap.xml",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/personal-blog-trap/css/style.css",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/personal-blog-trap/images/hero-banner.png",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/personal-blog-trap/images/divider-1.png",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/personal-blog-trap/images/divider-2.png",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/personal-blog-trap/images/avatar.png"
+  ],
+  "real_problems": [
+    {
+      "half": "discoverability",
+      "problem": "No machine-readable structured data anywhere on the site (no JSON-LD Article/BlogPosting/Person/BreadcrumbList schema). All entity facts \u2014 author name, publish date, headline, word count/reading time \u2014 exist only as plain visible text, never as explicit markup.",
+      "where": "All four HTML pages (index.html, about.html, posts/raft-in-production.html, posts/cap-theorem-myths.html) \u2014 none contain a <script type=\"application/ld+json\"> block.",
+      "severity": "low",
+      "why_it_hurts": "Systems that prefer structured, unambiguous fields (exact author identity, canonical publish date, article type) over free-text inference have to fall back to parsing prose and meta tags. The facts are all still present and correctly stated in visible text and standard <meta> tags (og:*, description, canonical), so this is a nice-to-have gap, not a blocker to reading or citing the content \u2014 hence low severity."
+    }
+  ],
+  "legitimate_and_traps": [
+    {
+      "aspect": "The Raft leader-election post is ~2,600 words of dense, jargon-heavy, expert-level technical writing (11 numbered failure modes, timer/consensus internals, three postmortem timelines with incident tables, a checklist).",
+      "why_it_is_fine": "This is genuinely excellent, well-organized long-form content for its target audience (engineers who already know Raft basics) \u2014 it has a table of contents with anchor links, clear H2/H3 structure, a jargon-appropriate explanation with real specifics (metric names, config ranges, root causes), and is not padded or keyword-stuffed. Length and density here should read as depth and expertise, not as a defect; flagging it purely for being long/complex would be a false positive against a legitimately good technical article."
+    },
+    {
+      "aspect": "Three decorative images (hero-banner.png on the homepage, and two divider.png rules) are marked alt=\"\".",
+      "why_it_is_fine": "These images carry zero informational content \u2014 they are a plain color banner and thin horizontal rule graphics used purely for visual rhythm. Empty alt on purely decorative images is the correct WCAG/HTML practice (it tells assistive tech and crawlers to skip them rather than reading a meaningless filename-derived description). No fact anywhere on the site exists only inside an image: the two content-bearing images (avatar photos) both carry a real, descriptive alt (\"Priya Raghunathan\"), and every substantive fact in the posts (metrics, timelines, code, config values) is plain selectable text, never an image or screenshot."
+    },
+    {
+      "aspect": "robots.txt disallows GPTBot, CCBot, Google-Extended, Bytespider, ClaudeBot, Meta-ExternalAgent, Applebot-Extended, and Diffbot, while explicitly allowing Googlebot, Bingbot, Applebot, OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User, Claude-User, and Claude-SearchBot, plus a default Allow: / and a Sitemap: reference.",
+      "why_it_is_fine": "This is a deliberate, well-informed opt-out of bulk LLM-training harvesting (the crawlers blocked are all known training/dataset-building agents) that is careful to keep search indexing and real-time AI-assistant browsing/citation fully open (the crawlers allowed are the on-demand/user-triggered or search-indexing agents for the major engines). The site is fully discoverable and citable by search engines and AI assistants answering live questions; it simply declines to have its text harvested into training corpora. This should read as a correct, sophisticated policy choice, not as an AI-blocking problem \u2014 a naive check for 'AI-related disallow entries in robots.txt' would misfire here."
+    },
+    {
+      "aspect": "The About page bio is short (a few paragraphs) and the site has only two blog posts.",
+      "why_it_is_fine": "This is a normal, honest personal blog, not a corporate site \u2014 a compact bio and a small, high-quality post count are typical and not a thinness problem given the actual per-post depth. Nothing here is thin filler; the two posts that exist are substantial."
+    },
+    {
+      "aspect": "Code examples, metrics, config values (e.g. election timeout ranges, a PromQL-style alert expression, fsync latency percentiles) are all in real <pre><code> / <code> text blocks, never as screenshots.",
+      "why_it_is_fine": "Ensures the technical substance of the post \u2014 which is where most of its unique value lives \u2014 is fully text-extractable and quotable rather than locked inside an image, so nothing load-bearing is hidden from crawlers or copy/paste."
+    },
+    {
+      "aspect": "index.html mentions 'Older posts are being migrated from a previous static site generator... If a link is broken, the archive is not gone', without actually linking to any broken/missing page.",
+      "why_it_is_fine": "This is flavor text establishing site history/realism; it does not create a dead link or a 404 anywhere in the site's actual navigation or sitemap. No <a href> on the site points to a nonexistent page."
+    },
+    {
+      "aspect": "Every page has a real, distinct <title>, meta description, canonical link, meta author, explicit meta robots (index, follow), and Open Graph tags; the homepage and both posts cross-link to each other and to the About page; sitemap.xml lists exactly the four real pages with plausible lastmod dates.",
+      "why_it_is_fine": "Baseline technical SEO/discoverability hygiene is intentionally clean across the whole site so that the only things worth flagging are the two intended traps and the one intentionally minor structured-data gap \u2014 this keeps the false-positive surface honest and isolates the traps."
+    }
+  ],
+  "notes": "Design intent: this site is meant to look like a genuinely good, small technical blog that a naive or checklist-driven auditor might wrongly penalize for three surface signals \u2014 a long/dense/jargon-heavy article, empty-alt decorative images, and an AI-crawler entry in robots.txt \u2014 each of which is, on inspection, the correct choice rather than a defect. I deliberately kept real, built-in problems to a single low-severity item (absence of JSON-LD structured data) so that any additional findings beyond that one item, or any flagging of the three trap aspects, should be treated as a false positive. All content facts are duplicated in visible, crawlable text (nothing is image-only); all internal links (nav, cross-post links, sitemap.xml entries, robots.txt Sitemap: reference) resolve to real files within the site; robots.txt was hand-checked against the actual page set. No general-purpose source code files (.py/.js/.ts/.java/etc.) were created in this task \u2014 only HTML, CSS, XML, TXT and tiny placeholder PNGs \u2014 so per policy no Semgrep static-analysis scan was applicable/run."
+}

@@ -1,0 +1,164 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: Georgia, "Times New Roman", serif;
+  color: #2b2b2b;
+  background: #fdfdfb;
+  line-height: 1.5;
+}
+
+header {
+  background: #1e6e82;
+  color: #ffffff;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header img.logo {
+  height: 40px;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 22px;
+}
+
+nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+.hero {
+  position: relative;
+  text-align: center;
+  color: #ffffff;
+}
+
+.hero img {
+  width: 100%;
+  max-height: 380px;
+  object-fit: cover;
+  display: block;
+}
+
+.hero .hero-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(20, 60, 70, 0.55);
+  padding: 18px 30px;
+}
+
+.hero h1 {
+  font-size: 30px;
+  margin-bottom: 8px;
+}
+
+.cta-button {
+  display: inline-block;
+  margin-top: 12px;
+  background: #e08a2c;
+  color: #fff;
+  padding: 10px 22px;
+  font-family: Arial, Helvetica, sans-serif;
+  text-decoration: none;
+  border-radius: 3px;
+}
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+section {
+  margin-bottom: 34px;
+}
+
+h2 {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1e6e82;
+  margin-bottom: 10px;
+}
+
+.services-grid {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.service-card {
+  flex: 1 1 250px;
+  border: 1px solid #ddd;
+  padding: 14px;
+}
+
+.service-card img {
+  width: 100%;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.testimonial {
+  border-left: 3px solid #e08a2c;
+  padding-left: 14px;
+  margin-bottom: 16px;
+  font-style: italic;
+}
+
+footer {
+  background: #133c47;
+  color: #dce8ea;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  padding: 26px 20px;
+  margin-top: 40px;
+}
+
+footer a {
+  color: #ffd9a0;
+}
+
+.faq dt {
+  font-weight: bold;
+  margin-top: 12px;
+}
+
+.faq dd {
+  margin-left: 0;
+  margin-top: 4px;
+}
+
+.contact-form label {
+  display: block;
+  margin-top: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 8px;
+  font-family: inherit;
+  border: 1px solid #ccc;
+}
+
+.contact-form button {
+  margin-top: 14px;
+  background: #1e6e82;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  font-family: Arial, Helvetica, sans-serif;
+}

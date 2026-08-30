@@ -1,0 +1,267 @@
+/* Grandma's Kitchen theme - style.css */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Georgia, 'Times New Roman', serif;
+  color: #3b2416;
+  background: #fffaf2;
+  line-height: 1.7;
+}
+
+a { color: #a5501e; }
+
+.site-header {
+  background: #fffaf2;
+  border-bottom: 3px solid #e0b989;
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.site-title a {
+  font-size: 28px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #5a3418;
+}
+
+.site-description {
+  font-size: 13px;
+  color: #8a6a4a;
+  margin-top: 2px;
+}
+
+.main-navigation ul {
+  list-style: none;
+  display: flex;
+  gap: 22px;
+  margin: 0;
+  padding: 0;
+}
+
+.main-navigation a {
+  text-decoration: none;
+  color: #5a3418;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ad-banner-slot {
+  text-align: center;
+  padding: 14px 0;
+  background: #f2e2c8;
+}
+
+.ad-label {
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #999;
+  margin-bottom: 4px;
+}
+
+.content-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 40px;
+}
+
+.hero-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+.post-card {
+  margin-bottom: 40px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid #e8d9bd;
+}
+
+.post-card h2 {
+  font-size: 26px;
+  margin: 10px 0 6px;
+}
+
+.post-meta {
+  font-size: 13px;
+  color: #8a6a4a;
+  margin-bottom: 10px;
+}
+
+.read-more {
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.sidebar .widget {
+  margin-bottom: 30px;
+}
+
+.widget h3 {
+  font-size: 16px;
+  text-transform: uppercase;
+  border-bottom: 2px solid #e0b989;
+  padding-bottom: 8px;
+}
+
+.subscribe-widget {
+  background: #f2e2c8;
+  padding: 16px;
+  border-radius: 6px;
+}
+
+.subscribe-widget input[type="email"] {
+  width: 100%;
+  padding: 8px;
+  margin: 8px 0;
+  border: 1px solid #c9a876;
+  border-radius: 4px;
+}
+
+.subscribe-widget button,
+.recipe-card .print-btn,
+.newsletter-inline button {
+  background: #a5501e;
+  color: #fff;
+  border: none;
+  padding: 9px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+}
+
+.entry-content {
+  font-size: 18px;
+}
+
+.entry-content p {
+  margin-bottom: 18px;
+}
+
+.in-content-ad {
+  margin: 26px 0;
+  text-align: center;
+  background: #f2e2c8;
+  padding: 10px 0;
+}
+
+.recipe-card {
+  background: #fff5e4;
+  border: 2px solid #e0b989;
+  border-radius: 8px;
+  padding: 26px;
+  margin-top: 20px;
+}
+
+.recipe-card h2 {
+  margin-top: 0;
+}
+
+.recipe-meta {
+  display: flex;
+  gap: 24px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  color: #6a4c30;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.recipe-card ol li,
+.recipe-card ul li {
+  margin-bottom: 10px;
+}
+
+.comments-section {
+  margin-top: 40px;
+  border-top: 2px solid #e0b989;
+  padding-top: 20px;
+}
+
+.comment {
+  padding: 12px 0;
+  border-bottom: 1px solid #f0e2c8;
+}
+
+.comment-author {
+  font-weight: bold;
+}
+
+.site-footer {
+  background: #3b2416;
+  color: #f2e2c8;
+  padding: 30px 20px;
+  margin-top: 40px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  font-size: 13px;
+}
+
+.site-footer a {
+  color: #f2e2c8;
+}
+
+/* Email capture modal */
+.email-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 12, 5, 0.72);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+}
+
+.email-modal-overlay.is-visible {
+  display: flex;
+}
+
+.email-modal {
+  background: #fffaf2;
+  max-width: 420px;
+  width: 90%;
+  padding: 34px 30px;
+  border-radius: 8px;
+  position: relative;
+  text-align: center;
+}
+
+.email-modal-close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #5a3418;
+  font-family: Arial, sans-serif;
+}
+
+.email-modal input[type="email"] {
+  width: 100%;
+  padding: 10px;
+  margin: 12px 0;
+  border: 1px solid #c9a876;
+  border-radius: 4px;
+}
+
+.email-modal button.subscribe-submit {
+  background: #a5501e;
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: Arial, sans-serif;
+  width: 100%;
+}

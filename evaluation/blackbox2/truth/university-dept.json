@@ -1,0 +1,140 @@
+{
+  "name": "university-dept",
+  "archetype": "Legacy academic department website \u2014 table-based HTML4 layout, server-rendered, no framework, circa-2011 visual style still in production",
+  "overall": "mixed",
+  "start_path": "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/university-dept/index.html",
+  "files_written": [
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/university-dept/index.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/university-dept/faculty.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/university-dept/courses.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/university-dept/contact.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/university-dept/robots.txt",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/university-dept/sitemap.xml",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/university-dept/images/banner.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/university-dept/images/faculty1.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/university-dept/images/faculty2.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/university-dept/images/faculty3.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/university-dept/images/letterhead.svg"
+  ],
+  "real_problems": [
+    {
+      "half": "discoverability",
+      "problem": "robots.txt contains 'Disallow: /courses.html', blocking the one page that is also linked in the nav and listed in sitemap.xml",
+      "where": "robots.txt (Disallow rule) vs sitemap.xml and nav links on all 4 pages",
+      "severity": "high",
+      "why_it_hurts": "Compliant crawlers and AI-assistant fetchers read robots.txt before fetching a URL. Even though the page is reachable by a human clicking the nav link, and even though it's declared in the sitemap, a rule-respecting fetcher will skip /courses.html entirely, so the full course catalog content is never ingested or citable even though everything about the page otherwise looks intentional and indexable."
+    },
+    {
+      "half": "discoverability",
+      "problem": "All four pages share the exact same <title>Department of Computer Science</title> and none of the pages has a meta description",
+      "where": "<head> of index.html, faculty.html, courses.html, contact.html",
+      "severity": "medium",
+      "why_it_hurts": "Titles/snippets are a primary signal search engines and AI systems use to distinguish and preview distinct pages of a site. Identical titles across faculty/courses/contact/home make it hard to tell the pages apart in a result list or citation, and the missing descriptions mean any preview text has to be scraped ad hoc from the dense body copy."
+    },
+    {
+      "half": "discoverability",
+      "problem": "Faculty bios exist only as paragraphs inside one shared table on faculty.html, with no per-person id/anchor or separate URL",
+      "where": "faculty.html, the three faculty rows (Halvorsen, Okafor, Nadarajah)",
+      "severity": "medium",
+      "why_it_hurts": "There is no way to link to or precisely cite a specific faculty member's bio; any citation of 'Dr. Okafor's AI research' can only point at the whole faculty.html page, which mixes in two unrelated bios, reducing citation precision for anyone (or anything) trying to attribute a specific claim to a specific person."
+    },
+    {
+      "half": "discoverability",
+      "problem": "The department's physical address, phone, fax and office hours are baked into a picture (letterhead.svg) with no alt text, rather than being present as page text",
+      "where": "contact.html, <img src=\"images/letterhead.svg\" width=\"500\" height=\"140\"> (no alt attribute)",
+      "severity": "medium",
+      "why_it_hurts": "Text rendered inside an image is invisible to text-based crawlers and to AI systems that don't perform OCR on every image; the only machine-readable contact detail on the page ends up being the phone number repeated in the footer, so structured facts like the building/room and office hours are effectively absent from the extractable text of the site."
+    },
+    {
+      "half": "engagement",
+      "problem": "No <meta name=\"viewport\"> tag on any page, combined with a fixed-width (780px) table layout",
+      "where": "<head> of all four pages; outer <table width=\"780\" ...> wrapping every page's content",
+      "severity": "high",
+      "why_it_hurts": "Without a viewport meta tag, mobile browsers render the page at desktop width and scale it down, forcing pinch-zoom and horizontal scrolling to read anything; the fixed 780px table does not reflow to narrow screens at all, so the layout is effectively unusable on a phone."
+    },
+    {
+      "half": "engagement",
+      "problem": "Nested/attribute-based table layout (bgcolor, valign, width attributes) used for visual structure instead of CSS, and it does not reflow on narrow viewports",
+      "where": "outer 2-column layout table and the faculty-photo table in faculty.html",
+      "severity": "high",
+      "why_it_hurts": "HTML tables lay out their columns side-by-side regardless of available width; on a small screen the sidebar and content columns stay forced next to each other (or shrink illegibly) instead of stacking, so text and images become cramped or truncated rather than adapting."
+    },
+    {
+      "half": "engagement",
+      "problem": "Long, unbroken multi-sentence paragraphs (100+ words each) used for the department overview, news, degree programs, and every faculty bio, with no bullet lists or sub-headings inside them",
+      "where": "index.html welcome/news/degree-programs paragraphs; each faculty bio in faculty.html",
+      "severity": "medium",
+      "why_it_hurts": "Dense uninterrupted prose is hard to visually scan; a visitor looking for one fact (e.g., which degrees are offered, or a professor's specialty) has to read the entire paragraph rather than skim a list, which increases the chance they bounce before finding what they came for."
+    },
+    {
+      "half": "engagement",
+      "problem": "Body copy is set with legacy <font face=\"Times New Roman\" size=\"2\"> tags instead of a fluid, user-scalable font size",
+      "where": "main content <font> wrapper on every page",
+      "severity": "medium",
+      "why_it_hurts": "Old-style numeric font sizes render small and do not scale the way modern relative/responsive typography does, which is harder to read at a glance, especially on phones or for users who rely on browser zoom/text-size settings."
+    },
+    {
+      "half": "engagement",
+      "problem": "Navy-blue body text against the light-blue (#CCDDEE) sidebar background in the left nav column",
+      "where": "left sidebar <td bgcolor=\"#CCDDEE\"><font color=\"#003366\">...</font></td> on every page",
+      "severity": "medium",
+      "why_it_hurts": "The color pairing falls short of typical text-contrast expectations against a light tinted background, making the navigation links harder to read for users with low vision and in bright ambient light on mobile devices."
+    },
+    {
+      "half": "engagement",
+      "problem": "All images (header banner, three faculty photos, contact letterhead) are missing alt attributes",
+      "where": "img tags in index.html, faculty.html, contact.html",
+      "severity": "medium",
+      "why_it_hurts": "Screen reader users get no description of what each image is when navigating the page, and if an image fails to load, sighted users relying on the fallback also see nothing meaningful, both of which degrade the experience for a subset of visitors trying to use the site."
+    },
+    {
+      "half": "engagement",
+      "problem": "Contact form fields have no <label> elements associated with the inputs; the only field identification is placeholder text",
+      "where": "contact.html form (Name, Email, Message inputs)",
+      "severity": "medium",
+      "why_it_hurts": "Placeholder text disappears the moment a user starts typing and is not reliably announced by all assistive technology the way a bound <label> is, so a user who tabs into a field mid-way through filling the form, or who uses a screen reader, can lose track of what each field expects."
+    },
+    {
+      "half": "engagement",
+      "problem": "Heading hierarchy skips levels: each page has an <h1> followed directly by <h4> subsections, with no <h2>/<h3> in between",
+      "where": "index.html (h1 then h4 'Latest Department News', h4 'Degree Programs'), faculty.html (h1 then h4 per faculty name)",
+      "severity": "low",
+      "why_it_hurts": "Skipped heading levels break the logical outline of the page for screen-reader users who navigate by heading level, and make the section hierarchy ambiguous, even though it renders fine visually."
+    }
+  ],
+  "legitimate_and_traps": [
+    {
+      "aspect": "All page content (welcome text, news, degree list, faculty bios, full course catalog table, contact details in the footer) is present as real server-rendered text in the initial HTML source, with no JavaScript rendering required",
+      "why_it_is_fine": "Despite the dated visual style, nothing about this site hides content behind client-side rendering; any crawler or fetcher that requests the HTML gets the full text immediately, so the outdated look should not be mistaken for a technical crawlability barrier."
+    },
+    {
+      "aspect": "robots.txt and sitemap.xml both exist, sitemap.xml is well-formed XML with the correct sitemaps.org namespace and valid lastmod dates, and robots.txt correctly references the sitemap",
+      "why_it_is_fine": "The mechanics of both files are correct; the single Disallow rule on /courses.html is a targeted, deliberate content-access bug, not a sign that the sitemap/robots setup itself is broken or malformed."
+    },
+    {
+      "aspect": "HTML4.01 Transitional doctype and deprecated presentational tags/attributes (<font>, <center>-style bgcolor/valign/align, table-based layout)",
+      "why_it_is_fine": "These render correctly and consistently in every modern browser; it is a legacy authoring style and a maintainability/aesthetics concern, not a functional defect, broken markup, or something that causes errors or blank pages."
+    },
+    {
+      "aspect": "Footer shows a static '\u00a9 2011 Department of Computer Science' on every page",
+      "why_it_is_fine": "This is only a stale, forgotten copyright string in the footer template; it does not correspond to any claim about when the course catalog, faculty roster, or news items were last reviewed, so it should not be read as evidence that the actual page content itself is out of date."
+    },
+    {
+      "aspect": "The phone number in the footer is plain text rather than a tel: link",
+      "why_it_is_fine": "This is a minor tap-to-call convenience gap on mobile, not a content-access or accessibility blocker \u2014 the number itself is fully present and readable as text."
+    },
+    {
+      "aspect": "No favicon.ico is served (will 404 if requested)",
+      "why_it_is_fine": "Purely a cosmetic browser-tab detail with no bearing on whether content can be found, read, or cited, and no bearing on whether a human visitor can use the page."
+    },
+    {
+      "aspect": "Internal navigation is implemented with plain relative <a href=\"...\"> links to four distinct .html files, with matching, consistent nav markup repeated on every page",
+      "why_it_is_fine": "Every page is a real, independently fetchable URL reachable through ordinary hyperlinks and listed in the sitemap (aside from the one deliberate robots.txt exception on courses.html) \u2014 there is no JS-only routing or SPA shell that would hide pages from a plain HTTP fetch."
+    },
+    {
+      "aspect": "The course catalog table on courses.html is long and text-dense, listing six full course descriptions",
+      "why_it_is_fine": "This reflects genuine, non-redundant catalog content appropriate to the page's purpose rather than filler or keyword stuffing, even though it visually reads as a big block of text."
+    }
+  ],
+  "notes": "Skipped MCP Semgrep static-analysis scan: only static HTML, SVG, XML, and plain-text files were created for this fixture (no .py/.js/.ts/.java/.c/.cpp/.go/.rb source files), and the site has no server-side or client-side executable logic (the contact form posts to '#' with no handler), so the scan does not apply. Fictional institution name (Northfield State University) and fictional people/emails/phone numbers used throughout to avoid referencing any real entity."
+}

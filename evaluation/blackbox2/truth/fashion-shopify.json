@@ -1,0 +1,81 @@
+{
+  "name": "fashion-shopify",
+  "archetype": "Shopify-style fashion e-commerce product detail page (control site) with a small supporting catalog (collection page, second product, about page)",
+  "overall": "clean",
+  "start_path": "index.html",
+  "files_written": [
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/fashion-shopify/index.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/fashion-shopify/product-scarf.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/fashion-shopify/collections.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/fashion-shopify/about.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/fashion-shopify/robots.txt",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/fashion-shopify/sitemap.xml",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/fashion-shopify/css/style.css",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/fashion-shopify/js/main.js",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/fashion-shopify/images/favicon.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/fashion-shopify/images/logo.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/fashion-shopify/images/coat-front.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/fashion-shopify/images/coat-back.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/fashion-shopify/images/coat-detail.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/fashion-shopify/images/scarf-main.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/fashion-shopify/images/about-hero.svg"
+  ],
+  "real_problems": [
+    {
+      "half": "engagement",
+      "severity": "low",
+      "where": "index.html and product-scarf.html header, .cart-link element",
+      "problem": "The \"Bag\" icon in the header links to href=\"#\" on every page; there is no cart or checkout page.",
+      "why_it_hurts": "A visitor who clicks the bag icon to review what they've added (a very common e-commerce action, especially right after using the Add to bag button) gets a no-op click with no feedback, which reads as a broken link and can erode trust/momentum right at the point of purchase intent."
+    },
+    {
+      "half": "discoverability",
+      "severity": "low",
+      "where": "index.html JSON-LD <script type=application/ld+json> Product block",
+      "problem": "The Product structured data models only the default variant (name, sku, color: Camel, single offer/price) even though the visible page also sells a Charcoal colorway and multiple sizes; there is no ProductGroup/variant-level schema.",
+      "why_it_hurts": "An AI assistant or shopping-feed parser that reads only the JSON-LD (rather than rendering and reading the on-page radio labels) will see a single SKU/color and can't confirm price or availability for the Charcoal variant from structured data alone, only from the surrounding HTML text."
+    },
+    {
+      "half": "discoverability",
+      "severity": "low",
+      "where": "site-wide (4 pages, 2 products)",
+      "problem": "The catalog and content depth is intentionally shallow: two products, no blog/editorial content, no press or sustainability-detail pages beyond a short paragraph.",
+      "why_it_hurts": "Fewer indexable, topically-varied pages means fewer opportunities for an AI assistant to encounter and cite the brand across different query types (e.g., \"best sustainable wool coats\", \"where is X brand made\"); this narrows discoverability surface area even though the pages that do exist are well-optimized."
+    }
+  ],
+  "legitimate_and_traps": [
+    {
+      "aspect": "Product photos are simple labeled SVG placeholders (colored shapes) rather than real photography.",
+      "why_it_is_fine": "This is an inherent constraint of building a static test fixture without real product photography; each image still has correct, descriptive alt text and correct dimensions/aspect ratio. It is not a discoverability or engagement defect of the site's actual design and should not be flagged as such."
+    },
+    {
+      "aspect": "Canonical URLs, og:url, JSON-LD item URLs, sitemap.xml locs, and robots.txt Sitemap line all point to an absolute placeholder domain (https://www.aurelieandco.example/), which will not match whatever host actually serves these static files.",
+      "why_it_is_fine": "Absolute URLs are required by the OG/canonical/sitemap specs, and there is no way to know in advance which host will serve a portable static fixture. The example.com-style domain is used 100% consistently across every page, meta tag, and JSON-LD block (no mismatched or partially-relative URLs), which is the correct way to author this content before a real domain is assigned; a real deployment would simply swap the domain."
+    },
+    {
+      "aspect": "Color and size variant pickers are plain radio inputs styled with CSS (:checked) rather than JavaScript-driven widgets, and the accordions (Details & care, Size guide, Shipping & returns, FAQ) use native <details>/<summary>.",
+      "why_it_is_fine": "This is deliberate progressive enhancement: every piece of product content, variant option, and FAQ/Q&A text is present and readable in the raw static HTML with JavaScript fully disabled. Nothing that matters to a crawler or an AI assistant is hidden behind client-side rendering."
+    },
+    {
+      "aspect": "js/main.js only intercepts the Add to bag form submit to show a confirmation toast and increment a visible cart counter; it does no fetch/AJAX calls, sets no cookies, and has no third-party script or analytics tag anywhere on the site.",
+      "why_it_is_fine": "This is a cosmetic, additive enhancement, not a load-bearing dependency for content visibility, and the total absence of external CDN fonts/scripts/analytics means the page renders identically and quickly under any network policy, a robustness/performance positive, not a stripped-down or broken feature set."
+    },
+    {
+      "aspect": "Each page carries multiple JSON-LD blocks (Product, BreadcrumbList, ItemList, Organization) and the Organization/breadcrumb schema is repeated across index.html, product-scarf.html, collections.html and about.html.",
+      "why_it_is_fine": "Every field in every JSON-LD block mirrors real, visible on-page text (same review authors/dates/quotes, same price, same rating counts, same product names) with nothing fabricated or hidden. Re-declaring Organization/breadcrumb schema per page is normal, spec-compliant practice for multi-page sites, not structured-data spam or keyword stuffing."
+    },
+    {
+      "aspect": "Size \"L\" on the coat is rendered as a disabled, struck-through option rather than being removed from the size list.",
+      "why_it_is_fine": "This accurately communicates real stock state to both users and any assistant reading the page (\"L is out of stock\" is more informative than silently omitting it), which is correct commerce UX, not a bug."
+    },
+    {
+      "aspect": "The Organization schema on about.html has no sameAs (social profile) links, and the footer/contact only offers a mailto: link.",
+      "why_it_is_fine": "This is a deliberate choice to avoid inventing unverifiable or dead social-media profile URLs for a fictional brand; omitting sameAs is honest and harmless, whereas fabricating social links would have been a worse, misleading trap to plant."
+    },
+    {
+      "aspect": "The contact email (support@aurelieandco.example) uses the same reserved example.com-style domain as the rest of the site and will not actually receive mail.",
+      "why_it_is_fine": "It is syntactically correct and consistent with every other URL on the site; this is the standard, expected way to represent a non-deployed placeholder brand, not a real broken contact channel a production version of the site would ship with."
+    }
+  ],
+  "notes": "Built as a 4-page mini storefront for a fictional brand \"Aurelie & Co.\" with index.html as the hero product page (Merino Wool Wrap Coat) doubling as the homepage, plus product-scarf.html (second product), collections.html (category/listing page linking both real products), and about.html (brand story). All pages share consistent title/meta description/canonical/OG/Twitter tags, valid Product/BreadcrumbList/ItemList/Organization JSON-LD that mirrors visible content exactly (prices, review text, ratings), semantic HTML with a skip link, ARIA breadcrumb, accessible native accordions and radio-based variant pickers that work without JavaScript, a self-contained CSS/JS/SVG asset set with zero external network dependencies, and a robots.txt + sitemap.xml covering all four pages. Verified: every internal href/src resolves to a real file or in-page anchor (no dead internal links except the intentionally-flagged header \"Bag\" placeholder), all four pages' JSON-LD blocks parse as valid JSON, and js/main.js passed an MCP Semgrep scan with no findings. Kept genuine defects to three low-severity items as directed for a control site: a non-functional header \"Bag\" link, single-variant (non-ProductGroup) structured data, and a deliberately shallow four-page/two-product content footprint."
+}

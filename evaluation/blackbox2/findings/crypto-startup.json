@@ -1,0 +1,120 @@
+{
+  "site": "http://127.0.0.1:38859",
+  "audited_at": "2026-01-01T00:00:00Z",
+  "summary": {
+    "total_findings": 4,
+    "critical": 0,
+    "high": 2,
+    "medium": 1,
+    "low": 1,
+    "discoverability": 3,
+    "engagement": 2
+  },
+  "scope": {
+    "pages_sampled": 1,
+    "pages_readable": 1,
+    "urls": [
+      "http://127.0.0.1:38859/"
+    ],
+    "render_available": false,
+    "robots_txt_found": true,
+    "offline_replay": false,
+    "skills_run": [
+      "crawler-access",
+      "machine-readability",
+      "fact-extractability",
+      "entity-trust",
+      "onsite-engagement"
+    ],
+    "skill_errors": []
+  },
+  "limitations": [
+    "Single-variant fetch: one geography, one device profile, no logged-in state, no cookie consent accepted. Personalization and geo/consent-gated content are not observed.",
+    "Lab proxy, not field data: latency and Core Web Vitals appear as risk factors measured once, not real-user metrics.",
+    "Network-dependent checks (sameAs resolvability, broken links) reflect what was reachable at audit time and are excluded from the byte-for-byte determinism guarantee."
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "title": "Type-warranting pages have no JSON-LD structured data",
+      "severity": "high",
+      "category": "jsonld-presence-validity",
+      "half": "discoverability",
+      "evidence": "1/1 pages that read as product/article pages carry no matching schema.org JSON-LD (e.g. http://127.0.0.1:38859/). Sampled 1 type-warranting page(s).",
+      "evidence_detail": {
+        "pages_missing": [
+          "http://127.0.0.1:38859/"
+        ],
+        "role_pages": 1
+      },
+      "mechanism": "Structured data lets machines read the exact fact (price, headline, author) instead of inferring it from prose; missing schema forfeits rich results.",
+      "suggested_action": {
+        "summary": "Add schema.org JSON-LD (Product or Article) matching each page's role so engines can extract the fact, not guess it.",
+        "priority": "high",
+        "mechanism": "Structured data lets machines read the exact fact (price, headline, author) instead of inferring it from prose; missing schema forfeits rich results.",
+        "effort": "medium",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-002",
+      "title": "No Organization entity anchor in JSON-LD",
+      "severity": "high",
+      "category": "org-entity-anchor-idgraph",
+      "half": "discoverability",
+      "evidence": "No Organization/LocalBusiness/Corporation JSON-LD node on any sampled page (0/1 pages). Engines have no machine-readable brand node to anchor to.",
+      "evidence_detail": {},
+      "mechanism": "AI engines resolve the brand string to a knowledge-graph node BEFORE evaluating page content; with no stable anchor, entity consolidation and knowledge-panel eligibility never begin.",
+      "suggested_action": {
+        "summary": "Add one Organization JSON-LD node with a stable @id, plus name, url and logo, on the homepage (and reference it site-wide).",
+        "priority": "high",
+        "mechanism": "AI engines resolve the brand string to a knowledge-graph node BEFORE evaluating page content; with no stable anchor, entity consolidation and knowledge-panel eligibility never begin.",
+        "effort": "medium",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-003",
+      "title": "Internal links point to missing pages",
+      "severity": "medium",
+      "category": "broken-internal-links",
+      "half": "engagement",
+      "evidence": "1/1 sampled internal links returned 404/410: http://127.0.0.1:38859/whitepaper.pdf (404). Network-dependent HEAD probe; gated/rate-limited links were treated as inconclusive.",
+      "evidence_detail": {
+        "broken": {
+          "http://127.0.0.1:38859/whitepaper.pdf": 404
+        },
+        "tested": 1
+      },
+      "mechanism": "Dead internal links strand visitors on error pages and waste crawl budget, eroding trust and engagement.",
+      "suggested_action": {
+        "summary": "Fix or redirect the broken internal links so visitors don't hit dead ends.",
+        "priority": "medium",
+        "mechanism": "Dead internal links strand visitors on error pages and waste crawl budget, eroding trust and engagement.",
+        "effort": "low",
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "F-004",
+      "title": "Non-sequential heading levels",
+      "severity": "low",
+      "category": "title-meta-heading-orientation",
+      "half": "both",
+      "evidence": "1/1 pages skip heading levels (e.g. http://127.0.0.1:38859/ jumps h2->h4).",
+      "evidence_detail": {
+        "pages": [
+          "http://127.0.0.1:38859/"
+        ]
+      },
+      "mechanism": "Level jumps break the document outline machines build to locate a fact within a section.",
+      "suggested_action": {
+        "summary": "Keep headings sequential (no skipping levels) so the outline parses cleanly.",
+        "priority": "low",
+        "mechanism": "Level jumps break the document outline machines build to locate a fact within a section.",
+        "effort": "low",
+        "confidence": "medium"
+      }
+    }
+  ]
+}

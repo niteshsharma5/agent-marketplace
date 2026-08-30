@@ -1,0 +1,1032 @@
+[
+  {
+    "site": "clean-marketing",
+    "verdicts": [
+      {
+        "id": "F-001",
+        "category": "mixed-content-https",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "Artifact of the audit harness serving the fixture over http://127.0.0.1, not a defect in the site. The site's own code declares HTTPS everywhere it matters: canonical, og:url, sitemap locs, and JSON-LD url/@id all use https://www.loomstack.com. Judged on the merits of the delivered files, there is no plain-HTTP configuration to fix; the TLS-cert advice targets the local test server, not the brand's site.",
+        "debated": true
+      },
+      {
+        "id": "F-002",
+        "category": "page-weight-render-blocking-transfer",
+        "verdict": "false_positive",
+        "fix_quality": "partial",
+        "reason": "Overclaims. The title cites '~3 blocking scripts' but heavy_html_pages, many_sync_scripts_pages and many_stylesheets_pages are all empty; the pages have ZERO scripts (only non-blocking JSON-LD), one stylesheet, and max_html_bytes=6745. The sole real factor is 'no gzip' which is a static-server config artifact \u2014 a 6.7KB page paints instantly. Enabling gzip is harmless generic advice, but 'defer/async non-critical scripts' applies to scripts that do not exist. First paint is not a real problem here.",
+        "debated": true
+      },
+      {
+        "id": "F-003",
+        "category": "http-status-redirect-canonical-integrity",
+        "verdict": "false_positive",
+        "fix_quality": "wrong",
+        "reason": "Textbook staging-host trap. The canonical points to the production domain (loomstack.com), which is correct, standard practice for a fixture/staging copy served on a different internal host. When the real site is served at loomstack.com the canonical is same-origin. The suggested fix ('point canonical at the on-domain 127.0.0.1 URL') would actively break the site by making it self-canonicalize to a throwaway host.",
+        "debated": true
+      },
+      {
+        "id": "F-004",
+        "category": "offsite-corroboration-surface",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Factually accurate and a genuine (minor) discoverability gap. The Organization JSON-LD has no sameAs and there are no social/off-site profile links anywhere. Off-site corroboration does help AI brand citation, so establishing real profiles and mirroring them in sameAs is legitimate advice. The tool correctly avoids telling the site to add fake links and marks confidence low. Note: whether off-site surfaces exist elsewhere is only partly verifiable from static files, but the absence of any sameAs/link is directly observable and real."
+      },
+      {
+        "id": "F-005",
+        "category": "discovery-infra-sitemap-orphan-llmstxt",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Accurate and honestly scoped. /llms.txt genuinely returns 404, and the tool explicitly frames it as informational, low-severity, a nice-to-have that does not block any crawler. A low-severity but correct observation counts as a true positive; the optional 'publish llms.txt' fix is reasonable and non-harmful."
+      }
+    ],
+    "missed": [
+      {
+        "problem": "The primary 'Start free trial' CTA on the pricing page (header button and all three plan cards) resolves to about.html#contact (a mailto contact page), not any signup/trial flow; on home/features the same CTA points to pricing, so a conversion-ready visitor is ultimately routed to a contact email rather than a trial.",
+        "half": "engagement",
+        "severity": "low",
+        "mechanism": "A CTA that promises self-serve 'Start free trial' but lands on a contact page is an expectation mismatch that adds friction at the moment of highest intent, depressing conversion. (Partly mitigated by the no-backend fixture constraint, but a deployed version would still need a real signup destination.)"
+      },
+      {
+        "problem": "The three named customer testimonials on the homepage and the rich entity/NAP data on about.html are not expressed as structured data (no Review/aggregateRating schema for the quotes; about.html carries no JSON-LD at all despite holding the address, phone, founding year and team size).",
+        "half": "discoverability",
+        "severity": "low",
+        "mechanism": "Named quotes and NAP facts left as plain prose are harder for engines to extract and attribute as machine-readable reviews/organization signals; marking them up would improve fact-extractability and entity trust for AI answers."
+      },
+      {
+        "problem": "twitter:card / twitter:* meta tags are present only on index.html; about.html, features.html and pricing.html have Open Graph tags but no Twitter card tags.",
+        "half": "discoverability",
+        "severity": "low",
+        "mechanism": "Inconsistent social-share metadata across pages; most platforms fall back to OG so rendering still works, making this a very minor polish gap rather than a real defect."
+      }
+    ],
+    "gt_disputes": [
+      {
+        "gt_problem": "real_problems: [] \u2014 author asserts the site has no genuine problems on either half.",
+        "judge_view": "Broadly agree; this is a clean control. Minor nuance: the author's 'no off-site identity surface' is only addressed obliquely via the 'no fake social links is fine' trap. Omitting dead href='#' links is indeed correct, but a total absence of any sameAs / off-site identity surface is still a real (low-severity) discoverability limitation, which is exactly what F-004 correctly surfaces. So F-004 is a legitimate finding, not a trap the tool fell into."
+      }
+    ],
+    "debated": 3,
+    "referee_notes": "All three contested findings are harness/environment artifacts rather than defects in the delivered site, which is a clean, well-configured fixture. F-001 and F-003 both stem from the fixture being served on a local http port while its markup uniformly and correctly declares the production HTTPS origin (loomstack.com) \u2014 the site's own code is internally consistent and their suggested fixes would target or break the test server. F-002 additionally overclaims on its own evidence: it frames a render-blocking-scripts problem on a page (6.7KB, zero executable scripts, one stylesheet) whose evidence_detail arrays prove none of those factors are present; only the harness-level 'no gzip' factor is real, insufficient for high severity. Prosecution's abstract trust-model reasoning for F-001 is noted but does not survive contact with the delivered files, which the adjudication instructions make the basis for judgment."
+  },
+  {
+    "site": "corporate-brand",
+    "verdicts": [
+      {
+        "id": "F-001",
+        "category": "contrast-legibility-taptargets",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed: index.html hero <p style=\"color:#cccccc;background:#ffffff;\"> yields ~1.61:1, far below AA 4.5:1. Real engagement/a11y defect; darkening the text is the correct fix."
+      },
+      {
+        "id": "F-002",
+        "category": "mixed-content-https",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "Triggered purely by the local test origin http://127.0.0.1:35833. Nothing in the static files dictates transport scheme; a real deployment can serve these exact files over HTTPS. This is a harness artifact, not a site defect.",
+        "debated": true
+      },
+      {
+        "id": "F-003",
+        "category": "mobile-viewport-zoom",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed: no <meta name=viewport> on index, about, or contact. Real mobile-rendering defect; the suggested tag is the standard fix."
+      },
+      {
+        "id": "F-004",
+        "category": "org-entity-anchor-idgraph",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed: zero JSON-LD/schema.org on any page. Genuine discoverability gap for entity resolution; adding an Organization node with @id/name/url/logo is the right fix."
+      },
+      {
+        "id": "F-005",
+        "category": "page-weight-render-blocking-transfer",
+        "verdict": "false_positive",
+        "fix_quality": "wrong",
+        "reason": "Title/mechanism describe ~3 render-blocking scripts and ~30KB HTML that do not exist here: the site has zero JS, one small CSS, and 2172-byte HTML. evidence_detail shows empty script/stylesheet/heavy-HTML lists. Only 'uncompressed' fires, which is a server config immaterial at 2KB. Generic template finding, not a real problem.",
+        "debated": true
+      },
+      {
+        "id": "F-006",
+        "category": "canonical-lang-hreflang",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Correct low/medium observation: no rel=canonical, so / and /index.html can index as duplicates. Accurately reported; self-referential canonical is the right fix."
+      },
+      {
+        "id": "F-007",
+        "category": "http-status-redirect-canonical-integrity",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed: careers.html is linked in every page's nav but the file does not exist (404). Real broken-nav engagement + crawl defect; restore or remove the link is correct."
+      },
+      {
+        "id": "F-008",
+        "category": "offsite-corroboration-surface",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed: no sameAs, no social/third-party profile links anywhere. Real off-site corroboration gap; establishing and mirroring profiles in sameAs is sound (low confidence appropriately noted)."
+      },
+      {
+        "id": "F-009",
+        "category": "title-meta-heading-orientation",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed: titles are bare 'Home'/'About'/'Contact' with no brand. Core problem is real and fix is sound. Minor undercount (only flags index; contact 'Contact' is equally generic and about.html was never read due to robots block)."
+      },
+      {
+        "id": "F-010",
+        "category": "discovery-infra-sitemap-orphan-llmstxt",
+        "verdict": "true_positive",
+        "fix_quality": "na",
+        "reason": "Accurate and honestly scoped as informational/nice-to-have; correctly states absence does not block any crawler. Low-value but a correct observation, not overstated."
+      },
+      {
+        "id": "F-011",
+        "category": "landmarks-skiplink-valueprop",
+        "verdict": "true_positive",
+        "fix_quality": "partial",
+        "reason": "Only the skip-link sub-claim is real (genuinely absent). The site already has <main>, header/nav/footer landmarks and an H1 value prop (evidence_detail no_main_pages=[], no_valueprop_pages=[]), so the suggested action to 'wrap in <main> and add an H1' is redundant. Correct but partly misframed; fix partial.",
+        "debated": true
+      }
+    ],
+    "missed": [
+      {
+        "problem": "robots.txt blocks GPTBot, CCBot, and Google-Extended for the whole site, and adds Disallow: /about.html for all other agents (blocking the brand-story page from Googlebot too). The tool found robots.txt but reported nothing about its contents.",
+        "half": "discoverability",
+        "severity": "critical",
+        "mechanism": "AI/training crawlers respecting robots cannot ingest the site; the one page with the company history is blocked from every crawler, so the richest brand content is unreachable. This is exactly why the tool itself could only read 2 of 3 pages, yet it never flagged the cause."
+      },
+      {
+        "problem": "Inconsistent legal/brand name across pages: 'Apex Solutions' (index footer), 'Apex Solutions Inc.' (about footer), 'Apex Solutions Group LLC' (contact).",
+        "half": "discoverability",
+        "severity": "high",
+        "mechanism": "Conflicting entity names on one domain prevent an AI/search engine from resolving the canonical legal name or matching the brand to external registries/knowledge bases."
+      },
+      {
+        "problem": "Brand name 'Apex Solutions' is highly generic with no disambiguator (no city, industry niche, or consistent legal suffix) in crawlable text.",
+        "half": "discoverability",
+        "severity": "high",
+        "mechanism": "Collides with many namesake businesses; an AI has almost nothing to key on to resolve this specific entity versus others."
+      },
+      {
+        "problem": "Identical boilerplate meta description ('Welcome to our website. We provide solutions for businesses of all sizes.') on all three pages. F-009 covered titles but not descriptions.",
+        "half": "discoverability",
+        "severity": "medium",
+        "mechanism": "Duplicate, generic descriptions give search/AI summarizers no per-page differentiation and no real information about what the company does."
+      },
+      {
+        "problem": "Homepage hero CTA 'Learn More' links to href=\"#\" and goes nowhere.",
+        "half": "engagement",
+        "severity": "high",
+        "mechanism": "The single most prominent action on the homepage is a dead end; clicking it just jumps to the same page, killing conversion momentum at the top of the funnel."
+      },
+      {
+        "problem": "Contact form submits to action=\"#\" with no real endpoint, and no email/phone/address fallback anywhere on the contact page.",
+        "half": "engagement",
+        "severity": "high",
+        "mechanism": "A motivated visitor who fills the form has no working submission and no alternative channel, so the converting visitor is lost. The tool read contact.html but flagged neither the dead form nor the missing contact facts."
+      },
+      {
+        "problem": "No physical address, phone, city, or founding year anywhere in the HTML (NAP/fact-extractability gap).",
+        "half": "discoverability",
+        "severity": "high",
+        "mechanism": "AI cannot extract or cite basic organization facts; there is no verifiable real-world identity data to anchor to."
+      },
+      {
+        "problem": "Homepage hero body is a single ~250-word run-on sentence of marketing filler with no sub-structure. F-001 flagged its contrast but not its readability.",
+        "half": "engagement",
+        "severity": "medium",
+        "mechanism": "A dense, unbroken wall of vague filler above the fold gives arrivals no quick reason to keep reading, raising bounce independent of the contrast issue."
+      },
+      {
+        "problem": "sitemap.xml omits contact.html and careers.html, lists about.html (which robots.txt disallows), and uses a placeholder domain (example-apexsolutions.com). The tool's sitemap/orphan category only surfaced llms.txt.",
+        "half": "discoverability",
+        "severity": "medium",
+        "mechanism": "Incomplete/contradictory sitemap means crawlers relying on it miss real pages and are pointed at a disallowed one, reducing coverage of already-thin content."
+      }
+    ],
+    "gt_disputes": [
+      {
+        "gt_problem": "The robots.txt AI-bot block is rated 'critical' with the claim that 'an AI assistant respecting robots.txt cannot ingest this brand's content at all.'",
+        "judge_view": "Directionally right and a genuine high/critical discoverability problem, but the 'cannot ingest at all' framing is overstated. GPTBot/CCBot/Google-Extended are primarily training-corpus crawlers; the file does NOT block live citation/retrieval agents (PerplexityBot, OAI-SearchBot, ClaudeBot, Googlebot, Bingbot), so citation-time crawling of index/contact remains possible. The unambiguously hard block is Disallow: /about.html for all agents, which does block Googlebot from the brand-story page."
+      },
+      {
+        "gt_problem": "The about.html hero-banner empty alt (alt=\"\") is rated 'critical' as a 'fact locked inside an image'.",
+        "judge_view": "The empty alt itself is legitimately fine (the GT concedes the image is a 1x1 synthetic file with no OCR-able text and that decorative images correctly use alt=\"\"). The real, valid gap is the absence of textual NAP/founding facts anywhere on the site \u2014 but pinning that on the empty alt and scoring it 'critical' overstates it; it is a manifestation of the broader missing-facts problem, not a standalone critical image defect."
+      }
+    ],
+    "debated": 3,
+    "referee_notes": "Verified against the actual homepage HTML. F-002 and F-005 are harness/template artifacts with no remediable defect in the site files (F-005's title even describes scripts/weight that provably do not exist; only an immaterial server-config compression sub-check fired). F-011's evidence is narrowly and correctly scoped to the genuinely-missing skip link; its evidence_detail correctly clears the <main> and value-prop sub-checks, so it is a correct low-severity observation despite over-inclusive suggested_action copy."
+  },
+  {
+    "site": "ecommerce-product",
+    "verdicts": [
+      {
+        "id": "F-001",
+        "category": "mixed-content-https",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "Flags a test-harness artifact, not a site defect. The page is only served over http because it is running from 127.0.0.1 locally; the site's real intended origin is HTTPS \u2014 every canonical, og:url, and JSON-LD url uses https://www.trailforgeoutdoor.com. There is no mixed content in the markup. The 'obtain a TLS cert / redirect to HTTPS' fix does not apply to the actual site content.",
+        "debated": true
+      },
+      {
+        "id": "F-002",
+        "category": "page-weight-render-blocking-transfer",
+        "verdict": "false_positive",
+        "fix_quality": "partial",
+        "reason": "The title claim of ~3 render-blocking scripts is false: the only <head> scripts are type=application/ld+json (data, not executable, never render-blocking), and the detail arrays for heavy_html/many_sync_scripts/many_stylesheets are all empty. The sole real sub-claim is 'no gzip' on pages whose max HTML is 7,287 bytes \u2014 negligible transfer, a static-server artifact, and nowhere near a 'high' engagement risk. The defer/async advice targets scripts that do not exist.",
+        "debated": true
+      },
+      {
+        "id": "F-003",
+        "category": "sameas-resolvability",
+        "verdict": "false_positive",
+        "fix_quality": "partial",
+        "reason": "The Organization sameAs correctly lists two real social profiles (Instagram, Facebook) \u2014 a legitimate, well-formed configuration. A small outdoor brand founded 2014 almost certainly has no Wikidata/Wikipedia node to point at, so 'add your Wikidata URL' is not actionable and rating the absence 'high' is overblown. This flags a legitimately-fine minimal sameAs as a severe defect.",
+        "debated": true
+      },
+      {
+        "id": "F-004",
+        "category": "http-status-redirect-canonical-integrity",
+        "verdict": "false_positive",
+        "fix_quality": "wrong",
+        "reason": "Classic trap. The canonical points to the site's real production domain (https://www.trailforgeoutdoor.com/...) and is perfectly consistent with og:url and JSON-LD across all three pages. The 'off-domain' appearance is purely because the fixture is served from 127.0.0.1. Rewriting the canonical to the 127.0.0.1 host, as implied, would be actively harmful; the current setup is the correct pattern the ground truth explicitly marks as fine.",
+        "debated": true
+      },
+      {
+        "id": "F-005",
+        "category": "discovery-infra-sitemap-orphan-llmstxt",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Accurate and honestly scoped: /llms.txt is genuinely absent and the finding explicitly frames it as informational, nice-to-have, and not a citation blocker. A correct low-severity observation, not a false alarm."
+      },
+      {
+        "id": "F-006",
+        "category": "landmarks-skiplink-valueprop",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Verified: no page wraps content in <main>/role=main and none has a skip-to-content link (they use header/section/footer only). The value-prop sub-claim correctly registered empty because the hero H1 is clear. Legitimate low-severity accessibility/engagement observation with an appropriate fix."
+      },
+      {
+        "id": "F-007",
+        "category": "title-meta-heading-orientation",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Correct: index.html jumps h1 (hero) straight to h3 (category cards) with no h2, while the two product pages are sequential (h1 -> h2 -> h3). Exactly 1/3 pages skip a level, as reported. Minor but real."
+      }
+    ],
+    "missed": [
+      {
+        "problem": "Trailblazer 40L Product JSON-LD offers.price is \"149.99\" but the visible sale price is $129.99 (with a 'Save 13%' badge and meta description saying 'Now $129.99'). Structured data contradicts the rendered price.",
+        "half": "discoverability",
+        "severity": "high",
+        "mechanism": "Rich snippets, shopping feeds, and AI assistants that trust schema.org over rendered text will quote $149.99 \u2014 misquoting the brand on its own page. The JSON-LD is otherwise valid so it passes any linter and only fails a cross-check against visible content, making it easy to miss."
+      },
+      {
+        "problem": "Two of three 'You may also like' cards on the Trailblazer page (2L Hydration Bladder, Pack Rain Cover) use href=\"#\" dead links.",
+        "half": "engagement",
+        "severity": "medium",
+        "mechanism": "An engaged visitor who clicks a related item gets no destination (or a jump to top), which reads as a broken/unfinished site and raises the chance of session abandonment."
+      },
+      {
+        "problem": "Homepage 'Accessories' category card links to products/summit-20l-daypack.html instead of any accessories page.",
+        "half": "engagement",
+        "severity": "low",
+        "mechanism": "A visitor expecting rain covers/hydration bladders/repair kits lands on an unrelated daypack product, breaking the browse intent and eroding trust in navigation."
+      },
+      {
+        "problem": "og:image on all pages is an SVG (e.g. trailblazer-40l-front.svg).",
+        "half": "discoverability",
+        "severity": "low",
+        "mechanism": "Most social/AI link-preview renderers cannot rasterize SVG og:images, so shares and AI cards render with no product image, weakening off-site brand presence and click-through."
+      },
+      {
+        "problem": "Primary nav 'Backpacks' and 'Daypacks' link directly to single product pages; no category/listing pages exist.",
+        "half": "both",
+        "severity": "low",
+        "mechanism": "Labels imply category listings but resolve to one product each, so crawlers and users get no true category node and any future catalog growth has no landing surface."
+      }
+    ],
+    "gt_disputes": [],
+    "debated": 4,
+    "referee_notes": "All four contested findings are false positives driven by the same root cause: the audit conflates the local test-harness transport (http://127.0.0.1:38149) with the site's real, HTTPS-first declared identity (https://www.trailforgeoutdoor.com), which is consistent across canonical, og:url, and JSON-LD. F-001 and F-004 are direct loopback-vs-production artifacts. F-002's headline (render-blocking scripts) is contradicted by the markup (a single inert JSON-LD script, one stylesheet) and its own empty evidence arrays, leaving only a negligible gzip nit mis-rated high. F-003 flags a legitimate, well-formed minimal sameAs and demands a Wikidata node that likely does not exist for a small 2014 brand. I read the homepage index.html and the full findings JSON; I did not inspect the two product pages, but the contested claims are all homepage-verifiable and the JSON evidence_detail corroborates the shared markup pattern."
+  },
+  {
+    "site": "gov-info (Harmon County Department of Public Records)",
+    "verdicts": [
+      {
+        "id": "F-001",
+        "category": "robots-citation-bot-block",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "robots.txt has explicit Disallow: / for ClaudeBot, ChatGPT-User, PerplexityBot (plus GPTBot/CCBot/Google-Extended/anthropic-ai). The tool correctly isolates the live citation bots and correctly resolves Claude-User/Claude-SearchBot/OAI-SearchBot as Allowed (they fall under User-agent:* which only blocks /documents,/search,/admin). This is the site's largest discoverability barrier. Fix (unblock citation bots, keep training opt-outs) is exactly right."
+      },
+      {
+        "id": "F-002",
+        "category": "indexability-directives",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "services.html really carries <meta name=robots content='noindex, nofollow'> yet is linked in primary nav and listed in sitemap.xml \u2014 a genuine, self-contradicting indexability block on a public page. Removing the tag is the correct fix."
+      },
+      {
+        "id": "F-003",
+        "category": "mixed-content-https",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "HTTP is a property of the localhost static test server (127.0.0.1:42119), not the authored site. Nothing in the authored files forces HTTP; the sitemap even uses https URLs and ground truth confirms no server config/headers are part of the site. This is a harness artifact, not a real authored defect.",
+        "debated": true
+      },
+      {
+        "id": "F-004",
+        "category": "org-entity-anchor-idgraph",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "No Organization/GovernmentOrganization JSON-LD exists on any page. For a county records dept, a machine-readable entity anchor genuinely aids AI entity resolution and knowledge-panel eligibility. Correct, non-trap observation; fix is appropriate."
+      },
+      {
+        "id": "F-005",
+        "category": "page-weight-render-blocking-transfer",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "The only concrete detected signal is lack of gzip/br \u2014 a server/harness config, not authored content. The 'render-blocking scripts' claim is inaccurate: faq.js loads at end of body (not head) and other pages have zero scripts. HTML files are ~5KB, so transfer/first-paint impact is negligible regardless of compression.",
+        "debated": true
+      },
+      {
+        "id": "F-006",
+        "category": "canonical-lang-hreflang",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "No page has rel=canonical. Correct observation and not a trap; a self-referential canonical is standard hygiene. Marginal impact here (single-URL static pages) but a correct low/medium note, not a false positive."
+      },
+      {
+        "id": "F-007",
+        "category": "cls-layout-stability",
+        "verdict": "true_positive",
+        "fix_quality": "partial",
+        "reason": "Authored images do lack width/height attrs (notably logo.png site-wide) \u2014 a legitimate best-practice gap. But materiality is low (logo is 40px and CSS sets its height; divider is CSS-sized; office-notice and iframes carry explicit dims) and the font-display half is vacuous (site uses system Arial, 0 @font-face). Correct but overstated at medium.",
+        "debated": true
+      },
+      {
+        "id": "F-008",
+        "category": "http-status-redirect-canonical-integrity",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "archives.html is linked in the nav of every page but the file was never created, so it 404s site-wide. Real broken-link/crawl-budget problem; fix (restore or remove the dead links) is correct."
+      },
+      {
+        "id": "F-009",
+        "category": "image-optimization-lazyload",
+        "verdict": "true_positive",
+        "fix_quality": "partial",
+        "reason": "Low materiality and misdirected: the flagged below-fold images are a small raster notice and a decorative divider (divider.png is a designated legitimate decorative asset). Adding srcset/lazy to a decorative rule is pointless, and for office-notice the real problem is that hours/phone are text-baked-into-an-image, not that it loads eagerly \u2014 which this finding misses.",
+        "debated": true
+      },
+      {
+        "id": "F-010",
+        "category": "offsite-corroboration-surface",
+        "verdict": "true_positive",
+        "fix_quality": "partial",
+        "reason": "Correct that there are no sameAs/social/off-site identity links. Legitimate entity-trust gap. Fix is partially off-target: recommending Crunchbase/Wikidata suits a company, not a county records office; linking official county .gov/social profiles would be the apt corroboration.",
+        "debated": true
+      },
+      {
+        "id": "F-011",
+        "category": "title-meta-heading-orientation",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "4/5 pages render <title>Home</title> (index, services, hours-locations, faq); only the law page has a descriptive title. Duplicate/generic titles genuinely harm findability and AI citation orientation. Correct; fix is right."
+      },
+      {
+        "id": "F-012",
+        "category": "canonical-lang-hreflang",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "4/5 pages omit the html lang attribute; only public-records-law.html has lang='en'. Accurate, correctly scoped low-severity finding; fix is right."
+      },
+      {
+        "id": "F-013",
+        "category": "discovery-infra-sitemap-orphan-llmstxt",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "Absence of /llms.txt is not a real problem \u2014 it is an emerging non-standard convention that no crawler requires, and the finding itself admits this. Reporting it (even as informational) is noise, not a genuine defect.",
+        "debated": true
+      },
+      {
+        "id": "F-014",
+        "category": "landmarks-skiplink-valueprop",
+        "verdict": "true_positive",
+        "fix_quality": "partial",
+        "reason": "The skip-link half is valid (no skip-to-content on any page). But part of the fix is redundant/wrong: all pages already wrap content in <main> (the tool's own no_main_pages is empty), and flagging faq.html for lacking a value-prop paragraph is weak for an FAQ index. Correct core observation, partially misapplied fix.",
+        "debated": true
+      },
+      {
+        "id": "F-015",
+        "category": "readability-scannability",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "Falls into the designated trap: it lists public-records-law.html (verbatim statutory Chapter 12) as dense \u2014 genre-appropriate legal text that must NOT be treated as a readability defect. services.html (44.1, just under threshold) is short, subheaded, bullet-style content, not a wall of text. The self-negating fix ('unless legal/technical') confirms it should not have been reported.",
+        "debated": true
+      },
+      {
+        "id": "F-016",
+        "category": "title-meta-heading-orientation",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "index/services/hours-locations really jump h1->h4, skipping h2/h3. The tool correctly does NOT flag public-records-law.html (proper h1->h2). Accurate low-severity outline issue; fix is right."
+      },
+      {
+        "id": "F-017",
+        "category": "title-meta-heading-orientation",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "4/5 pages lack a meta description; only the law page has one. Accurate, correctly scoped; adding concise descriptions is the right low-severity fix."
+      }
+    ],
+    "missed": [
+      {
+        "problem": "Office hours and department phone are baked into a raster image (office-notice.png) with a non-descriptive alt='notice'; the text exists nowhere in the DOM.",
+        "half": "both",
+        "severity": "high",
+        "mechanism": "Text-in-image is invisible to text extractors and search/AI indexers, so hours/phone can never be read or cited; screen-reader users hear only 'notice' and low-vision users can't reflow/enlarge it. The tool produced no alt-text/text-in-image finding at all."
+      },
+      {
+        "problem": "Office physical addresses on hours-locations.html exist only inside cross-origin map <iframe> embeds; there is no plain-text address anywhere on the site.",
+        "half": "discoverability",
+        "severity": "high",
+        "mechanism": "Crawlers and AI assistants cannot read text rendered inside a third-party iframe, so the office locations are functionally invisible to anything that doesn't execute and interact with the embed."
+      },
+      {
+        "problem": "FAQ answers are absent from the initial DOM; each is fetched via JS from faq-data.json only after a click, with no noscript fallback or server-rendered content.",
+        "half": "both",
+        "severity": "high",
+        "mechanism": "Non-JS or non-interacting crawlers and JS-disabled users see three empty answer divs, so the exact citable Q&A facts (fee waiver, 10/30-day timing, ID needed) are unreachable and the page looks empty to visitors on constrained browsers."
+      },
+      {
+        "problem": "Fee amounts and request-form fields live only in rasterized image-only PDFs (no text layer) under /documents/, a path robots.txt Disallows for all agents.",
+        "half": "discoverability",
+        "severity": "high",
+        "mechanism": "The exact fees/form content are doubly locked: no OCR/text layer for text extraction, and the whole path is crawl-blocked, and no plain-text fee appears anywhere else on the site."
+      },
+      {
+        "problem": "Viewport is fixed at width=1024 (not width=device-width) on index, services, hours-locations, and faq, with a hard 1024px container.",
+        "half": "engagement",
+        "severity": "high",
+        "mechanism": "On phones the desktop layout is rendered and shrunk, forcing pinch-zoom and horizontal scrolling to read or tap anything \u2014 a classic non-mobile-friendly pattern that drives mobile abandonment. The tool produced no responsive/viewport finding."
+      },
+      {
+        "problem": "Primary body/heading text is #999999 (and nav #aaaaaa) on #ffffff (~2.85:1 or worse) on the four non-law pages.",
+        "half": "engagement",
+        "severity": "high",
+        "mechanism": "Fails WCAG 2.1 AA 4.5:1 contrast, making text genuinely hard to read for low-vision users and in bright/outdoor mobile conditions \u2014 a real bounce driver. The tool produced no color-contrast finding."
+      },
+      {
+        "problem": "Nav links render at 11px with 1px vertical / 3px horizontal padding and 2px gaps between adjacent links.",
+        "half": "engagement",
+        "severity": "medium",
+        "mechanism": "Tap targets far under the ~44x44px guideline sit adjacent, causing frequent mis-taps on touch devices."
+      },
+      {
+        "problem": "The cookie-banner dismiss control is a <span class=cookie-close onclick=...> with no button/role/tabindex/keyboard handler/aria-label, plus low-contrast #888 on #333.",
+        "half": "engagement",
+        "severity": "medium",
+        "mechanism": "Keyboard-only and most screen-reader users cannot focus or activate it, so the fixed banner can never be dismissed by them; the low-contrast 'x' also reads as non-interactive to sighted users."
+      },
+      {
+        "problem": "The subscribe form uses placeholder-only inputs with no <label> elements and posts to action='#', so it is both inaccessible and non-functional.",
+        "half": "engagement",
+        "severity": "low",
+        "mechanism": "Placeholders vanish on input and aren't a reliable accessible name, and submitting does nothing \u2014 the sole conversion element on the homepage is broken and unlabeled."
+      },
+      {
+        "problem": "sitemap.xml omits hours-locations.html, still lists the noindexed services.html, and the robots.txt Sitemap directive is a relative path (/sitemap.xml) rather than an absolute URL.",
+        "half": "discoverability",
+        "severity": "medium",
+        "mechanism": "Sitemap-reliant crawlers miss a genuinely public page, are pointed at a page the site itself tells them not to index, and a relative Sitemap directive is non-conformant to the sitemaps spec."
+      }
+    ],
+    "gt_disputes": [],
+    "debated": 8,
+    "referee_notes": "Ruled 5 contested findings; verdicts: F-007, F-009, F-010, F-014 true_positive; F-003, F-005, F-013, F-015 false_positive. Key file evidence: index.html (office-notice.png has width/height but no lazy, below fold; logo has no dims), css/style.css (.site-header img sets only height:40px; .divider is CSS-sized; font-family Arial system stack, no @font-face), sitemap.xml (declares https:// canonical URLs, contradicting the HTTP harness origin), public-records-law.html (verbatim Chapter 12 statute \u2014 designated legal-text trap), services.html (short h4-subheaded scannable sections), hours-locations.html (iframes carry explicit width/height and loading=lazy). F-005's own empty render-blocking arrays disprove its headline; F-013 self-admits llms.txt is not a requirement; F-014's no_main_pages is empty confirming all pages have <main>."
+  },
+  {
+    "site": "local-restaurant (The Blue Fork)",
+    "verdicts": [
+      {
+        "id": "F-001",
+        "category": "jsonld-presence-validity",
+        "verdict": "true_positive",
+        "fix_quality": "partial",
+        "reason": "Correct that no JSON-LD exists anywhere \u2014 a real discoverability gap for a restaurant. But it mischaracterizes the homepage as a 'Product/Article' page and only counts 1/4 as type-warranting; the right schema here is LocalBusiness/Restaurant with openingHours/address/menu. The fix ('add Product or Article') points at the wrong type, so partial.",
+        "debated": true
+      },
+      {
+        "id": "F-002",
+        "category": "mixed-content-https",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "Flags http://127.0.0.1:37733 \u2014 an artifact of the local test harness, not a property of the site. The site's own sitemap.xml and robots.txt both use https://www.thebluefork.example, indicating the production origin is HTTPS. Not a real defect in the delivered files.",
+        "debated": true
+      },
+      {
+        "id": "F-003",
+        "category": "org-entity-anchor-idgraph",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Genuinely true: there is no Organization/LocalBusiness node on any page, so there is no machine-readable brand anchor. Fix (add one Organization node with stable @id, name, url, logo) is sound; a Restaurant/LocalBusiness subtype would be even better here."
+      },
+      {
+        "id": "F-004",
+        "category": "page-weight-render-blocking-transfer",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "Misleading/boilerplate. The site has ZERO scripts (evidence_detail confirms many_sync_scripts_pages:[] and many_stylesheets_pages:[]); the '~3 blocking scripts' is a generic HTTP-Archive baseline, not something on this site. The only real signal is 'uncompressed', but HTML maxes at 2,950 bytes (compression saves nothing meaningful) and server compression is not determinable from static files. No real render-blocking problem exists on this tiny static site.",
+        "debated": true
+      },
+      {
+        "id": "F-005",
+        "category": "canonical-lang-hreflang",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Accurate \u2014 no rel=canonical on any of the 4 pages. Low real impact for a 4-page static site but a correct observation; self-referential canonical is a sound, low-effort fix."
+      },
+      {
+        "id": "F-006",
+        "category": "cls-layout-stability",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Correct: the img tags carry no width/height and CSS only sets max-width:100%, so no space is reserved before load (layout shift). Matches ground truth's low-severity CLS item. Font-display part correctly reported empty (no @font-face). Fix sound."
+      },
+      {
+        "id": "F-007",
+        "category": "http-status-redirect-canonical-integrity",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Real and important: the homepage 'Order Online' CTA links to order-online.html, which does not exist and 404s. This is a dead-end on the most action-oriented button. Tool under-rated it as medium (ground truth: high), but the observation and fix (restore or remove the dead link) are correct."
+      },
+      {
+        "id": "F-008",
+        "category": "image-optimization-lazyload",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Correct: below-fold content images lack loading=lazy and there is no srcset/<picture>. Hero correctly excluded. Low impact on the placeholder assets but valid on a real deployment; srcset+lazy fix is sound."
+      },
+      {
+        "id": "F-009",
+        "category": "offsite-corroboration-surface",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Accurate: no social/profile links, no sameAs, no Wikidata/Wikipedia link anywhere. For a local restaurant, off-site corroboration surfaces are a genuine (if lower-confidence) discoverability gap. Fix direction is sound."
+      },
+      {
+        "id": "F-010",
+        "category": "discovery-infra-sitemap-orphan-llmstxt",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Factually correct (no /llms.txt) and, crucially, honestly framed as informational/non-blocker at low severity \u2014 not overclaimed. Appropriate and not a trap. Optional-publish fix is fine."
+      },
+      {
+        "id": "F-011",
+        "category": "landmarks-skiplink-valueprop",
+        "verdict": "true_positive",
+        "fix_quality": "partial",
+        "reason": "The only real sub-signal is the missing skip-to-content link (genuinely absent on all pages) \u2014 a legitimate low-severity a11y point. But <main> IS present on every page (no_main_pages:[]) and a clear H1 value prop IS present (no_valueprop_pages:[]), so two-thirds of the recommended fix ('wrap in main', 'lead with an H1 plus description') is redundant. Partial.",
+        "debated": true
+      }
+    ],
+    "missed": [
+      {
+        "problem": "The entire menu \u2014 every dish name and price \u2014 exists only inside menu-chalkboard.jpg (on menu.html and index.html). There is no HTML text, list, table, or PDF text layer with any dish or price anywhere. An AI asked 'what does The Blue Fork serve and how much' has zero extractable source text.",
+        "half": "both",
+        "severity": "critical",
+        "mechanism": "Text crawlers and LLM retrieval extract page text, not pixels. With menu facts only in a raster image and alt text that doesn't transcribe them, there is nothing to index, cite, or show a visitor at a glance \u2014 the site's core flaw, entirely unreported by the tool."
+      },
+      {
+        "problem": "Business hours appear only as a photographed door-sign image (hours-sign.jpg on index.html and contact.html). No plain-text hours and no schema.org openingHours anywhere.",
+        "half": "both",
+        "severity": "high",
+        "mechanism": "The very common query 'what time does it close tonight' has no answer in page text; the only source is locked in image pixels, so crawlers/LLMs and hurried visitors both come up empty."
+      },
+      {
+        "problem": "The street address exists only inside location-map.jpg on contact.html. No plain-text postal address (street number/ZIP) and no PostalAddress/LocalBusiness JSON-LD anywhere; prose only gives 'Elm Street, downtown Millbrook'.",
+        "half": "discoverability",
+        "severity": "high",
+        "mechanism": "AI assistants and maps/knowledge panels need a text NAP string or structured address to answer 'where is it' and match the business. An image-only address gives nothing to cite and no structured fallback."
+      },
+      {
+        "problem": "Alt text on the fact-bearing images describes them visually ('Photo of our chalkboard menu board', 'A wooden sign ... displaying our store hours', 'Screenshot of our location on a map') instead of transcribing the actual items/prices/hours/address inside them.",
+        "half": "discoverability",
+        "severity": "medium",
+        "mechanism": "Alt text is the cheap fallback channel for image-derived facts; describing the picture rather than its contents forfeits the one remaining path to make these facts machine-readable."
+      },
+      {
+        "problem": "On menu.html the 'Drinks' figure reuses hours-sign.jpg but labels it alt='Photo of our drinks list chalkboard' \u2014 a wrong-image/content-integrity bug (the hours sign is presented as the drinks list).",
+        "half": "both",
+        "severity": "low",
+        "mechanism": "A mislabeled image both misleads any alt-text consumer and shows visitors the wrong content, eroding trust in an already image-only menu experience."
+      },
+      {
+        "problem": "The contact-page map figcaption says 'Tap for directions on your favorite maps app', but location-map.jpg is a plain <img> with no link and there is no address/geo/maps URL to act on.",
+        "half": "engagement",
+        "severity": "low",
+        "mechanism": "The affordance promises an action it can't deliver \u2014 a dead end for a visitor trying to navigate to the restaurant."
+      },
+      {
+        "problem": "menu.html (a common landing page) offers no next action \u2014 no reserve/call/order link back from the menu \u2014 leaving a bounce as the only option once the photo can't be read.",
+        "half": "engagement",
+        "severity": "medium",
+        "mechanism": "With the menu unreadable at a glance on small screens and no CTA to convert intent into a call/visit/order, visitors who land here have nothing to do but leave."
+      }
+    ],
+    "gt_disputes": [],
+    "debated": 4,
+    "referee_notes": "Verified directly: index.html has no <script> tags, a single css/style.css stylesheet, <main> wrapping content, <h1>Welcome to The Blue Fork</h1> followed by a descriptive paragraph, and no JSON-LD. grep across all four HTML files confirms zero ld+json, zero scripts, zero skip links, <main> on all pages, and no hardcoded http:// in markup/CSS. robots.txt and sitemap.xml both declare the HTTPS production origin https://www.thebluefork.example, establishing that F-002's and F-004's HTTP/compression signals are artifacts of the local test harness (origin http://127.0.0.1:37733), not the delivered site. F-001 and F-011 each rest on a genuinely-present defect (no structured data; no skip link) despite imperfect fix wording, so both rule true_positive; F-002 and F-004 flag harness artifacts / non-existent render-blocking resources and rule false_positive."
+  },
+  {
+    "site": "news-article",
+    "verdicts": [
+      {
+        "id": "F-001",
+        "category": "jsonld-presence-validity",
+        "verdict": "false_positive",
+        "fix_quality": "wrong",
+        "reason": "Factually wrong. The author page (author/priya-chandran.html) DOES carry schema.org JSON-LD: a valid ProfilePage with a Person mainEntity (name, jobTitle, url, image, worksFor, email, sameAs). ProfilePage/Person is exactly the correct schema for an author bio page. The finding demands 'Product or Article' schema, which would be incorrect for a profile page. The premise 'no matching JSON-LD' is false.",
+        "debated": true
+      },
+      {
+        "id": "F-002",
+        "category": "mixed-content-https",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "Artifact of local-harness serving on http://127.0.0.1:43987, not a property of the site's design. Every canonical, og:url, and JSON-LD url in the static files declares https://www.continentalledger.example. The intended deployment is HTTPS; the finding flags the test server, not the site.",
+        "debated": true
+      },
+      {
+        "id": "F-003",
+        "category": "org-entity-anchor-idgraph",
+        "verdict": "false_positive",
+        "fix_quality": "partial",
+        "reason": "Evidence ('No Organization node on any of 4 pages') is factually false: both articles include a publisher Organization node (@type Organization, name 'The Continental Ledger', logo ImageObject). The standard news-publisher nested-publisher pattern is present and correct. A dedicated top-level Organization/NewsMediaOrganization with a stable @id and sameAs would be a minor nice-to-have, so the fix has some merit, but the stated premise is wrong.",
+        "debated": true
+      },
+      {
+        "id": "F-004",
+        "category": "page-weight-render-blocking-transfer",
+        "verdict": "false_positive",
+        "fix_quality": "wrong",
+        "reason": "Fabricated render-blocking resources. The pages have ZERO stylesheets and ZERO executable scripts \u2014 only inert application/ld+json blocks, which do not block parsing/rendering. The finding's own detail arrays for heavy_html/sync_scripts/stylesheets are all empty; max HTML is ~9KB (well under the ~30KB median it cites). 'Defer scripts / inline critical CSS' is inapplicable \u2014 there is nothing to defer or inline. Only leftover is gzip, a server-config artifact on trivially small pages.",
+        "debated": true
+      },
+      {
+        "id": "F-005",
+        "category": "author-eeat-contact-citations",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "Wrong. JSON-LD author name is 'Priya Chandran' and the visible byline reads 'By Priya Chandran, Senior Energy Correspondent' on both articles \u2014 they match exactly. There is no author disagreement to reconcile.",
+        "debated": true
+      },
+      {
+        "id": "F-006",
+        "category": "http-status-redirect-canonical-integrity",
+        "verdict": "false_positive",
+        "fix_quality": "wrong",
+        "reason": "Harness artifact. The canonicals (https://www.continentalledger.example/...) are self-referential to the site's real domain; they only look 'off-domain' because the tool fetched from localhost. Repointing canonical at 127.0.0.1 (the suggested fix's implication) would be actively harmful. Ground truth confirms self-canonical URLs matching og:url as a deliberate strength.",
+        "debated": true
+      },
+      {
+        "id": "F-007",
+        "category": "image-optimization-lazyload",
+        "verdict": "true_positive",
+        "fix_quality": "partial",
+        "reason": "Genuinely true that images ship at a single size (no srcset/<picture>) and lack loading=lazy \u2014 a legitimate, low-severity best-practice gap for a real deployment (the hero would benefit from srcset). However the 'below-fold' classification is shaky: the only non-hero images are tiny byline/author headshots that sit above the fold, where lazy-loading is not recommended. So the observation is real but partly misapplied and low impact.",
+        "debated": true
+      },
+      {
+        "id": "F-008",
+        "category": "offsite-corroboration-surface",
+        "verdict": "false_positive",
+        "fix_quality": "partial",
+        "reason": "Evidence ('No sameAs on any of the 4 pages') is factually false: the author page's Person JSON-LD includes sameAs with LinkedIn and X profile links. There IS an off-site identity surface. Adding Organization-level sameAs would be a genuine minor improvement, but the finding's core claim of zero sameAs / zero off-site surface is wrong.",
+        "debated": true
+      },
+      {
+        "id": "F-009",
+        "category": "discovery-infra-sitemap-orphan-llmstxt",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Accurate: no /llms.txt exists. The finding honestly labels it informational/low and explicitly states it is not a citation requirement and does not block any crawler. A correct, well-caveated low-severity observation."
+      },
+      {
+        "id": "F-010",
+        "category": "landmarks-skiplink-valueprop",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "The verified sub-claim (no skip-to-content link on all pages) is correct and a real, minor a11y improvement. Note the title overstates: <main> landmarks, nav/header, H1, and a clear value-prop/dek ARE present (the finding's own no_main/no_valueprop arrays are empty). Judged on the skip-link kernel, it is a true low finding with a sound fix."
+      },
+      {
+        "id": "F-011",
+        "category": "name-consistency-ambiguity",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "Wrong. The brand string is consistent everywhere: og:site_name, JSON-LD publisher name, and the <title> suffix are all 'The Continental Ledger'. The tool incorrectly compares the full page <title> (article headline + brand) against og:site_name and mistakes the headline for a brand declaration. No real inconsistency.",
+        "debated": true
+      },
+      {
+        "id": "F-012",
+        "category": "readability-scannability",
+        "verdict": "false_positive",
+        "fix_quality": "partial",
+        "reason": "Classic trap: a legitimately dense expert energy/grid-policy article. It is well structured \u2014 descriptive H2 subheads, short paragraphs, a lede stating the concrete finding up front, a named quoted source; the finding's own wall_of_text array is empty. Flesch density is appropriate for the domain, which the finding itself concedes. Penalizing this is flagging legitimate expert content.",
+        "debated": true
+      }
+    ],
+    "missed": [
+      {
+        "problem": "Pages reference many CSS classes (site-header, brand, tagline, dek, byline, eyebrow, etc.) but ship with no stylesheet and no inline styles, so they render as fully unstyled HTML. Ironically F-004 asserts stylesheets exist and block rendering, the opposite of reality.",
+        "half": "engagement",
+        "severity": "low",
+        "mechanism": "An unstyled page hurts perceived credibility and reading comfort for arriving human visitors, raising bounce. Likely a fixture simplification (analogous to the 1x1 placeholder images) rather than an intended production defect, so rated low; content and semantics are fully intact for AI readers."
+      }
+    ],
+    "gt_disputes": [],
+    "debated": 10,
+    "referee_notes": "Reviewed all three source pages (index.html, articles/texas-battery-co-op-heat-dome.html, author/priya-chandran.html) plus the findings JSON. Nine of ten contested findings are false positives: F-001/F-003/F-005/F-008/F-011 rest on premises directly contradicted by the source markup; F-002/F-006 flag the local http://127.0.0.1 harness rather than the site (which declares HTTPS and self-canonical URLs to www.continentalledger.example throughout); F-004 fabricates render-blocking resources (empty detail arrays, no scripts/stylesheets, 9KB max); F-012 penalizes legitimate expert content with an empty wall_of_text array. F-007 is the only true positive \u2014 single-resolution images with no srcset/<picture> is a real low-severity responsive-optimization gap \u2014 though its 'below-fold non-lazy' framing is misapplied (the flagged image resolves to the above-fold hero after the byline headshot is excluded first)."
+  },
+  {
+    "site": "personal-blog-trap",
+    "verdicts": [
+      {
+        "id": "F-001",
+        "category": "robots-citation-bot-block",
+        "verdict": "false_positive",
+        "fix_quality": "wrong",
+        "reason": "This is the site's central trap and the tool walked into it, at critical severity. ClaudeBot and Meta-ExternalAgent are TRAINING/dataset crawlers, not citation bots. The robots.txt deliberately opts out of bulk training harvesting while explicitly Allowing every real citation/answer crawler - the tool's own resolved_verdicts show Claude-User=Allow, Claude-SearchBot=Allow, OAI-SearchBot=Allow, PerplexityBot=Allow, Perplexity-User=Allow, ChatGPT-User=Allow, plus Googlebot/Bingbot/Applebot. Mislabeling the training bots as 'citation bots' is wrong, and the fix (remove the opt-out) would strip a correct, sophisticated policy choice. Content remains fully citable.",
+        "debated": true
+      },
+      {
+        "id": "F-002",
+        "category": "jsonld-presence-validity",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Correct: no page carries any application/ld+json. This is the site's one genuine (ground-truth-acknowledged) gap - author, publish date, headline exist only as visible text/meta. Adding Article/BlogPosting schema is the right fix. Severity is overstated though: HIGH here vs the accurate LOW - all facts are present in clean meta/og/canonical, so it's a nice-to-have, not a blocker. The 'Product' half of the suggestion is irrelevant to a blog; Article is correct."
+      },
+      {
+        "id": "F-003",
+        "category": "mixed-content-https",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "Artifact of the local replay harness (http://127.0.0.1:37617), not a property of the site. Every canonical and og:url on the site is https://marginalnotes.example, indicating the real deployment is HTTPS. There is no actual mixed content (all resource refs are relative). Nothing to fix on the site.",
+        "debated": true
+      },
+      {
+        "id": "F-004",
+        "category": "mobile-viewport-zoom",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "The single flagged page is robots.txt - a plain-text file, not an HTML document; a viewport meta is meaningless there. All four real HTML pages DO include <meta name=viewport ...>. The check was misapplied to a non-HTML resource.",
+        "debated": true
+      },
+      {
+        "id": "F-005",
+        "category": "org-entity-anchor-idgraph",
+        "verdict": "false_positive",
+        "fix_quality": "partial",
+        "reason": "Category error: this is a personal blog authored by an individual, not a brand/Organization. Demanding Organization/LocalBusiness/Corporation JSON-LD and 'knowledge-panel eligibility' misfits the archetype. A Person entity node would be defensible (and overlaps the real JSON-LD gap in F-002), but the finding as framed insists on the wrong entity type for the site.",
+        "debated": true
+      },
+      {
+        "id": "F-006",
+        "category": "page-weight-render-blocking-transfer",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "The render-blocking premise is baseless - the site has ZERO scripts (evidence_detail many_sync_scripts_pages is empty) and one small stylesheet; the '~3 blocking scripts' is a generic median, not observed here. The only real sub-claim is missing gzip/br, which is a server/harness config, not determinable from static files, and negligible at max 20KB HTML. Advice to defer/async nonexistent scripts is inapplicable.",
+        "debated": true
+      },
+      {
+        "id": "F-007",
+        "category": "cls-layout-stability",
+        "verdict": "false_positive",
+        "fix_quality": "partial",
+        "reason": "The two dimensionless images are the decorative divider PNGs, and CSS .divider already reserves space (width:100%; height:12px), so meaningful CLS does not occur. The hero (LCP) image has explicit width/height. There are no @font-face rules (fontface_count 0), so the font-display half is moot. Adding width/height attrs is harmless but unnecessary here.",
+        "debated": true
+      },
+      {
+        "id": "F-008",
+        "category": "http-status-redirect-canonical-integrity",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "Harness artifact again. The canonicals correctly self-reference the production domain (https://marginalnotes.example/...); they only look 'off-domain' because the audit replayed the files from 127.0.0.1. Served from the real host these are correct self-canonicals. Repointing them at 127.0.0.1 would be actively wrong.",
+        "debated": true
+      },
+      {
+        "id": "F-009",
+        "category": "image-optimization-lazyload",
+        "verdict": "false_positive",
+        "fix_quality": "partial",
+        "reason": "The flagged below-fold images are the 12px-tall decorative dividers; srcset/responsive variants and loading=lazy give negligible benefit there. unresponsive_count is 0, so the 'ship at one size / oversized' headline is unsubstantiated. Not a real engagement problem on this site.",
+        "debated": true
+      },
+      {
+        "id": "F-010",
+        "category": "offsite-corroboration-surface",
+        "verdict": "true_positive",
+        "fix_quality": "partial",
+        "reason": "Factually correct - no sameAs, social, or Wikidata/Wikipedia links anywhere. For AI discoverability, third-party corroboration genuinely helps entity trust, so this is a real (if modest, low-confidence) gap the tool honestly rated. Fix is only partially apt: Crunchbase/Wikidata is org-oriented; for a person the right move is linking professional profiles (GitHub, etc.) via a Person sameAs. Medium severity is a touch high.",
+        "debated": true
+      },
+      {
+        "id": "F-011",
+        "category": "title-meta-heading-orientation",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Correct and verifiable: index.html has no <h1> (site-title is an <a>, post titles are <h2>). This is a legitimate minor structure/orientation defect. Adding one homepage <h1> is the right, low-effort fix. Notably this real issue is not listed in the ground-truth's real_problems."
+      },
+      {
+        "id": "F-012",
+        "category": "discovery-infra-sitemap-orphan-llmstxt",
+        "verdict": "true_positive",
+        "fix_quality": "na",
+        "reason": "Accurate and appropriately non-alarmist: llms.txt genuinely returns 404 and the finding explicitly labels it informational, not a blocker or citation requirement. Correct observation, correctly de-escalated; effectively a non-defect, so no fix is required."
+      },
+      {
+        "id": "F-013",
+        "category": "landmarks-skiplink-valueprop",
+        "verdict": "false_positive",
+        "fix_quality": "partial",
+        "reason": "Mostly wrong for the real pages: all four HTML pages DO wrap content in <main> (the only 'no main' hit is robots.txt, a text file), and index.html clearly has an above-fold value prop (tagline + 'Nine years writing storage engines...' intro + post cards). The only surviving kernel is that skip-to-content links are absent - a minor a11y nicety, overstated here as an engagement/bounce driver.",
+        "debated": true
+      },
+      {
+        "id": "F-014",
+        "category": "readability-scannability",
+        "verdict": "false_positive",
+        "fix_quality": "wrong",
+        "reason": "The intended 'dense expert article' trap. cap-theorem-myths is legitimately precise technical writing for readers who know CAP; the Raft post is even better structured (TOC, H2/H3, tables, checklist). The finding carries the right caveat yet still reports it. 'Shorten sentences / break up prose' would degrade correct expert content. Flesch 43.4 is normal and appropriate for the domain.",
+        "debated": true
+      }
+    ],
+    "missed": [
+      {
+        "problem": "No RSS/Atom feed for the blog. There is no feed link (rel=alternate) in any <head> and no feed file, so there is no machine-readable index of posts and no subscription channel.",
+        "half": "both",
+        "severity": "low",
+        "mechanism": "Blogs are commonly enumerated and monitored by feed readers and content-discovery pipelines; absence removes a standard syndication/subscription surface and a lightweight machine-readable list of the site's content."
+      },
+      {
+        "problem": "The 'Posts' navigation link points to a single specific article (posts/raft-in-production.html) rather than a posts index/archive page, and no dedicated listing page exists.",
+        "half": "engagement",
+        "severity": "low",
+        "mechanism": "A visitor clicking 'Posts' lands on one arbitrary article instead of a list, which is confusing navigation; the homepage doubles as the only post index, so there is no canonical archive to enumerate all posts."
+      },
+      {
+        "problem": "Publish/updated dates are only human-readable prose ('Published March 3, 2026') with no <time datetime> element and no article:published_time/modified_time meta.",
+        "half": "discoverability",
+        "severity": "low",
+        "mechanism": "Machines must parse free text to recover the publish date; a structured date field (or JSON-LD datePublished) would let engines read it unambiguously. Overlaps the structured-data gap the tool did flag."
+      }
+    ],
+    "gt_disputes": [
+      {
+        "gt_problem": "Ground truth lists exactly one real problem (absence of JSON-LD, low) and states 'Baseline technical SEO/discoverability hygiene is intentionally clean across the whole site.'",
+        "judge_view": "The homepage genuinely has no <h1> (site-title is an anchor, post titles are h2). That is a small but real orientation/structure defect - correctly caught by the tool as F-011 - and it is not captured by GT's single real_problem nor fully consistent with the 'baseline hygiene is intentionally clean' claim. GT's core thesis (the site is deliberately good with mostly traps) is sound; I'd just add the missing homepage h1 (and the minor RSS/posts-archive gaps) as additional low-severity real items."
+      }
+    ],
+    "debated": 11,
+    "referee_notes": "Verified against the actual site files: index.html, about.html, robots.txt, css/style.css, posts/raft-in-production.html, and the images directory (all PNGs are 68-byte placeholders). This is a deliberate 'trap' site rewarding sophisticated correct choices. Key confirmations: (1) robots.txt has explicit labeled sections separating training crawlers (disallowed: ClaudeBot, Meta-ExternalAgent, GPTBot, CCBot, etc.) from citation/search crawlers (allowed: Claude-User, Claude-SearchBot, OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User) with a header comment stating the policy \u2014 so citation is fully preserved (F-001 FP). (2) All HTML pages use https://marginalnotes.example canonicals/og:url and relative resource refs; the http/127.0.0.1 origin is purely the replay harness (F-003, F-008 FP). (3) All four HTML pages have viewport meta and <main>; only robots.txt lacks them (F-004, and F-013's landmark component, FP). (4) Zero scripts anywhere (F-006 FP). (5) Dimensionless/non-lazy images are 12px decorative dividers with CSS-reserved space; hero has explicit dimensions; fontface_count 0 (F-007, F-009 FP). (6) index.html has an above-fold tagline+intro value prop (F-013 FP). (7) Dense-content page is appropriate expert writing (F-014 FP). Only F-010 (no offsite corroboration surface) is a genuinely correct, verifiable gap and ruled true_positive."
+  },
+  {
+    "site": "spa-saas",
+    "verdicts": [
+      {
+        "id": "F-001",
+        "category": "mixed-content-https",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "The 'plain HTTP' is purely an artifact of the local audit harness (origin http://127.0.0.1:35239). The site's own canonical and sitemap URLs are all https://www.nimbusly.example.com, and nothing in the static files indicates the real deployment is HTTP. Flagging the localhost test server as an insecure-transport defect of the brand is wrong; 'obtain a TLS certificate' is not applicable to this fixture.",
+        "debated": true
+      },
+      {
+        "id": "F-002",
+        "category": "org-entity-anchor-idgraph",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed: there is zero JSON-LD (or any structured data) anywhere on the site. No Organization node exists to anchor the brand in a knowledge graph. This is a genuine, if not the most severe, discoverability gap here, and the fix (add one Organization node with stable @id/name/url/logo) is the right remedy. Severity 'high' is a touch aggressive relative to the far bigger CSR/robots problems the tool missed, but the observation and fix are correct."
+      },
+      {
+        "id": "F-003",
+        "category": "page-weight-render-blocking-transfer",
+        "verdict": "false_positive",
+        "fix_quality": "na",
+        "reason": "The finding's own evidence contradicts it: many_sync_scripts_pages and many_stylesheets_pages are both empty, and max_html_bytes is 389. The single script tag carries defer (non-blocking), and a 389-byte HTML document is far too small for gzip/br to matter (compression overhead would exceed savings). The '~3 blocking scripts / ~30KB HTML' text is generic boilerplate not grounded in this site. The real engagement risk is the blank white page during JS render, not transfer weight.",
+        "debated": true
+      },
+      {
+        "id": "F-004",
+        "category": "canonical-lang-hreflang",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed: index.html and pricing.html have no rel=canonical (only the blog page does). A self-referential canonical is reasonable best practice for these pages. Correct low/medium observation; fix is sound."
+      },
+      {
+        "id": "F-005",
+        "category": "offsite-corroboration-surface",
+        "verdict": "true_positive",
+        "fix_quality": "partial",
+        "reason": "Accurate: no sameAs, no social/profile links (the JS-rendered footer only has href=# Privacy/Terms), and no Wikipedia/Wikidata reference exist. Off-site corroboration is genuinely absent, a legitimate (low-confidence) discoverability gap. Fix is partial: the sameAs/link portion is actionable on-site, but 'establish Crunchbase/Wikidata/Wikipedia' is off-site work outside the site's own code.",
+        "debated": true
+      },
+      {
+        "id": "F-006",
+        "category": "title-meta-heading-orientation",
+        "verdict": "true_positive",
+        "fix_quality": "partial",
+        "reason": "For a non-JS fetcher (the exact audience of an AI-discoverability audit) the raw index.html truly contains no h1 \u2014 the h1 only appears after app.js runs. The observation is correct and relevant. But the tool misattributes the cause: the page DOES render exactly one h1 client-side; the real defect is the CSR/empty-shell (which the tool never names). 'Add exactly one h1' is a partial fix \u2014 an h1 in the static shell helps non-JS clients but doesn't address the underlying no-SSR/no-noscript problem.",
+        "debated": true
+      },
+      {
+        "id": "F-007",
+        "category": "landmarks-skiplink-valueprop",
+        "verdict": "true_positive",
+        "fix_quality": "partial",
+        "reason": "Mixed but net-valid. Skip link is genuinely absent even after render. Raw HTML has no <main> and no value prop for non-JS clients. However, the rendered home page DOES wrap content in <main> and leads with a strong h1+lede value prop, so the 'no clear value prop' claim is wrong for real (JS-executing) visitors. The tool acknowledges its heuristic can't see rendered content. Low severity is appropriate; fix is partial (again treats a CSR symptom).",
+        "debated": true
+      },
+      {
+        "id": "F-008",
+        "category": "title-meta-heading-orientation",
+        "verdict": "true_positive",
+        "fix_quality": "sound",
+        "reason": "Confirmed: index.html (and pricing.html) have no meta description, in the static head or after render (only the blog page has one). Correctly scoped as a minor, recoverable gap; fix is sound."
+      }
+    ],
+    "missed": [
+      {
+        "problem": "index.html and pricing.html are empty SPA shells (<div id=\"root\"></div> + deferred app.js); all product copy, headings, feature text, and every price figure exist only as JS string templates injected at runtime. The raw served HTML has no product content at all.",
+        "half": "discoverability",
+        "severity": "critical",
+        "mechanism": "Any client that reads served HTML without executing JS (most AI URL-fetch tools, many crawlers, link-unfurlers) gets a contentless document with nothing to quote, summarize, or cite. The tool reported downstream symptoms (no h1/main/meta-desc) but never named this root cause."
+      },
+      {
+        "problem": "No <noscript> fallback and no SSR/prerender snapshot on either JS-rendered page.",
+        "half": "discoverability",
+        "severity": "high",
+        "mechanism": "Even one <noscript> sentence would give non-executing clients something to read. Its total absence means the empty-shell failure mode has zero mitigation \u2014 the document is unconditionally empty for non-JS clients."
+      },
+      {
+        "problem": "robots.txt 'Disallow: /blog/' blocks the one fully static, server-rendered, content-rich page (the workflow-automation post) \u2014 the only page a non-JS crawler could productively read and cite.",
+        "half": "discoverability",
+        "severity": "high",
+        "mechanism": "The single well-optimized page (good title, meta description, canonical, descriptive alts) is explicitly excluded from crawling, while it also sits in sitemap.xml \u2014 a direct contradiction. The tool only noted robots_txt_found:true and never parsed the disallow rules."
+      },
+      {
+        "problem": "Boilerplate/weak titles: index.html still ships <title>React App</title> (framework default); pricing.html is bare <title>Nimbusly</title> with no page descriptor.",
+        "half": "discoverability",
+        "severity": "medium",
+        "mechanism": "Title is one of the few strings guaranteed to survive in raw HTML for a JS-rendered page. 'React App' identifies nothing; the bare brand name can't distinguish the pricing page. The tool sampled index.html but never flagged its title."
+      },
+      {
+        "problem": "Uptime SLA figures (99.5% / 99.9% / 99.99%) exist only as vector text inside comparison-chart.svg, referenced from pricing.html, and are never repeated as page text; the alt ('Uptime SLA comparison chart') is generic and omits the numbers.",
+        "half": "discoverability",
+        "severity": "medium",
+        "mechanism": "A text reader of the HTML learns the topic exists but not the actual figures, since crawlers don't parse a separately-fetched image's internal markup. The tool never sampled pricing.html so it missed this entirely."
+      },
+      {
+        "problem": "sitemap.xml lists https://www.nimbusly.example.com/features.html, a URL that does not exist on the site (would 404).",
+        "half": "discoverability",
+        "severity": "low",
+        "mechanism": "Wastes crawl budget on a dead link and signals an unmaintained sitemap. The tool never parsed the sitemap."
+      },
+      {
+        "problem": "No Open Graph / Twitter card tags on index.html or pricing.html.",
+        "half": "discoverability",
+        "severity": "low",
+        "mechanism": "No static social/preview metadata for link-unfurlers or AI preview generators to fall back on when JS isn't executed."
+      },
+      {
+        "problem": "Every primary CTA on the home and pricing pages is a dead link (href=\"#\"): 'Get Started Free', 'Choose Starter', 'Choose Team', 'Contact Sales'.",
+        "half": "engagement",
+        "severity": "high",
+        "mechanism": "The core conversion path (sign up / contact sales) goes nowhere, so any engaged visitor who clicks hits a dead end with no way to continue. The tool only saw raw HTML (CTAs are JS-injected) and missed this."
+      },
+      {
+        "problem": "An unsolicited full-screen newsletter modal auto-opens ~600ms after the homepage renders (setTimeout(showSignupModal,600)), covering the hero before the visitor reads anything.",
+        "half": "engagement",
+        "severity": "medium",
+        "mechanism": "An interstitial on first arrival, before any content is read, is a well-documented driver of immediate bounce/abandonment. Not detectable from raw HTML, so the tool missed it."
+      },
+      {
+        "problem": "No loading indicator, skeleton, or placeholder between page load and JS paint \u2014 visitors see a blank white page during the render window.",
+        "half": "engagement",
+        "severity": "low",
+        "mechanism": "On a slow connection or busy main thread there is no signal the page is working, raising the chance of abandonment before content appears. The tool's F-007 touched 'value prop' but not this specific blank-render gap."
+      }
+    ],
+    "gt_disputes": [],
+    "debated": 5,
+    "referee_notes": "The fixture is a client-side-rendered SPA: index.html is an empty shell (div#root + deferred app.js) with a placeholder <title>React App</title>, served from a loopback test origin with render_available:false. Two rulings turn on distinguishing harness/framing artifacts from real defects (F-001 flags the localhost HTTP test server; F-003's title contradicts its own empty many_sync_scripts/many_stylesheets evidence and a 389-byte body). Three rulings turn on honoring the audit's stated non-JS scope, which matches the AI-crawler audience: F-005 is a conceded-accurate off-site gap; F-006 and F-007 correctly report what non-JS fetchers see in the static shell, with F-007's skip link absent even post-render. F-006 and F-007 are decided consistently on the same scope logic."
+  }
+]

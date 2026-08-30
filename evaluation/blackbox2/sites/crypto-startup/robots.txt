@@ -1,0 +1,39 @@
+# Aurorachain robots.txt
+# Policy: we opt out of bulk crawling for AI model-training corpora,
+# but we explicitly welcome real-time answer engines / citation bots
+# that send users back to us. Reviewed quarterly by the growth team.
+
+# --- Training-data crawlers: opted out ---
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+# --- Answer engines / citation & search crawlers: welcome ---
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# --- Everything else (search engines, general bots) ---
+User-agent: *
+Allow: /
+
+Sitemap: /sitemap.xml

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <circle r="80" cx="100" cy="100" fill="transparent" stroke="#7f5af0" stroke-width="40" stroke-dasharray="201 502" stroke-dashoffset="0"/>
+  <circle r="80" cx="100" cy="100" fill="transparent" stroke="#2cb1bc" stroke-width="40" stroke-dasharray="100 502" stroke-dashoffset="-201"/>
+  <circle r="80" cx="100" cy="100" fill="transparent" stroke="#f2c94c" stroke-width="40" stroke-dasharray="75 502" stroke-dashoffset="-301"/>
+  <circle r="80" cx="100" cy="100" fill="transparent" stroke="#eb5757" stroke-width="40" stroke-dasharray="75 502" stroke-dashoffset="-376"/>
+  <circle r="80" cx="100" cy="100" fill="transparent" stroke="#6fcf97" stroke-width="40" stroke-dasharray="50 502" stroke-dashoffset="-451"/>
+</svg>

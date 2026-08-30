@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="140">
+<rect width="500" height="140" fill="#FFFFFF" stroke="#003366" stroke-width="2"/>
+<text x="20" y="30" font-family="Georgia, serif" font-size="18" fill="#003366">Department of Computer Science</text>
+<text x="20" y="55" font-family="Georgia, serif" font-size="14" fill="#000000">Ellery Hall, Room 214, 118 College Ave</text>
+<text x="20" y="75" font-family="Georgia, serif" font-size="14" fill="#000000">Northfield, ST 55057</text>
+<text x="20" y="95" font-family="Georgia, serif" font-size="14" fill="#000000">Phone: 555-0142  Fax: 555-0199</text>
+<text x="20" y="115" font-family="Georgia, serif" font-size="14" fill="#000000">Office Hours: Mon-Fri, 8:00 AM - 4:30 PM</text>
+</svg>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Platform Overview | Meridian Ops</title>
+<meta name="description" content="See how Meridian Ops models approval chains, reconciles exceptions, and connects to your ERP, HRIS, and ITSM systems, with a documented API and enterprise-grade access controls.">
+<link rel="canonical" href="https://www.meridianops.example/platform.html">
+<meta name="robots" content="index, follow">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Meridian Ops">
+<meta property="og:title" content="Platform Overview | Meridian Ops">
+<meta property="og:description" content="How Meridian Ops models approval chains, reconciles exceptions, and connects to your ERP, HRIS, and ITSM systems.">
+<meta property="og:url" content="https://www.meridianops.example/platform.html">
+<meta property="og:image" content="https://www.meridianops.example/assets/img/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="/assets/img/logo.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" sizes="32x32" type="image/png">
+<link rel="stylesheet" href="/assets/css/styles.css">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.meridianops.example/" },
+    { "@type": "ListItem", "position": 2, "name": "Platform", "item": "https://www.meridianops.example/platform.html" }
+  ]
+}
+</script>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="/">
+      <img src="/assets/img/logo.svg" alt="" width="32" height="32">
+      Meridian Ops
+    </a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav">Menu</button>
+    <nav class="primary-nav" id="primary-nav" aria-label="Primary">
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/platform.html" aria-current="page">Platform</a></li>
+        <li><a href="/pricing.html">Pricing</a></li>
+        <li><a href="/company.html">Company</a></li>
+      </ul>
+    </nav>
+    <div class="nav-actions">
+      <a class="btn btn-secondary" href="/company.html#contact">Talk to sales</a>
+      <a class="btn btn-primary" href="/pricing.html">Start free trial</a>
+    </div>
+  </div>
+</header>
+
+<main id="main-content">
+
+  <section class="hero" style="padding-bottom: 32px;">
+    <div class="container" style="grid-template-columns: 1fr; text-align:center;">
+      <div>
+        <p class="eyebrow">Platform overview</p>
+        <h1>One workflow engine for approvals, exceptions, and audit trails</h1>
+        <p class="lede" style="margin-left:auto;margin-right:auto;">Meridian Ops sits between the systems your teams already use and gives every request, exception, and sign-off a single, traceable home.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="two-col">
+        <div>
+          <h2>Approval orchestration</h2>
+          <p>Design multi-step approval chains with conditional routing based on amount, department, vendor risk, or any field from a connected system. Delegate approvals during time off without losing the audit trail, and set automatic escalation when a request sits too long.</p>
+          <p>Approvers act from email, Slack, Teams, or the Meridian Ops inbox — no separate login required for occasional approvers.</p>
+        </div>
+        <div>
+          <img src="/assets/img/hero-illustration.svg" alt="Approval pipeline view showing a request at 67% completion across four approval stages" width="480" height="360">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-alt">
+    <div class="container">
+      <div class="section-heading">
+        <h2>Exception reconciliation</h2>
+        <p>Meridian Ops compares records across connected systems and surfaces mismatches automatically, before they turn into audit findings.</p>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card">
+          <h3>Automatic matching</h3>
+          <p>Match invoices, purchase orders, and receipts across systems using configurable rules, with tolerance thresholds you control.</p>
+        </article>
+        <article class="feature-card">
+          <h3>Owner routing</h3>
+          <p>Unmatched or out-of-tolerance items are routed to the correct owner automatically, based on department, vendor, or cost center.</p>
+        </article>
+        <article class="feature-card">
+          <h3>Resolution tracking</h3>
+          <p>Every exception carries a full resolution history, so recurring issues are easy to spot and fix at the source.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="integrations">
+    <div class="container">
+      <div class="section-heading">
+        <h2>Connects to the systems you already run</h2>
+        <p>Native connectors keep data in sync without middleware, and a documented REST API covers everything else.</p>
+      </div>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Native connectors</th>
+            <th>Sync direction</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ERP &amp; finance</td>
+            <td>NetSuite, SAP S/4HANA, Workday Financial Management</td>
+            <td>Two-way</td>
+          </tr>
+          <tr>
+            <td>HRIS</td>
+            <td>Workday HCM, BambooHR, ADP</td>
+            <td>Read + provisioning</td>
+          </tr>
+          <tr>
+            <td>ITSM &amp; ticketing</td>
+            <td>ServiceNow, Jira Service Management</td>
+            <td>Two-way</td>
+          </tr>
+          <tr>
+            <td>Identity</td>
+            <td>Okta, Azure AD, OneLogin (SAML/SCIM)</td>
+            <td>Provisioning</td>
+          </tr>
+          <tr>
+            <td>Everything else</td>
+            <td>REST API and outbound webhooks</td>
+            <td>Two-way</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin-top:16px;">Need a connector we don't list yet? Our solutions team scopes custom connectors as part of enterprise onboarding — <a href="/company.html#contact">get in touch</a>.</p>
+    </div>
+  </section>
+
+  <section class="section-alt">
+    <div class="container">
+      <div class="section-heading">
+        <h2>Built for enterprise IT and security teams</h2>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card">
+          <h3>Role-based access control</h3>
+          <p>Permissions apply down to the individual workflow step, so a reviewer in one department can't see requests from another.</p>
+        </article>
+        <article class="feature-card">
+          <h3>SSO &amp; SCIM</h3>
+          <p>Provision and deprovision users automatically through your identity provider, with SAML-based single sign-on for every login.</p>
+        </article>
+        <article class="feature-card">
+          <h3>Immutable audit log</h3>
+          <p>Every state change is recorded with a user, timestamp, and reason, and exportable in CSV or via API for your GRC tooling.</p>
+        </article>
+      </div>
+      <p style="text-align:center;margin-top:28px;">Read more about our certifications on the <a href="/company.html#security">security and compliance</a> page.</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="cta-band">
+        <h2>See Meridian Ops with your own workflow</h2>
+        <p>We'll walk through a live approval chain and exception queue using a sandbox seeded with data like yours.</p>
+        <div class="hero-actions" style="justify-content:center">
+          <a class="btn btn-primary btn-large" href="/pricing.html">Start free trial</a>
+          <a class="btn btn-secondary btn-large" style="color:#fff;border-color:#4a5578" href="/company.html#contact">Book a walkthrough</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="/">
+          <img src="/assets/img/logo.svg" alt="" width="32" height="32">
+          Meridian Ops
+        </a>
+        <p>Workflow automation for enterprise operations teams. Built for finance, procurement, and audit workflows that can't afford to lose the paper trail.</p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <ul>
+          <li><a href="/platform.html">Platform overview</a></li>
+          <li><a href="/platform.html#integrations">Integrations</a></li>
+          <li><a href="/pricing.html">Pricing</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/company.html">About us</a></li>
+          <li><a href="/company.html#security">Security &amp; compliance</a></li>
+          <li><a href="/company.html#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="/sitemap.xml">Sitemap</a></li>
+          <li><a href="mailto:hello@meridianops.example">hello@meridianops.example</a></li>
+          <li><a href="tel:+14155550148">+1 (415) 555-0148</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Meridian Ops, Inc. All rights reserved.</p>
+      <p>560 Bryant Street, Suite 300, San Francisco, CA 94107</p>
+    </div>
+  </div>
+</footer>
+
+<script src="/assets/js/main.js"></script>
+</body>
+</html>

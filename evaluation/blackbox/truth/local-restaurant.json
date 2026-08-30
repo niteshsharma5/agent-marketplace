@@ -1,0 +1,105 @@
+{
+  "name": "local-restaurant",
+  "archetype": "Small local restaurant / small-business brochure site (static HTML, no framework, family-run feel)",
+  "overall": "problematic",
+  "start_path": "/index.html",
+  "files_written": [
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/local-restaurant/index.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/local-restaurant/menu.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/local-restaurant/about.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/local-restaurant/contact.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/local-restaurant/robots.txt",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/local-restaurant/sitemap.xml",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/local-restaurant/css/style.css",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/local-restaurant/images/hero.jpg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/local-restaurant/images/menu-chalkboard.jpg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/local-restaurant/images/hours-sign.jpg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/local-restaurant/images/location-map.jpg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox/sites/local-restaurant/images/divider.svg"
+  ],
+  "real_problems": [
+    {
+      "half": "discoverability",
+      "problem": "The entire menu (item names and prices) exists only inside a photographed chalkboard/menu-card JPEG on menu.html and index.html; there is no HTML text, table, list, or PDF text layer containing any dish name or price anywhere on the site.",
+      "where": "menu.html figure with images/menu-chalkboard.jpg; also referenced on index.html under 'Tonight's Specials'",
+      "severity": "critical",
+      "why_it_hurts": "Text-based crawlers and most AI assistant retrieval pipelines extract page text, not pixel content of raster images. Since these are 1x1 placeholder JPEGs standing in for real photos with no OCR-able/alt-text transcription, an AI assistant asked 'what does The Blue Fork serve and how much does it cost' has zero source text to draw from and cannot answer or cite accurately. This is the core, intentional flaw of the site per its directive."
+    },
+    {
+      "half": "discoverability",
+      "problem": "Business hours are communicated only through a photographed door-sign image, on both the homepage and the contact page, with no plain-text hours anywhere and no schema.org openingHours markup.",
+      "where": "index.html and contact.html, images/hours-sign.jpg",
+      "severity": "high",
+      "why_it_hurts": "A very common query ('what time does X close tonight') has no answer available to a crawler or LLM ingesting the page text; the only source of truth is locked inside image pixels."
+    },
+    {
+      "half": "discoverability",
+      "problem": "The street address is only visible inside a map-screenshot image on the contact page; there is no plain-text postal address anywhere on the site and no LocalBusiness/PostalAddress structured data.",
+      "where": "contact.html, images/location-map.jpg",
+      "severity": "high",
+      "why_it_hurts": "AI assistants and search engines rely on plain-text NAP (name/address/phone) or JSON-LD to confidently answer 'where is it located' and to match the business to map/knowledge-panel data. With the address only in an image there is no extractable address string to cite, and no LocalBusiness JSON-LD compensates for it anywhere on the site."
+    },
+    {
+      "half": "discoverability",
+      "problem": "Alt text on the fact-bearing images describes the image visually ('Photo of our chalkboard menu board', 'A wooden sign ... displaying our store hours', 'Screenshot of our location on a map') rather than transcribing the actual facts (items, prices, hours, address) inside them.",
+      "where": "index.html, menu.html, contact.html - alt attributes on the menu/hours/map images",
+      "severity": "medium",
+      "why_it_hurts": "Even a crawler that does read alt text (a common fallback for image-derived facts) gets no usable data here, closing off the one cheap remediation path a real site might otherwise have used."
+    },
+    {
+      "half": "discoverability",
+      "problem": "No structured data (JSON-LD LocalBusiness/Restaurant, Menu, or openingHours) exists anywhere on the site.",
+      "where": "site-wide (absent from all four pages' <head>)",
+      "severity": "medium",
+      "why_it_hurts": "Structured data is the standard, low-effort way small local businesses make hours/address/menu machine-readable independent of prose; its total absence removes a fallback channel that would otherwise have partially offset the image-only facts."
+    },
+    {
+      "half": "engagement",
+      "problem": "The homepage 'Order Online' call-to-action button links to order-online.html, a page that was never created and will 404 on a static file server.",
+      "where": "index.html, cta-row button 'Order Online'",
+      "severity": "high",
+      "why_it_hurts": "A visitor who clicks the most action-oriented button on the page hits a dead end, a classic real-world small-business site bug that kills conversion at the exact moment of intent."
+    },
+    {
+      "half": "engagement",
+      "problem": "The menu experience for a visitor is a single static photo with no menu structure, no way to filter/search dishes, no in-page ordering, and no link from the menu page back to a reservation or ordering action.",
+      "where": "menu.html",
+      "severity": "medium",
+      "why_it_hurts": "Visitors who land on the menu page (a very common entry point) have no next action offered besides leaving the page; combined with the image being unreadable at a glance on small screens, this increases the chance they bounce instead of converting to a call/visit."
+    },
+    {
+      "half": "engagement",
+      "problem": "Fact-bearing images (menu, hours, map) have no explicit width/height attributes and are allowed to render at whatever their intrinsic size is, with no responsive sizing guidance beyond max-width:100%.",
+      "where": "css/style.css .menu-board-figure/.hours-figure/.map-figure img rules; corresponding <img> tags in index.html/menu.html/contact.html",
+      "severity": "low",
+      "why_it_hurts": "Without width/height reservations, the browser cannot reserve layout space before the image loads, contributing to layout shift as the page renders \u2014 a minor but genuine real-world engagement/UX cost, compounded by the fact that on a live version of this site these would be large hi-res photos, not the tiny placeholders used for testing."
+    }
+  ],
+  "legitimate_and_traps": [
+    {
+      "aspect": "The decorative <img src=\"images/divider.svg\" alt=\"\"> elements scattered between sections",
+      "why_it_is_fine": "These are purely ornamental separators with no informational content; an empty alt attribute is the correct, accessible way to mark a decorative image so screen readers and crawlers skip it. This must not be flagged as 'missing alt text'."
+    },
+    {
+      "aspect": "robots.txt allows all crawlers and points to sitemap.xml; sitemap.xml lists exactly the four real, working pages with plausible lastmod dates",
+      "why_it_is_fine": "This is textbook-correct configuration for a small static site \u2014 nothing to flag here. Note the sitemap intentionally omits the broken order-online.html since that page doesn't exist; that's correct sitemap hygiene, not an oversight."
+    },
+    {
+      "aspect": "about.html is fully text-based, narrative, well-structured with H1/H2 hierarchy and internal links, and contains no facts hidden in images",
+      "why_it_is_fine": "This page is a deliberate contrast/control: it demonstrates the site's operators COULD write good text content when they chose to (for a 'story' page), making it clear that the image-only treatment of menu/hours/address elsewhere is a targeted, realistic gap rather than a site-wide inability to produce text."
+    },
+    {
+      "aspect": "Phone number and email are real, clickable tel:/mailto: text links repeated in the footer of every page and in the contact page body, with normal contrast and no image involved",
+      "why_it_is_fine": "This is the one core NAP fact (phone) the business got right: plain text, machine-readable, consistent site-wide. It should not be flagged as a discoverability problem, and should not be confused with the hours/address facts that genuinely are image-only."
+    },
+    {
+      "aspect": "General neighborhood/location context appears in prose ('downtown Millbrook', 'on Elm Street', 'across from the old clock tower') on the homepage, about page, and contact page, even though the precise postal address is image-only",
+      "why_it_is_fine": "This is a realistic middle ground, not a total blackout of location info \u2014 an AI assistant could still correctly say the restaurant is in downtown Millbrook on Elm Street, just not cite the exact street number/zip, which is the genuine gap being tested."
+    },
+    {
+      "aspect": "Two short customer testimonials in plain text on the homepage, and a 'Community'/neighborhood section on the about page",
+      "why_it_is_fine": "This is ordinary, legitimate small-business content (not padding or keyword stuffing) and should not be penalized; it's exactly the kind of authentic text a real bistro site would have."
+    }
+  ],
+  "notes": "Site is a 4-page static brochure site (index, menu, about, contact) for a fictional restaurant, \"The Blue Fork\" in \"downtown Millbrook\". No build tooling, relative links only, servable by any static file server. Images are minimal valid 1x1 placeholder JPEGs (real photos would obviously contain real pixel content, but the point under test is that no text/alt/structured-data channel exists to recover the facts regardless of image content). No source code files (.py/.js/.ts/etc.) were created or modified this turn \u2014 only HTML, CSS, SVG, XML, and JPEG/text assets \u2014 so per the static-analysis policy the Semgrep scan step was correctly skipped as not triggered (nothing scannable was written)."
+}

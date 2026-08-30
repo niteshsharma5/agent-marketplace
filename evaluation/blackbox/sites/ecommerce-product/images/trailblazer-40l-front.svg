@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
+  <rect width="600" height="600" fill="#e8e2d2"/>
+  <rect x="180" y="120" width="240" height="360" rx="26" fill="#2f6b4f"/>
+  <rect x="210" y="160" width="180" height="120" rx="14" fill="#1f4d3a"/>
+  <rect x="230" y="320" width="140" height="100" rx="10" fill="#1f4d3a"/>
+  <circle cx="300" cy="140" r="10" fill="#c65d2c"/>
+  <text x="300" y="560" font-family="Arial" font-size="22" fill="#6b6b63" text-anchor="middle">Trailblazer 40L — Front View</text>
+</svg>

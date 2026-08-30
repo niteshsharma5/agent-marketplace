@@ -1,0 +1,82 @@
+{
+  "name": "crypto-startup",
+  "archetype": "Flashy crypto/web3 startup single-page landing site (fictional \"Aurorachain\" L2 protocol) \u2014 animated hero, live token stats, tokenomics, roadmap, team, FAQ, heavy CSS/JS polish but content is server-delivered static HTML.",
+  "overall": "mixed",
+  "start_path": "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/crypto-startup/index.html",
+  "files_written": [
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/crypto-startup/index.html",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/crypto-startup/robots.txt",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/crypto-startup/sitemap.xml",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/crypto-startup/favicon.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/crypto-startup/assets/style.css",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/crypto-startup/assets/script.js",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/crypto-startup/assets/images/logo.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/crypto-startup/assets/images/hero-blob.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/crypto-startup/assets/images/chart-allocation.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/crypto-startup/assets/images/team-1.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/crypto-startup/assets/images/team-2.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/crypto-startup/assets/images/team-3.svg",
+    "/codemill/sharmnit/projects/personal-projects/brand-ai-audit/tests/blackbox2/sites/crypto-startup/assets/images/team-4.svg"
+  ],
+  "real_problems": [
+    {
+      "where": "index.html <title>/<meta name=\"description\">",
+      "problem": "Meta description is generic boilerplate (\"Aurorachain is a blockchain platform.\") instead of describing what the product actually does, its differentiator, or key facts.",
+      "why_it_hurts": "Search engines and AI answer engines often lean on the meta description as a quick, low-cost summary/snippet when the full page hasn't been deeply parsed. A thin, generic description increases the chance of a vague or inaccurate one-line summary being surfaced, even though the full page content is otherwise rich and correct.",
+      "severity": "low",
+      "half": "discoverability"
+    },
+    {
+      "where": "index.html nav link 'Whitepaper' and matching footer link and hero secondary CTA, all pointing to /whitepaper.pdf",
+      "problem": "The Whitepaper link points to /whitepaper.pdf, a file that does not exist anywhere in the site and will 404.",
+      "why_it_hurts": "A visitor (human or crawler) who clicks 'Read Whitepaper' \u2014 arguably the single most-clicked link on a crypto landing page for anyone doing due diligence \u2014 hits a dead end. This directly damages trust and is a real engagement failure, and it also means an AI assistant cannot follow that link to ground answers about tokenomics/technical detail in a deeper document.",
+      "severity": "medium",
+      "half": "both"
+    },
+    {
+      "where": "Entire index.html <head>",
+      "problem": "No JSON-LD structured data anywhere (no Organization, WebSite, or FAQPage schema), despite the page containing clean, schema-friendly FAQ content and clear brand facts.",
+      "why_it_hurts": "Structured data is the highest-confidence signal AI assistants and search engines use to extract discrete facts (official name, sameAs social profiles, FAQ pairs) without having to infer them from prose. Its total absence doesn't block reading the page, but it raises the chance of lower-confidence or slightly-off citations (e.g. guessing at the entity or missing that the FAQ is authoritative) compared to a similar page with markup.",
+      "severity": "medium",
+      "half": "discoverability"
+    },
+    {
+      "where": "assets/style.css .stat .label rule (used for the 'Total Value Locked', 'Active Wallets', etc. captions under the hero stats)",
+      "problem": "The stat captions are styled at roughly a 2:1 contrast ratio (#45454f text on #0b0b12 background), well below the WCAG AA minimum of 4.5:1 for normal-size text.",
+      "why_it_hurts": "These captions are what give the big animated numbers their meaning (e.g. distinguishing '482,000,000+' as TVL vs. transaction count). Low contrast makes them hard to read for many users, especially on lower-quality or glare-affected screens, which undercuts comprehension of the site's core trust signals and can contribute to early bounce.",
+      "severity": "low",
+      "half": "engagement"
+    }
+  ],
+  "legitimate_and_traps": [
+    {
+      "aspect": "robots.txt disallows GPTBot, CCBot, Google-Extended, and Bytespider, while explicitly Allow-ing ClaudeBot, Claude-User, PerplexityBot, OAI-SearchBot, anthropic-ai, and a wildcard Allow for everyone else.",
+      "why_it_is_fine": "This is a deliberate, coherent business decision, not an accidental block: it opts out of bulk crawlers primarily used to build LLM pretraining corpora while explicitly keeping the door open for real-time answer/citation engines that drive traffic back to the site. It should not be flagged as 'blocking AI crawlers hurts discoverability' \u2014 the site is in fact more precisely tuned for citation-style discoverability than a site with no robots.txt opinion at all."
+    },
+    {
+      "aspect": "Single-page design: everything (features, tokenomics, roadmap, team, FAQ) lives in one index.html with in-page anchor navigation, and sitemap.xml lists only one URL.",
+      "why_it_is_fine": "For an early-stage startup landing page this is a normal, legitimate information architecture, not a thinness or crawl-budget problem. The single page carries substantial unique text (roadmap milestones, named team bios, a full tokenomics table, five FAQ answers) \u2014 it is not a low-content splash page just because the page count is 1."
+    },
+    {
+      "aspect": "Decorative images use empty alt and aria-hidden: the header logo mark inside the text-based brand link (assets/images/logo.svg), and the large animated background blob in the hero (assets/images/hero-blob.svg).",
+      "why_it_is_fine": "Both are purely ornamental \u2014 the brand name is already present as adjacent text, and the blob is an abstract gradient shape with no informational content. Empty alt + aria-hidden is the textbook-correct accessibility pattern for decorative imagery (it should NOT be flagged as 'missing alt text'), in contrast to the team photos and the tokenomics pie chart, which correctly DO carry descriptive alt text because they convey information."
+    },
+    {
+      "aspect": "All hero copy, the four stat numbers, tokenomics table, roadmap items, team bios, and FAQ answers are present as literal text nodes in the raw HTML document; script.js only re-renders the stat numbers with a counting animation after page load (final value matches the static fallback) and toggles a mobile nav class.",
+      "why_it_is_fine": "Despite the site's flashy, animation-heavy feel, none of the substantive content is JS-injected or client-side-rendered-only. A crawler or assistant that never executes JavaScript still sees the complete page: real numbers, real bios, real FAQ text. This should not be penalized as 'JS-dependent/thin without JS' just because the page also happens to be visually dynamic."
+    },
+    {
+      "aspect": "FAQ section is built with native <details>/<summary> elements rather than a JS-only accordion widget.",
+      "why_it_is_fine": "This is a progressive-enhancement pattern: the FAQ expands/collapses via native browser behavior with zero JavaScript required, and all five Q&A pairs are fully present and readable in the raw HTML regardless of script execution or CSS load."
+    },
+    {
+      "aspect": "Social links (X, Discord, GitHub) point to external https URLs on other domains rather than '#' placeholders, and open with rel=\"noopener noreferrer\"; they are not expected to resolve to real accounts since this is an isolated fictional-brand test fixture.",
+      "why_it_is_fine": "This reflects normal external-link hygiene (real anchor semantics, secure rel attributes) for a site that will never be deployed at its canonical domain. It is a fixture limitation, not a genuine broken-internal-link defect \u2014 distinct from the one intentional genuine defect (the internal /whitepaper.pdf 404), which was included specifically as the modest, real problem to find."
+    },
+    {
+      "aspect": "No external CDN dependencies for fonts, icons, or analytics \u2014 the whole page uses a system font stack and inline emoji/SVG for icons, and canonical/OG/meta tags reference only self-hosted assets.",
+      "why_it_is_fine": "This is a reliability-positive choice (nothing about page rendering depends on a third-party network call succeeding), not an oversight; it should read as a strength, not a missing-integration gap."
+    }
+  ],
+  "notes": "Brand: fictional \"Aurorachain\" ($AURA), a made-up zk-rollup L2, chosen to avoid colliding with any real crypto project name. The site is a single index.html plus assets/ (style.css, script.js, images/) and root-level robots.txt, sitemap.xml, favicon.svg \u2014 no other pages exist by design (single-page architecture is itself one of the traps). Genuine problems were kept deliberately modest (one broken link, one missing-structured-data gap, one thin meta description, one low-contrast style choice) so that the numerous superficially-suspicious-but-correct patterns (AI-training opt-out robots.txt, empty alt on decorative art, single page, JS-animated-but-fully-static-in-HTML content) stand out as the intended false-positive bait. Ran a Semgrep scan on assets/script.js (the only scannable source file produced); no issues were found. HTML/CSS were not scanned as they are markup, not source code, per policy."
+}

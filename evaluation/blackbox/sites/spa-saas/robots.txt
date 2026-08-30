@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /blog/
+Disallow: /api/
+
+Sitemap: https://www.nimbusly.example.com/sitemap.xml
